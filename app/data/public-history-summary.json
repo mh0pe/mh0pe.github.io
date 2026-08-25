@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-25T17:51:05.643189Z",
+  "cutoff_date": "2026-08-25",
+  "collection_status": "complete",
+  "public_only": true,
+  "accounts": {
+    "awsmadi": {
+      "attributed_contribution_pull_requests": 92,
+      "authored_pull_requests": 92,
+      "merged_attributed_contribution_pull_requests": 60,
+      "merged_authored_pull_requests": 60,
+      "public_owned_repositories": 13,
+      "public_owned_nonfork_repositories": 0
+    },
+    "mh0pe": {
+      "attributed_contribution_pull_requests": 73,
+      "authored_pull_requests": 63,
+      "copilot_authored_contribution_pull_requests": 10,
+      "merged_attributed_contribution_pull_requests": 33,
+      "merged_authored_pull_requests": 26,
+      "public_owned_repositories": 23,
+      "public_owned_nonfork_repositories": 0
+    }
+  },
+  "combined": {
+    "attributed_contribution_pull_requests": 165,
+    "authored_pull_requests": 155,
+    "copilot_authored_contribution_pull_requests": 10,
+    "merged_attributed_contribution_pull_requests": 93,
+    "merged_attributed_contribution_pull_requests_to_external_repositories": 72,
+    "merged_attributed_contribution_pull_requests_to_owned_repositories": 21,
+    "merged_authored_pull_requests": 86,
+    "merged_authored_pull_requests_to_external_repositories": 72,
+    "merged_authored_pull_requests_to_owned_repositories": 14,
+    "distinct_pr_target_repositories": 43,
+    "public_owned_repositories": 36,
+    "public_owned_nonfork_repositories": 0,
+    "pull_request_commit_memberships": 1236,
+    "submitted_pr_context_commit_occurrences": 1038
+  },
+  "fork_delivery_audit": {
+    "repositories_audited": 36,
+    "fork_only_commits": 1015,
+    "residual_commits_without_collected_pr": 634,
+    "account_attributed_residual_commits": 235,
+    "pr_covered_shas_excluded": 1137
+  },
+  "counting_rules": {
+    "attributed_contribution_pull_requests": "Every public PR returned by GitHub Search for is:pr is:public author:<account>. Copilot-authored PRs returned by an account query count as account-directed contributions while retaining Copilot as the detail author.",
+    "authored_pull_requests": "Public PRs whose current detailed PR author login equals mh0pe or awsmadi.",
+    "delivery_state": "Capability availability is primary: implementations available from a public fork or public PR branch remain delivered work. Upstream adoption is retained as separate provenance.",
+    "direct_fork_delivery": "Account-attributed commits reachable from a public fork branch, absent from current upstream branches, and not covered by a collected PR."
+  }
+}

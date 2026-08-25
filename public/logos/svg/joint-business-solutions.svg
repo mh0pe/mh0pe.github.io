@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title">
+  <title id="title">Joint Business Solutions emblem</title>
+  <path fill="#394047" d="M0 0h120v120H0z"/>
+  <path fill="#2e343a" d="m35 25 52 2 10 10-2 52-10 8-52-2-10-10 2-52z" opacity=".48"/>
+  <path fill="#f7f7f4" d="M34 24h52l10 10-18 9H42l-18-9z"/>
+  <path fill="#d2d5d6" d="m86 24 10 10v52L86 96l-9-18V42z"/>
+  <path fill="#fff" d="M86 96H34L24 86l18-9h36z"/>
+  <path fill="#e4e7e7" d="M24 34 34 24l9 18v36l-9 18-10-10z"/>
+  <path fill="#394047" d="M43 43h34v34H43z"/>
+</svg>

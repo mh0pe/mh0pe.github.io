@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0.0",
+  "observed_at": "2026-07-24",
+  "public_only": true,
+  "source": "GitHub REST API via gh CLI; public identity supplied by the portfolio owner",
+  "profile": {
+    "name": "Madison Hope Steiner",
+    "primary_login": "mh0pe",
+    "secondary_login": "awsmadi",
+    "public_since": 2014
+  },
+  "selected_ecosystem_stars": 97024,
+  "ecosystems": {
+    "ash": {
+      "label": "AWS Labs Automated Security Helper",
+      "repositories": [
+        "awslabs/automated-security-helper"
+      ],
+      "stars": 671,
+      "forks": 86
+    },
+    "aws_platform": {
+      "label": "AWS CDK and jsii",
+      "repositories": [
+        "aws/aws-cdk",
+        "aws/aws-cdk-cli",
+        "aws/jsii"
+      ],
+      "stars": 15809,
+      "forks": 4957
+    },
+    "aws_mcp": {
+      "label": "AWS Labs MCP",
+      "repositories": [
+        "awslabs/mcp"
+      ],
+      "stars": 9492,
+      "forks": 1660
+    },
+    "lightpanda": {
+      "label": "Lightpanda",
+      "repositories": [
+        "lightpanda-io/browser"
+      ],
+      "stars": 32108,
+      "forks": 1431
+    },
+    "agent_frameworks": {
+      "label": "BASE, CARL, PAUL, and SEED",
+      "repositories": [
+        "ChristopherKahler/base-v1",
+        "ChristopherKahler/carl",
+        "ChristopherKahler/paul",
+        "ChristopherKahler/seed"
+      ],
+      "stars": 1911,
+      "forks": 251
+    },
+    "nextcloud": {
+      "label": "Nextcloud Server",
+      "repositories": [
+        "nextcloud/server"
+      ],
+      "stars": 36242,
+      "forks": 5080
+    },
+    "esp_idf": {
+      "label": "esp-idf-sys",
+      "repositories": [
+        "esp-rs/esp-idf-sys"
+      ],
+      "stars": 400,
+      "forks": 163
+    },
+    "redshift": {
+      "label": "SQLAlchemy Redshift",
+      "repositories": [
+        "sqlalchemy-redshift/sqlalchemy-redshift"
+      ],
+      "stars": 228,
+      "forks": 164
+    },
+    "forgemax": {
+      "label": "Forgemax",
+      "repositories": [
+        "postrv/forgemax"
+      ],
+      "stars": 150,
+      "forks": 8
+    },
+    "docker_webnut": {
+      "label": "Docker webNUT",
+      "repositories": [
+        "edgd1er/docker-webnut"
+      ],
+      "stars": 13,
+      "forks": 8
+    }
+  }
+}

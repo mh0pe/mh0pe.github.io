@@ -1,0 +1,18 @@
+# Madison Hope Steiner — Principal AI Architect
+
+Madison Hope Steiner is a Principal AI Architect whose public engineering identities are mh0pe and awsmadi. This site is Madison Hope Steiner's source-linked open-source systems portfolio.
+
+## Canonical portfolio
+
+- Portfolio: https://mh0pe.github.io/
+- Madison Hope Steiner on GitHub (mh0pe): https://github.com/mh0pe
+- Madison Hope Steiner on GitHub (awsmadi): https://github.com/awsmadi
+- Madison Hope Steiner on LinkedIn: https://www.linkedin.com/in/madisonhsteiner
+
+## Public work represented
+
+The portfolio covers distributed systems, AI infrastructure, agent orchestration, cloud architecture, security engineering, browser runtimes, durability, and developer tooling. Each project links to public repositories, pull requests, commits, files, reviews, and documentation where available.
+
+## Evidence policy
+
+The portfolio uses public GitHub activity from mh0pe and awsmadi. It distinguishes upstream merges, open review, and capabilities available from public forks. Employment history follows the linked public LinkedIn profile. The site is personal and does not speak for any employer.

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "observed_at": "2026-07-23",
+  "usage": "Employer identification only. All trademarks remain the property of their respective owners and do not imply endorsement.",
+  "assets": [
+    {
+      "employer": "Amazon Web Services",
+      "file": "/logos/svg/aws.svg",
+      "kind": "source_vector",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+      "provenance_url": "https://commons.wikimedia.org/wiki/File:Amazon_Web_Services_Logo.svg",
+      "note": "Public vector identifies Amazon as source and author; preserved in its navy and orange treatment."
+    },
+    {
+      "employer": "Chainalysis",
+      "file": "/logos/svg/chainalysis.svg",
+      "kind": "source_vector",
+      "source_url": "https://www.chainalysis.com/",
+      "provenance_url": "https://www.chainalysis.com/",
+      "note": "Extracted from the two-path inline SVG in the official site header and given the same #ff5300 fill applied by the official stylesheet."
+    },
+    {
+      "employer": "Cameo",
+      "file": "/logos/svg/cameo.svg",
+      "kind": "source_vector",
+      "source_url": "https://drive.google.com/uc?export=download&id=1QW2Y6kYPa-rrDjEcI-w4s3BfO-M6n3P5",
+      "provenance_url": "https://brand.cameo.com/logos",
+      "note": "Official primary black vector from Cameo's public brand kit."
+    },
+    {
+      "employer": "Trōv",
+      "file": "/logos/svg/trov.svg",
+      "kind": "mirrored_source_vector",
+      "source_url": "https://raw.githubusercontent.com/matldupont/incident-reporter/main/client/src/assets/svg/trov_logo_blue.svg",
+      "provenance_url": "https://commons.wikimedia.org/wiki/File:JPEG_Trov_Logo_Blue_2020.jpg",
+      "note": "Public vector mirror matches the authenticated 2020 raster master's 800x420 dimensions, Illustrator metadata, and #0198ff artwork."
+    },
+    {
+      "employer": "Rakuten AirMap, Inc.",
+      "file": "/logos/svg/rakuten-airmap.svg",
+      "kind": "derived_vector",
+      "source_url": "https://web.archive.org/web/20181119055451id_/https://www.rakuten-airmap.co.jp/wp-content/uploads/2018/06/02_Rakuten-AirMap_Logo_2-Lines_White.png",
+      "provenance_url": "https://corp.rakuten.co.jp/news/press/2017/0315_01.html",
+      "note": "Deterministic path trace of the archived 716x430 first-party transparent master; color sampled from the first-party blue variant."
+    },
+    {
+      "employer": "cielo24",
+      "file": "/logos/svg/cielo24.svg",
+      "kind": "derived_vector",
+      "source_url": "https://raw.githubusercontent.com/cielo24/Docs/master/api/source/_static/logo.png",
+      "provenance_url": "https://github.com/cielo24/Docs",
+      "note": "Deterministic two-color path trace of the public first-party documentation logo."
+    },
+    {
+      "employer": "Quiver Media",
+      "file": "/logos/svg/quiver-media.svg",
+      "kind": "derived_vector",
+      "source_url": "https://web.archive.org/web/20160116164929id_/http://quiver.zone/wp-content/uploads/2015/11/quiver_main_logo.png",
+      "provenance_url": "https://www.linkedin.com/company/quiver-media-inc-/",
+      "note": "Deterministic path trace of the archived first-party Quiver Media Inc. wordmark; unrelated Quiver brands were excluded."
+    },
+    {
+      "employer": "Tinder",
+      "file": "/logos/svg/tinder.svg",
+      "kind": "source_vector",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Tinder_logo_%282026%29.svg",
+      "provenance_url": "https://commons.wikimedia.org/wiki/File:Tinder_logo_(2026).svg",
+      "note": "Current 2026 public wordmark vector with an explicit viewBox added from its declared 500x94 dimensions."
+    },
+    {
+      "employer": "Joint Business Solutions",
+      "file": "/logos/svg/joint-business-solutions.svg",
+      "kind": "derived_vector",
+      "source_url": "https://www.linkedin.com/company/joint-business-solutions/",
+      "provenance_url": "https://www.linkedin.com/company/joint-business-solutions/",
+      "note": "Clean geometric reconstruction of the beveled-square emblem in the public company avatar; the organization name is rendered separately in the ledger."
+    }
+  ]
+}

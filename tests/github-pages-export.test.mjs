@@ -38,7 +38,10 @@ test("exports a production-origin GitHub Pages document", async () => {
     html,
     /Bringing Hope to distributed systems[\s\S]*?at enterprise scale/i,
   );
-  assert.match(html, /Six fixes merged[\s\S]*?minimal builder runs under Wine/i);
+  assert.match(
+    html,
+    /Derivation builder and whole-project cross-build coverage merged[\s\S]*?reports build results under Wine/i,
+  );
   assert.match(html, /Seven capability layers merged upstream/i);
   assert.match(html, /data-graph-source="inline"/i);
   assert.deepEqual(

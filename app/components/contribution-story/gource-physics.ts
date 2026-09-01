@@ -44,6 +44,10 @@ export interface GourcePhysicsRuntime {
 
 export const GOURCE_PHYSICS_SCALE = 100;
 const fixedPhysicsStep = 1 / 60;
+const repositoryAnchorScale = 0.72;
+const minimumRepositorySceneDistance = 0.52;
+const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+const repositoryAnchorProbeLimit = 256;
 const hierarchyNodeTypes = new Set<ContributionGraphNode["type"]>([
   "repository",
   "directory",
@@ -180,6 +184,10 @@ export function createGourcePhysics(
     string,
     { readonly x: number; readonly y: number }
   >();
+  const repositoryAnchors: Array<{
+    readonly x: number;
+    readonly y: number;
+  }> = [];
 
   function resolveAnchor(nodeId: string): {
     readonly x: number;
@@ -194,17 +202,32 @@ export function createGourcePhysics(
       throw new Error(`Missing Gource hierarchy node ${nodeId}`);
     }
     if (graphNode.type === "repository") {
-      const angle = hashAngle(`${graphNode.id}:repository-anchor`);
+      const baseAngle = hashAngle(`${graphNode.id}:repository-anchor`);
       const radius =
         (0.45 +
           (hashText(`${graphNode.id}:repository-radius`) / 4294967296) * 1.75) *
         GOURCE_PHYSICS_SCALE;
-      const anchor = {
-        x: Math.cos(angle) * radius,
-        y: Math.sin(angle) * radius,
-      };
-      anchorByNodeId.set(nodeId, anchor);
-      return anchor;
+      const minimumAnchorDistance =
+        (minimumRepositorySceneDistance * GOURCE_PHYSICS_SCALE) /
+        repositoryAnchorScale;
+      for (let attempt = 0; attempt < repositoryAnchorProbeLimit; attempt += 1) {
+        const angle = baseAngle + attempt * goldenAngle;
+        const anchor = {
+          x: Math.cos(angle) * radius,
+          y: Math.sin(angle) * radius,
+        };
+        const collision = repositoryAnchors.some(
+          (existing) =>
+            Math.hypot(anchor.x - existing.x, anchor.y - existing.y) <
+            minimumAnchorDistance,
+        );
+        if (!collision) {
+          repositoryAnchors.push(anchor);
+          anchorByNodeId.set(nodeId, anchor);
+          return anchor;
+        }
+      }
+      throw new Error(`Unable to place Gource repository anchor ${nodeId}`);
     }
     const parentId = parentByNodeId.get(nodeId);
     if (!parentId) {
@@ -220,6 +243,12 @@ export function createGourcePhysics(
     };
     anchorByNodeId.set(nodeId, anchor);
     return anchor;
+  }
+
+  for (const repository of hierarchyGraphNodes.filter(
+    (graphNode) => graphNode.type === "repository",
+  )) {
+    resolveAnchor(repository.id);
   }
 
   const nodes: GourcePhysicsNode[] = graph.nodes
@@ -242,8 +271,8 @@ export function createGourcePhysics(
         anchorY: anchor.y,
         x: anchor.x * 0.74 + Math.cos(angle) * radius,
         y: anchor.y * 0.74 + Math.sin(angle) * radius,
-        fx: repositoryNode ? anchor.x * 0.72 : undefined,
-        fy: repositoryNode ? anchor.y * 0.72 : undefined,
+        fx: repositoryNode ? anchor.x * repositoryAnchorScale : undefined,
+        fy: repositoryNode ? anchor.y * repositoryAnchorScale : undefined,
         z: semanticDepth(graphNode),
         revealIndex: firstEvidenceIndex(graphNode, evidenceIndex),
         energy: 0,

@@ -47,7 +47,65 @@ test("compact player catalog reverses to every complete public record", () => {
     },
     { changes: 0, commits: 0, files: 0 },
   );
-  assert.deepEqual(totals, { changes: 39, commits: 418, files: 1169 });
+  assert.deepEqual(totals, { changes: 41, commits: 696, files: 1635 });
+});
+
+test("compact player catalog preserves deleted-file base references", () => {
+  const headSha = "a".repeat(40);
+  const baseSha = "b".repeat(40);
+  const records = [
+    {
+      schemaVersion: 1,
+      publicOnly: true,
+      id: "deleted-files",
+      repositories: [
+        { name: "example/repo", href: "https://github.com/example/repo" },
+      ],
+      changes: [
+        {
+          id: "change-1",
+          label: "Remove retired fixture",
+          href: "https://github.com/example/repo/pull/1",
+          availability: "public-fork",
+          integrationStatus: "open",
+          kind: "pull-request",
+          repository: "example/repo",
+          date: null,
+          number: 1,
+          referenceSha: headSha,
+          commits: [
+            {
+              sha: headSha,
+              label: "Remove retired fixture",
+              href: `https://github.com/example/repo/commit/${headSha}`,
+              date: null,
+              agentId: null,
+            },
+          ],
+          files: [
+            {
+              path: "fixtures/retired.yml",
+              href: `https://github.com/example/repo/blob/${baseSha}/fixtures%2Fretired.yml`,
+              status: "removed",
+              additions: 0,
+              deletions: 1,
+              changes: 1,
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const compact = packContributionPlayerRecordCatalog(records);
+  assert.equal(compact.v, 3);
+  assert.deepEqual(unpackContributionPlayerRecordCatalog(compact), records);
+
+  compact.g[0][2][0][10][0][5] = "not-a-sha";
+  assert.throws(
+    () => unpackContributionPlayerRecordCatalog(compact),
+    /invalid file reference SHA/,
+  );
 });
 
 test("complete player catalog stays compact in raw and transport form", () => {

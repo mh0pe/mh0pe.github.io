@@ -160,19 +160,22 @@ test("server-renders an executive open-source portfolio", async () => {
   assert.match(html, /linkedin\.com\/in\/madisonhsteiner/i);
   assert.match(
     html,
-    /What I built, why it matters, and where to inspect it\./i,
+    /Each project starts with the operating result\.[\s\S]*?optional source map reveal the repositories, changes, commits, and files behind it\./i,
   );
   assert.match(
     html,
-    /Public implementations extending upstream capability\./i,
+    /Capabilities available beyond current upstream releases\./i,
   );
   assert.match(
     html,
-    /constellation behind each card represents public contribution relationships, not literal Git ancestry/i,
+    /constellation represents contribution relationships, not literal Git ancestry/i,
   );
   assert.match(html, /Agent platforms from one contract[\s\S]*?<dd>15<\/dd>/i);
   assert.match(html, /SVG capability layers merged[\s\S]*?<dd>7<\/dd>/i);
-  assert.match(html, /Nix Windows fixes merged[\s\S]*?<dd>6<\/dd>/i);
+  assert.match(
+    html,
+    /Multi-project security orchestration[\s\S]*?<dd>v3\.7<\/dd>/i,
+  );
   assert.match(
     html,
     new RegExp(
@@ -181,11 +184,17 @@ test("server-renders an executive open-source portfolio", async () => {
     ),
   );
   assert.match(html, /Automated Security Helper/i);
-  assert.match(html, /15 agent platforms[\s\S]*?production MCP/i);
+  assert.match(
+    html,
+    /Workspace mode shipped in v3\.7\.0[\s\S]*?distributed public implementation available/i,
+  );
   assert.match(html, /CloudFormation Guard correctness/i);
   assert.match(html, /Shipped in Guard 3\.2\.1/i);
   assert.match(html, /Nix on Windows/i);
-  assert.match(html, /Six fixes merged[\s\S]*?minimal builder runs under Wine/i);
+  assert.match(
+    html,
+    /Derivation builder and whole-project cross-build coverage merged[\s\S]*?reports build results under Wine/i,
+  );
   assert.match(html, /Integrity-bound Yarn PnP for Bazel/i);
   assert.match(html, /zero-install importer/i);
   assert.match(html, /A typed SVG DOM for an agent-native browser/i);
@@ -194,8 +203,11 @@ test("server-renders an executive open-source portfolio", async () => {
   assert.match(html, /transactional collections/i);
   assert.match(html, /analytic path geometry/i);
   assert.match(html, /deterministic UTF-8 text metrics/i);
-  assert.match(html, /Portable agent frameworks/i);
-  assert.match(html, /Agent teams · decision memory · multi-CLI runtime/i);
+  assert.match(html, /Organizational agent systems/i);
+  assert.match(
+    html,
+    /Subagents, agent teams, decision memory, and recursive improvement/i,
+  );
   assert.match(html, /AWS Labs MCP/i);
   assert.match(html, /AWS CDK and jsii/i);
   assert.match(html, /OpenAI Plugins fork · template-aware GitHub creation/i);
@@ -205,7 +217,7 @@ test("server-renders an executive open-source portfolio", async () => {
   assert.match(html, /class="resource-kind">Repository</i);
   assert.match(html, /class="resource-kind">Capability</i);
   assert.match(html, /class="resource-kind">Release</i);
-  assert.match(html, /class="resource-kind">Issue</i);
+  assert.match(html, /class="resource-kind">Prototype</i);
   assert.match(html, /automated-security-helper\/pull\/331/i);
   assert.match(html, /automated-security-helper\/pull\/440/i);
   assert.match(html, /cloudformation-guard\/pull\/717/i);
@@ -239,17 +251,17 @@ test("server-renders an executive open-source portfolio", async () => {
   assert.match(html, new RegExp(String(trust.profile.public_since)));
   assert.match(
     html,
-    new RegExp(
-      `${summary.combined.copilot_authored_contribution_pull_requests} pull requests opened by GitHub Copilot on behalf of mh0pe`,
-      "i",
-    ),
+    /Each capability opens to the pull request, commit, release, or branch where the work lives/i,
   );
   assert.match(html, /Public GitHub record since/i);
   assert.match(
     html,
-    /Merged upstream, open-review, and public-fork implementations are labeled separately/i,
+    /Explore the systems from initial proposal through review, integration, and continued evolution/i,
   );
-  assert.match(html, /public forks remain part of the usable engineering record/i);
+  assert.doesNotMatch(
+    html,
+    /Co-authored-by|described without client names|Client names stay private|without naming clients/i,
+  );
   const consultingStart = html.indexOf('class="consulting-context"');
   const consultingEnd = html.indexOf('id="record"', consultingStart);
   assert.ok(consultingStart >= 0 && consultingEnd > consultingStart);
@@ -285,9 +297,15 @@ test("pins the refreshed project catalog and positioning copy in source", async 
     page,
     /Bringing Hope to distributed systems[\s\S]*?at enterprise scale/,
   );
-  assert.match(page, /Nix Windows fixes merged[\s\S]*?<dd>6<\/dd>/);
+  assert.match(
+    page,
+    /Multi-project security orchestration[\s\S]*?<dd>v3\.7<\/dd>/,
+  );
   assert.match(page, /SVG capability layers merged[\s\S]*?<dd>7<\/dd>/);
-  assert.match(page, /Six fixes merged · minimal builder runs under Wine/);
+  assert.match(
+    page,
+    /Derivation builder and whole-project cross-build coverage merged/,
+  );
   assert.match(page, /Seven capability layers merged upstream/);
   assert.doesNotMatch(page, /I build the infrastructure/);
   assert.match(
@@ -398,6 +416,17 @@ test("uses bounded public data sources consistently", async () => {
 
 test("keeps project activity players readable and touchable on phones", async () => {
   const styles = await readFile(new URL("public/portfolio.css", root), "utf8");
+  const viewEnterStart = styles.indexOf("@keyframes view-enter");
+  const viewEnterEnd = styles.indexOf("@supports", viewEnterStart);
+  const viewEnter = styles.slice(viewEnterStart, viewEnterEnd);
+
+  assert.ok(viewEnterStart >= 0 && viewEnterEnd > viewEnterStart);
+  assert.match(viewEnter, /translate:\s*0 2rem/);
+  assert.doesNotMatch(
+    viewEnter,
+    /opacity:\s*0/,
+    "Core scroll-linked content must remain visible before it enters the viewport",
+  );
 
   assert.match(
     styles,

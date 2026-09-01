@@ -15,6 +15,7 @@ import {
   projectIdForEvidence,
   subscribePortfolioLineageFocus,
 } from "./contribution-story/lineage-focus";
+import { useScrollActivity } from "./contribution-story/scroll-activity";
 import type { ContributionClusterId } from "./contribution-story/types";
 
 interface Point {
@@ -291,7 +292,8 @@ export function ContributionConstellation({
 }: ContributionConstellationProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const activeChapterIndexRef = useRef(0);
-  const reduceMotion = useReducedMotion() === true;
+  const scrollActive = useScrollActivity();
+  const reduceMotion = useReducedMotion() === true || scrollActive;
   const idSuffix = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const washId = `lineage-wash-${idSuffix}`;
   const [activeChapterIndex, setActiveChapterIndex] = useState(0);
@@ -312,6 +314,9 @@ export function ContributionConstellation({
   const activeAgentSignals =
     agentClusterMap.get(activeChapter.id)?.signals ?? [];
   useEffect(() => {
+    if (scrollActive) {
+      return;
+    }
     const root = sectionRef.current;
     if (!root) {
       return;
@@ -364,9 +369,12 @@ export function ContributionConstellation({
 
     chapterElements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, []);
+  }, [scrollActive]);
 
   useEffect(() => {
+    if (scrollActive) {
+      return;
+    }
     const observedSections = Array.from(
       document.querySelectorAll<HTMLElement>("[data-constellation-cluster]"),
     );
@@ -395,7 +403,7 @@ export function ContributionConstellation({
 
     observedSections.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, []);
+  }, [scrollActive]);
 
   useEffect(() => {
     const handleLineageFocus = () => {
@@ -506,8 +514,8 @@ export function ContributionConstellation({
             <p>
               Two public identities meet at the origin. Colored clusters become
               system families; their orbiting marks become source-linked
-              capabilities. Agent shapes appear only when GitHub records an
-              author or Co-authored-by signal.
+              capabilities. Distinct agent shapes show where collaboration
+              helped move the work forward.
             </p>
           </div>
         </div>
@@ -890,8 +898,8 @@ export function ContributionConstellation({
               {agentLens ? (
                 <div className="lineage-agent-legend">
                   <div>
-                    <strong>Recorded agent signals</strong>
-                    <span>GitHub author and Co-authored-by metadata</span>
+                    <strong>Agent collaboration</strong>
+                    <span>Models connected to the selected work</span>
                   </div>
                   {activeAgentSignals.length > 0 ? (
                     <div>
@@ -1073,12 +1081,11 @@ export function ContributionConstellation({
           <p>
             <strong>What the lines mean.</strong> This is a curated map of
             public work, not a literal Git graph. Every named point opens to the
-            PR, commit, or fork that carries the capability. Agent marks appear
-            only when GitHub records an author or Co-authored-by signal; they do
-            not claim exclusive line ownership.
+            PR, commit, or fork that carries the capability. Agent shapes
+            distinguish the models connected to the work.
           </p>
           <p>
-            Public-only snapshot ·{" "}
+            Public snapshot ·{" "}
             <time dateTime={contributionLineageSnapshot.observedAt}>
               {snapshotDate}
             </time>

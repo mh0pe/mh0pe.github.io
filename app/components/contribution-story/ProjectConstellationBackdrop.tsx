@@ -13,6 +13,7 @@ import {
 } from "react";
 import { getContributionGraph } from "./graph-loaders";
 import { publishPortfolioLineageFocus } from "./lineage-focus";
+import { useScrollActivity } from "./scroll-activity";
 import type {
   ContributionGraphEdge,
   ContributionGraphNode,
@@ -29,8 +30,8 @@ const clusterTones = {
 
 const FLOW_EDGE_BUDGET = 4;
 const PULSE_NODE_BUDGET = 2;
-const BACKDROP_NODE_BUDGET = 48;
-const BACKDROP_EDGE_BUDGET = 72;
+const BACKDROP_NODE_BUDGET = 36;
+const BACKDROP_EDGE_BUDGET = 54;
 const BEAT_DURATION_MS = 4_800;
 const BACKDROP_VISIBILITY_RATIO = 0.18;
 
@@ -105,6 +106,10 @@ function edgeIsActive(
   );
 }
 
+function svgNumber(value: number) {
+  return Math.round(value * 1_000_000) / 1_000_000;
+}
+
 function nodeRadius(node: ContributionGraphNode) {
   const base =
     node.type === "repository"
@@ -116,7 +121,9 @@ function nodeRadius(node: ContributionGraphNode) {
           : node.type === "commit"
             ? 0.034
             : 0.028;
-  return Math.min(base * 1.42, base + Math.log2(node.weight + 1) * 0.004);
+  return svgNumber(
+    Math.min(base * 1.42, base + Math.log2(node.weight + 1) * 0.004),
+  );
 }
 
 function polygonPoints(
@@ -128,7 +135,7 @@ function polygonPoints(
 ) {
   return Array.from({ length: sides }, (_, index) => {
     const angle = rotation + (index / sides) * Math.PI * 2;
-    return `${x + Math.cos(angle) * radius},${y + Math.sin(angle) * radius}`;
+    return `${svgNumber(x + Math.cos(angle) * radius)},${svgNumber(y + Math.sin(angle) * radius)}`;
   }).join(" ");
 }
 
@@ -136,9 +143,9 @@ function starPoints(x: number, y: number, radius: number) {
   return Array.from({ length: 10 }, (_, index) => {
     const angle = -Math.PI / 2 + (index / 10) * Math.PI * 2;
     const pointRadius = index % 2 === 0 ? radius : radius * 0.44;
-    return `${x + Math.cos(angle) * pointRadius},${
-      y + Math.sin(angle) * pointRadius
-    }`;
+    return `${svgNumber(x + Math.cos(angle) * pointRadius)},${svgNumber(
+      y + Math.sin(angle) * pointRadius,
+    )}`;
   }).join(" ");
 }
 
@@ -148,18 +155,20 @@ function nodeGlyph(
   active: boolean,
 ): ReactNode {
   const radius = nodeRadius(node);
+  const x = svgNumber(node.x);
+  const y = svgNumber(node.y);
   const common = {
     "data-active": active ? "true" : "false",
     "data-agent-marker": marker ?? undefined,
     "data-node-type": node.type,
-    key: node.id,
   };
 
   if (marker === "triangle") {
     return (
       <polygon
         {...common}
-        points={polygonPoints(node.x, node.y, radius * 1.22, 3)}
+        key={node.id}
+        points={polygonPoints(x, y, radius * 1.22, 3)}
       />
     );
   }
@@ -167,12 +176,13 @@ function nodeGlyph(
     return (
       <rect
         {...common}
-        height={radius * 2}
-        rx={radius * 0.16}
-        transform={`rotate(45 ${node.x} ${node.y})`}
-        width={radius * 2}
-        x={node.x - radius}
-        y={node.y - radius}
+        height={svgNumber(radius * 2)}
+        key={node.id}
+        rx={svgNumber(radius * 0.16)}
+        transform={`rotate(45 ${x} ${y})`}
+        width={svgNumber(radius * 2)}
+        x={svgNumber(x - radius)}
+        y={svgNumber(y - radius)}
       />
     );
   }
@@ -180,11 +190,12 @@ function nodeGlyph(
     return (
       <rect
         {...common}
-        height={radius * 2}
-        rx={radius * 0.18}
-        width={radius * 2}
-        x={node.x - radius}
-        y={node.y - radius}
+        height={svgNumber(radius * 2)}
+        key={node.id}
+        rx={svgNumber(radius * 0.18)}
+        width={svgNumber(radius * 2)}
+        x={svgNumber(x - radius)}
+        y={svgNumber(y - radius)}
       />
     );
   }
@@ -192,7 +203,8 @@ function nodeGlyph(
     return (
       <polygon
         {...common}
-        points={starPoints(node.x, node.y, radius * 1.34)}
+        key={node.id}
+        points={starPoints(x, y, radius * 1.34)}
       />
     );
   }
@@ -203,12 +215,13 @@ function nodeGlyph(
     return (
       <rect
         {...common}
-        height={radius * 2}
-        rx={radius * 0.14}
-        transform={`rotate(45 ${node.x} ${node.y})`}
-        width={radius * 2}
-        x={node.x - radius}
-        y={node.y - radius}
+        height={svgNumber(radius * 2)}
+        key={node.id}
+        rx={svgNumber(radius * 0.14)}
+        transform={`rotate(45 ${x} ${y})`}
+        width={svgNumber(radius * 2)}
+        x={svgNumber(x - radius)}
+        y={svgNumber(y - radius)}
       />
     );
   }
@@ -216,18 +229,19 @@ function nodeGlyph(
     return (
       <polygon
         {...common}
-        points={polygonPoints(node.x, node.y, radius * 1.12, 6)}
+        key={node.id}
+        points={polygonPoints(x, y, radius * 1.12, 6)}
       />
     );
   }
-  return <circle {...common} cx={node.x} cy={node.y} r={radius} />;
+  return <circle {...common} cx={x} cy={y} key={node.id} r={radius} />;
 }
 
 function edgePath(edges: readonly ResolvedEdge[]) {
   return edges
     .map(
       ({ source, target }) =>
-        `M ${source.x} ${source.y} L ${target.x} ${target.y}`,
+        `M ${svgNumber(source.x)} ${svgNumber(source.y)} L ${svgNumber(target.x)} ${svgNumber(target.y)}`,
     )
     .join(" ");
 }
@@ -315,6 +329,7 @@ export function ProjectConstellationBackdrop({
   const layerRef = useRef<HTMLDivElement | null>(null);
   const interactionPausedRef = useRef(false);
   const reduceMotion = useReducedMotion() === true;
+  const scrollActive = useScrollActivity();
   const owner = useSyncExternalStore(
     subscribeBackdropOwner,
     getBackdropOwnerSnapshot,
@@ -325,7 +340,8 @@ export function ProjectConstellationBackdrop({
   const [documentVisible, setDocumentVisible] = useState(true);
   const [beatIndex, setBeatIndex] = useState(0);
   const active = owner === ownerId && visible && documentVisible;
-  const motionActive = active && !reduceMotion;
+  const visualActive = active && !scrollActive;
+  const motionActive = visualActive && !reduceMotion;
   const resolvedBeatIndex = reduceMotion
     ? Math.max(0, graph.beats.length - 1)
     : beatIndex;
@@ -408,6 +424,10 @@ export function ProjectConstellationBackdrop({
     }
     const observer = new IntersectionObserver(
       ([entry]) => {
+        if (scrollActive) {
+          setBackdropCandidate(ownerId, null);
+          return;
+        }
         const nextVisible =
           entry.isIntersecting &&
           entry.intersectionRatio >= BACKDROP_VISIBILITY_RATIO;
@@ -433,7 +453,7 @@ export function ProjectConstellationBackdrop({
       observer.disconnect();
       setBackdropCandidate(ownerId, null);
     };
-  }, [ownerId]);
+  }, [ownerId, scrollActive]);
 
   useEffect(() => {
     const update = () => setDocumentVisible(!document.hidden);
@@ -448,10 +468,10 @@ export function ProjectConstellationBackdrop({
     );
     article?.setAttribute(
       "data-evolution-active",
-      active ? "true" : "false",
+      visualActive ? "true" : "false",
     );
     return () => article?.setAttribute("data-evolution-active", "false");
-  }, [active]);
+  }, [visualActive]);
 
   useEffect(() => {
     if (
@@ -514,7 +534,7 @@ export function ProjectConstellationBackdrop({
   }, [graph.beats]);
 
   useEffect(() => {
-    if (!active || !selectedBeat) {
+    if (!visualActive || !selectedBeat) {
       return;
     }
     publishPortfolioLineageFocus({
@@ -529,13 +549,13 @@ export function ProjectConstellationBackdrop({
       nodeType: null,
       source: "project-simulation",
     });
-  }, [active, project, selectedBeat]);
+  }, [project, selectedBeat, visualActive]);
 
   return (
     <div
       aria-hidden="true"
       className="project-constellation"
-      data-constellation-active={active ? "true" : "false"}
+      data-constellation-active={visualActive ? "true" : "false"}
       data-constellation-visible={visible ? "true" : "false"}
       data-edge-count={graph.edges.length}
       data-evidence-id={selectedEvidenceId}
@@ -567,7 +587,7 @@ export function ProjectConstellationBackdrop({
           />
         ) : null}
         <motion.g
-          animate={{ opacity: active ? 1 : 0.48 }}
+          animate={{ opacity: visualActive ? 1 : 0.48 }}
           className="project-constellation-nodes"
           initial={false}
           transition={

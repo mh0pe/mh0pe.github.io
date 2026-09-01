@@ -24,6 +24,7 @@ import {
   publishPortfolioLineageFocus,
   subscribePortfolioLineageFocus,
 } from "./lineage-focus";
+import { useScrollActivity } from "./scroll-activity";
 import type {
   ContributionGraph,
   ContributionGraphBeat,
@@ -461,6 +462,7 @@ export function ContributionStoryRail({
   const evidenceDetailsRef = useRef<HTMLDetailsElement | null>(null);
   const entriesRef = useRef(new Map<Element, IntersectionObserverEntry>());
   const reduceMotion = useReducedMotion() === true;
+  const scrollActive = useScrollActivity();
   const claimedCanvasOwner = useSyncExternalStore(
     subscribeToCanvasOwner,
     getCanvasOwnerSnapshot,
@@ -575,6 +577,9 @@ export function ContributionStoryRail({
       scope.querySelectorAll<HTMLElement>("[data-evolution-project]"),
     );
     const chooseActive = () => {
+      if (scrollActive) {
+        return;
+      }
       const viewportCenter = window.innerHeight / 2;
       const visible = [...observedEntries.values()]
         .filter((entry) => entry.isIntersecting)
@@ -608,7 +613,7 @@ export function ContributionStoryRail({
       observer.disconnect();
       observedEntries.clear();
     };
-  }, [scopeId]);
+  }, [scopeId, scrollActive]);
 
   useEffect(() => {
     const scope = document.getElementById(scopeId);
@@ -665,6 +670,7 @@ export function ContributionStoryRail({
     if (
       !activeGraph ||
       !scopeVisible ||
+      scrollActive ||
       reduceMotion ||
       !resolvedProjectId ||
       activeGraph.beats.length < 2
@@ -736,6 +742,7 @@ export function ContributionStoryRail({
     listHighlightedNodeId,
     reduceMotion,
     resolvedProjectId,
+    scrollActive,
     scopeVisible,
     scopeId,
     selectedNodeId,
@@ -890,6 +897,7 @@ export function ContributionStoryRail({
       activeProject &&
       canUseCanvas &&
       railVisible &&
+      !scrollActive &&
       !reduceMotion &&
       !canvasFailed,
   );
@@ -923,6 +931,7 @@ export function ContributionStoryRail({
     <aside
       className="project-evolution"
       data-cluster={activeProject.clusterId}
+      data-scroll-active={scrollActive ? "true" : "false"}
       ref={railRef}
       style={{ "--evolution-tone": tone } as CSSProperties}
       aria-labelledby={`${scopeId}-evolution-title`}
@@ -957,7 +966,7 @@ export function ContributionStoryRail({
           >
             {activeGraph ? (
               <StaticGraph
-                animate={!canvasReady && !reduceMotion}
+                animate={!canvasReady && !reduceMotion && !scrollActive}
                 graph={activeGraph}
                 highlightedNodeId={highlightedNodeId}
                 selectedEvidenceId={activeEvidenceId}
@@ -1029,10 +1038,7 @@ export function ContributionStoryRail({
                 <div className="project-evolution-authorship">
                   <span>Portfolio identities</span>
                   <strong>mh0pe · awsmadi</strong>
-                  <small>
-                    Agent marks follow recorded author and Co-authored-by
-                    metadata.
-                  </small>
+                  <small>Agent shapes show the models connected to this work.</small>
                 </div>
                 <a
                   href={beat.href}

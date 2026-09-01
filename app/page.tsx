@@ -34,7 +34,11 @@ const agentAttributionData = readAgentAttributionData(agentAttribution);
 const lineageRepositories: Readonly<Record<string, readonly string[]>> = {
   security: [
     "awslabs/automated-security-helper",
-    "mh0pe/automated-security-helper",
+    "awsmadi/automated-security-helper",
+    "aws-cloudformation/cloudformation-guard",
+    "awsmadi/cloudformation-guard",
+    "aws-cloudformation/aws-guard-rules-registry",
+    "awsmadi/aws-guard-rules-registry",
   ],
   cloud: [
     "aws/aws-cdk",
@@ -63,6 +67,12 @@ const lineageRepositories: Readonly<Record<string, readonly string[]>> = {
   ],
   browser: ["lightpanda-io/browser", "mh0pe/browser"],
   durability: [
+    "NixOS/nix",
+    "awsmadi/nix",
+    "nix-windows/nix-windows-demo",
+    "awsmadi/nix-windows-demo",
+    "aspect-build/rules_js",
+    "mh0pe/rules_js",
     "nextcloud/server",
     "mh0pe/server",
     "esp-rs/esp-idf-hal",
@@ -174,64 +184,93 @@ const featuredProjects = [
     repository: "awslabs / automated-security-helper",
     repositoryHref: "https://github.com/awslabs/automated-security-helper",
     period: "Contributor and public maintainer activity · 2024–2026",
-    focus: "Security orchestration, agent packaging, and MCP",
-    status: "15 agent platforms · production MCP · merged upstream",
+    focus: "Workspace orchestration, MCP confinement, and deployable execution",
+    status:
+      "Workspace mode shipped in v3.7.0 · distributed public implementation available",
     context:
-      "AWS Labs’ orchestration engine for source, dependency, infrastructure, and agent-workflow security.",
+      "ASH coordinates source, dependency, infrastructure, and agent-workflow security across developer environments.",
     value:
-      "Expanded ASH from scanner orchestration into an agent-integrated security platform with generated packages, production transports, isolated sessions, and non-vacuous CI.",
+      "Advanced ASH into workspace-scale security orchestration with inspectable plans, independently scoped project scans, project-aware reporting, workspace policy, and confined MCP access. A linked public implementation extends that model to distributed execution and deployable AWS targets.",
     contributions: [
       {
-        evidenceId: "ash-transpiler",
-        text: "Built a schema-driven transpiler that generates validated ASH integrations for 15 AI-agent platforms.",
+        evidenceId: "ash-workspace",
+        text: "Shipped workspace planning and per-project execution, with aggregate results that retain project identity and workspace-level policy controls.",
       },
       {
-        evidenceId: "ash-mcp-transport",
-        text: "Added Streamable HTTP and SSE, timing-safe authentication, CORS controls, and a JSON-Patch runtime allowlist.",
+        evidenceId: "ash-mcp-confinement",
+        text: "Confined MCP scan targets to configured roots through canonical, symlink-aware containment and per-session isolation.",
       },
       {
-        evidenceId: "ash-mcp-sessions",
-        text: "Added per-session state, locking, profiles, and bounded source delivery that rejects symlinks and oversized archives.",
+        evidenceId: "ash-distributed",
+        text: "Built a public execute-and-collect architecture with scanner sharding and deployable AgentCore, Fargate, Lambda, and CodePipeline targets.",
       },
       {
-        evidenceId: "ash-scanner-runtime",
-        text: "Centralized the scanner lifecycle and migrated Checkov, Grype, Semgrep, OpenGrep, and Bandit onto the shared runtime.",
-      },
-      {
-        evidenceId: "ash-external-gate",
-        text: "Added positive external-scan assertions that exposed two masked failures despite a large green unit-test history.",
+        evidenceId: "ash-assurance-python",
+        text: "Strengthened measurement with broader Python package coverage and TypeScript gates whose denominator is pinned to the intended source set.",
       },
     ],
     links: [
       {
+        kind: "Release",
+        label: "ASH v3.7.0 · workspace mode shipped",
+        href: "https://github.com/awslabs/automated-security-helper/releases/tag/v3.7.0",
+        evidenceId: "ash-workspace",
+      },
+      {
         kind: "PR",
-        label: "#331 · agent package transpiler · merged",
+        label: "#456 · complete workspace stack · merged to main",
+        href: "https://github.com/awslabs/automated-security-helper/pull/456",
+        evidenceId: "ash-workspace",
+      },
+      {
+        kind: "PR",
+        label: "#462 · stacked project execution series",
+        href: "https://github.com/awslabs/automated-security-helper/pull/462",
+        evidenceId: "ash-workspace",
+      },
+      {
+        kind: "PR",
+        label: "#478 · stacked reporting and policy series",
+        href: "https://github.com/awslabs/automated-security-helper/pull/478",
+        evidenceId: "ash-workspace",
+      },
+      {
+        kind: "PR",
+        label: "#477 · confined MCP targets · merged",
+        href: "https://github.com/awslabs/automated-security-helper/pull/477",
+        evidenceId: "ash-mcp-confinement",
+      },
+      {
+        kind: "Capability",
+        label: "#493 · agent-driven workspace scans over MCP",
+        href: "https://github.com/awslabs/automated-security-helper/pull/493",
+      },
+      {
+        kind: "Prototype",
+        label: "#494 · distributed execution and deployable targets",
+        href: "https://github.com/awslabs/automated-security-helper/pull/494",
+        evidenceId: "ash-distributed",
+      },
+      {
+        kind: "Capability",
+        label: "#499 · Python package coverage depth",
+        href: "https://github.com/awslabs/automated-security-helper/pull/499",
+      },
+      {
+        kind: "Capability",
+        label: "#500 · TypeScript CI with pinned scope",
+        href: "https://github.com/awslabs/automated-security-helper/pull/500",
+      },
+      {
+        kind: "PR",
+        label: "#331 · integrations for 15 agent platforms · merged",
         href: "https://github.com/awslabs/automated-security-helper/pull/331",
         evidenceId: "ash-transpiler",
       },
       {
         kind: "PR",
-        label: "#335 · production MCP transport · merged",
-        href: "https://github.com/awslabs/automated-security-helper/pull/335",
-        evidenceId: "ash-mcp-transport",
-      },
-      {
-        kind: "PR",
-        label: "#336 · isolated MCP sessions · merged",
-        href: "https://github.com/awslabs/automated-security-helper/pull/336",
-        evidenceId: "ash-mcp-sessions",
-      },
-      {
-        kind: "PR",
-        label: "#338 · scanner runtime · merged",
-        href: "https://github.com/awslabs/automated-security-helper/pull/338",
-        evidenceId: "ash-scanner-runtime",
-      },
-      {
-        kind: "PR",
-        label: "#440 · external scan gate · merged",
+        label: "#440 · external scan assurance · merged",
         href: "https://github.com/awslabs/automated-security-helper/pull/440",
-        evidenceId: "ash-external-gate",
       },
       {
         kind: "Docs",
@@ -255,16 +294,16 @@ const featuredProjects = [
     repositoryHref:
       "https://github.com/aws-cloudformation/cloudformation-guard",
     period: "Contributor · 2026",
-    focus: "Policy evaluation that fails closed",
-    status: "Shipped in Guard 3.2.1 · campaign continues",
+    focus: "Trustworthy evaluation, reporting, and published rule packs",
+    status: "Core correction shipped in Guard 3.2.1 · rule-pack assurance available",
     context:
-      "CloudFormation Guard evaluates infrastructure policy before deployment, where a silent pass is more dangerous than a visible failure.",
+      "CloudFormation Guard evaluates infrastructure policy before deployment, where precise outcomes and trustworthy rule packs support confident decisions.",
     value:
-      "Closed evaluator and reporter paths that passed or hid invalid input, then carried the work into outcome semantics, parser boundaries, deterministic reporting, and rule-registry compatibility.",
+      "Strengthened evaluator semantics and reporting, then extended the work into assembled-pack validation, executable rule tests, deterministic tooling, and publication gates tied to successful checks.",
     contributions: [
       {
         evidenceId: "guard-enforcement",
-        text: "Fixed silent PASS and SKIP behavior across negation, empty references, scoping, mixed numeric comparisons, indexes, and reporter output.",
+        text: "Made negation, empty references, scoping, mixed numeric comparisons, indexes, and reporter output preserve the intended policy result.",
       },
       {
         evidenceId: "guard-outcomes",
@@ -272,17 +311,17 @@ const featuredProjects = [
       },
       {
         evidenceId: "guard-query-reporting",
-        text: "Extended the public implementation into query capture isolation, parser limits, reporter integrity, and tests that prove the intended rule actually ran.",
+        text: "Extended the public implementation into query capture isolation, parser limits, reporter integrity, and tests that prove the intended rule path executed.",
       },
       {
-        evidenceId: "guard-registry",
-        text: "Made five security rules explicit about non-string operands and retained 190 of 190 rule-test pairs on current and fail-closed evaluators.",
+        evidenceId: "guard-registry-pack",
+        text: "Added assembled-pack validation across 50 distributions and paired orphaned tests with real per-resource rules while preserving published identifiers.",
       },
     ],
     links: [
       {
         kind: "PR",
-        label: "#717 · fail-open audit · merged",
+        label: "#717 · verdict integrity correction · merged",
         href: "https://github.com/aws-cloudformation/cloudformation-guard/pull/717",
         evidenceId: "guard-enforcement",
       },
@@ -305,9 +344,21 @@ const featuredProjects = [
       },
       {
         kind: "PR",
-        label: "Rules registry #285 · future-safe policies",
+        label: "Rules registry #287 · assembled-pack assurance",
+        href: "https://github.com/aws-cloudformation/aws-guard-rules-registry/pull/287",
+        evidenceId: "guard-registry-pack",
+      },
+      {
+        kind: "PR",
+        label: "Rules registry #285 · explicit operand semantics",
         href: "https://github.com/aws-cloudformation/aws-guard-rules-registry/pull/285",
-        evidenceId: "guard-registry",
+        evidenceId: "guard-registry-operands",
+      },
+      {
+        kind: "PR",
+        label: "Rules registry #288 · executable rule expectations",
+        href: "https://github.com/aws-cloudformation/aws-guard-rules-registry/pull/288",
+        evidenceId: "guard-registry-tests",
       },
       {
         kind: "Repository",
@@ -325,39 +376,74 @@ const featuredProjects = [
     repository: "NixOS / nix + awsmadi / nix",
     repositoryHref: "https://github.com/NixOS/nix",
     period: "Contributor · 2026",
-    focus: "Cross-platform runtime and store semantics",
-    status: "Six fixes merged · minimal builder runs under Wine",
+    focus: "Windows build execution, cross-build assurance, and lifecycle semantics",
+    status: "Derivation builder and whole-project cross-build coverage merged",
     context:
-      "Nix is a reproducible build and package system whose Windows port still has foundational runtime and store gaps.",
+      "Nix brings reproducible build and package semantics to a growing Windows implementation.",
     value:
-      "Moved the port from serialization and environment failures toward real derivation builds, while publishing the next runtime and CI blockers with source-level evidence.",
+      "Advanced the Windows build chain from its portability foundation to an upstream derivation builder, whole-project cross-build coverage, broader test compilation, and clearer platform-specific lifecycle semantics.",
     contributions: [
       {
-        evidenceId: "nix-winsock",
-        text: "Initialized Winsock before socket use and routed failures through native Windows errors, removing the Nix-side blocker behind misleading socket failures.",
-      },
-      {
-        evidenceId: "nix-aterm",
-        text: "Made Windows store paths round-trip through ATerm and .drv encoding, eliminating a hard derivation parse failure.",
-      },
-      {
-        evidenceId: "nix-environment",
-        text: "Corrected Win32 environment access so empty variables remain present and runtime updates are visible consistently.",
-      },
-      {
-        evidenceId: "nix-setenv",
-        text: "Restored portable setEnv success semantics with cross-platform tests.",
-      },
-      {
-        evidenceId: "nix-proxy",
-        text: "Fixed uppercase proxy-variable detection and propagation into nix-shell.",
-      },
-      {
         evidenceId: "nix-builder",
-        text: "Implemented a deliberately bounded Windows derivation builder that completes an input-addressed build under Wine.",
+        text: "Introduced a deliberately scoped builder that executes supported derivations, registers valid store outputs, and reports build results under Wine.",
+      },
+      {
+        evidenceId: "nix-cross-build-ci",
+        text: "Enabled large COFF objects across Windows targets and expanded CI from a narrow utility suite to the complete MinGW cross-build graph.",
+      },
+      {
+        evidenceId: "nix-cert-startup",
+        text: "Improved certificate-path startup handling, with public-branch capabilities for handle-relative store cleanup and post-startup configuration loading.",
       },
     ],
     links: [
+      {
+        kind: "PR",
+        label: "#16347 · Windows derivation builder · merged",
+        href: "https://github.com/NixOS/nix/pull/16347",
+        evidenceId: "nix-builder",
+      },
+      {
+        kind: "PR",
+        label: "#16367 · large COFF objects across Windows targets · merged",
+        href: "https://github.com/NixOS/nix/pull/16367",
+        evidenceId: "nix-big-coff",
+      },
+      {
+        kind: "PR",
+        label: "#16368 · cross-build every Windows component · merged",
+        href: "https://github.com/NixOS/nix/pull/16368",
+        evidenceId: "nix-cross-build-ci",
+      },
+      {
+        kind: "PR",
+        label: "#16364 · certificate-path startup handling · merged",
+        href: "https://github.com/NixOS/nix/pull/16364",
+        evidenceId: "nix-cert-startup",
+      },
+      {
+        kind: "Capability",
+        label: "#16359 · handle-relative Windows store deletion",
+        href: "https://github.com/NixOS/nix/pull/16359",
+        evidenceId: "nix-store-deletion",
+      },
+      {
+        kind: "Capability",
+        label: "#16383 · post-startup certificate configuration",
+        href: "https://github.com/NixOS/nix/pull/16383",
+        evidenceId: "nix-cert-config",
+      },
+      {
+        kind: "Capability",
+        label: "Working Windows implementation and branches",
+        href: "https://github.com/awsmadi/nix",
+      },
+      {
+        kind: "Capability",
+        label: "Windows validation harness · independent result checks",
+        href: "https://github.com/nix-windows/nix-windows-demo/pull/1",
+        evidenceId: "nix-validation-harness",
+      },
       {
         kind: "PR",
         label: "#16342 · Winsock initialization · merged",
@@ -388,21 +474,96 @@ const featuredProjects = [
         href: "https://github.com/NixOS/nix/pull/16355",
         evidenceId: "nix-proxy",
       },
+    ],
+  },
+  {
+    id: "portable-frameworks",
+    graphId: "portable-frameworks",
+    clusterId: "agents",
+    index: "04",
+    title: "Organizational agent systems",
+    repository: "mh0pe / base-v1 + carl + paul + seed",
+    repositoryHref: "https://github.com/mh0pe/base-v1",
+    period: "Builder and maintainer · 2026",
+    focus: "Subagents, agent teams, decision memory, and recursive improvement",
+    status: "Four portable frameworks · native plugins and multi-CLI runtimes",
+    context:
+      "BASE, CARL, PAUL, and SEED form an interoperable toolkit for organizing agent teams, retaining decisions, planning work, and improving the workflows that produce software.",
+    value:
+      "Helped pioneer the practical application of subagents, agent teams, durable decision memory, and organizational recursive self-improvement, then made that operating model portable across native plugins, skills directories, package runners, and multiple coding CLIs.",
+    contributions: [
+      {
+        evidenceId: "portable-base",
+        text: "Turned agent-team and improvement patterns into recoverable, TOML-backed state with explicit integration boundaries.",
+      },
+      {
+        evidenceId: "portable-carl-runtime",
+        text: "Made decision memory portable across plugin and multi-CLI runtimes, with session-start state and schema validation.",
+      },
+      {
+        evidenceId: "portable-paul",
+        text: "Packaged planning and workflow capabilities for native plugins, standalone skills directories, and project-root discovery.",
+      },
+      {
+        evidenceId: "code-index-skill",
+        text: "Extended the operating model with an installable code-index-first skill for staged reading, tool routing, and subagent guidance.",
+      },
+    ],
+    links: [
       {
         kind: "PR",
-        label: "#16347 · minimal derivation builder",
-        href: "https://github.com/NixOS/nix/pull/16347",
-        evidenceId: "nix-builder",
+        label: "BASE #2 · state and integration hardening",
+        href: "https://github.com/mh0pe/base-v1/pull/2",
+        evidenceId: "portable-base",
+      },
+      {
+        kind: "PR",
+        label: "CARL #2 · multi-CLI runtime · merged",
+        href: "https://github.com/mh0pe/carl/pull/2",
+        evidenceId: "portable-carl-runtime",
+      },
+      {
+        kind: "PR",
+        label: "CARL #3 · schema validation · merged",
+        href: "https://github.com/mh0pe/carl/pull/3",
       },
       {
         kind: "Capability",
-        label: "Working Windows implementation",
-        href: "https://github.com/awsmadi/nix",
+        label: "PAUL #1 · portable planning integration",
+        href: "https://github.com/mh0pe/paul/pull/1",
+        evidenceId: "portable-paul",
       },
       {
-        kind: "Issue",
-        label: "Windows CI coverage gaps",
-        href: "https://github.com/NixOS/nix/issues/16360",
+        kind: "Capability",
+        label: "SEED #1 · portable workflow integration",
+        href: "https://github.com/mh0pe/seed/pull/1",
+        evidenceId: "portable-seed",
+      },
+      {
+        kind: "Capability",
+        label: "code-index-mcp #111 · index-first agent skill",
+        href: "https://github.com/johnhuang316/code-index-mcp/pull/111",
+        evidenceId: "code-index-skill",
+      },
+      {
+        kind: "Docs",
+        label: "BASE · session memory and reviewed insight-to-rule flow",
+        href: "https://github.com/mh0pe/base-v1#per-session-meta-memory-psmm--session-intelligence",
+      },
+      {
+        kind: "Docs",
+        label: "CARL · selective decision recall",
+        href: "https://github.com/mh0pe/carl#decisions",
+      },
+      {
+        kind: "Docs",
+        label: "PAUL · explicit subagent and reconciliation policy",
+        href: "https://github.com/mh0pe/paul#in-session-context",
+      },
+      {
+        kind: "Docs",
+        label: "SEED · typed handoff into managed delivery",
+        href: "https://github.com/mh0pe/seed#the-paul-connection--ideation-to-managed-build",
       },
     ],
   },
@@ -417,7 +578,7 @@ const frontierWork = [
     title: "Integrity-bound Yarn PnP for Bazel",
     repository: "aspect-build / rules_js + mh0pe / rules_js",
     period: "Contributor · 2026",
-    status: "Open review · usable public-fork implementation",
+    status: "Available public implementation · upstream review active",
     text: "After maintainer feedback, I replaced an exporter design with a zero-install importer that never runs Yarn or constructs node_modules. It cross-validates Yarn 3 and 4 lock/PnP graphs, then integrity-binds the resolver, caches, unplugged files, file types, and executable modes before Bazel loads the project.",
     links: [
       {
@@ -428,7 +589,7 @@ const frontierWork = [
       },
       {
         kind: "Capability",
-        label: "Exact public-fork branch",
+        label: "Exact public implementation branch",
         href: "https://github.com/mh0pe/rules_js/tree/codex/yarn-lock-repo-cache-v2.3.7",
         evidenceId: "rules-js-pnp",
       },
@@ -512,7 +673,7 @@ const architectureDecisions = [
     number: "01",
     status: "Guard 3.2.1 · merged and released · 2026",
     title: "Make negative tests prove the policy engine fails closed",
-    text: "The Guard audit did not stop at adding expected failures. It traced places where negation, empty references, numeric coercion, scope, and reporting could erase a violation, then made the tests assert the rule path and diagnostic—not merely a nonzero exit.",
+    text: "The Guard audit did not stop at adding expected failures. It traced places where negation, empty references, numeric coercion, scope, and reporting could erase a violation, then made the tests assert the rule path and diagnostic, not merely a nonzero exit.",
     links: [
       {
         kind: "PR",
@@ -580,49 +741,27 @@ const architectureDecisions = [
       },
     ],
   },
-] as const;
-
-const supportingWork = [
   {
-    id: "portable-frameworks",
-    graphId: "portable-frameworks",
-    clusterId: "agents",
-    project: "Portable agent frameworks",
-    status: "Agent teams · decision memory · multi-CLI runtime",
-    text: "Across BASE, CARL, PAUL, and SEED, I packaged agent-team, decision-memory, and planning patterns for native plugins, standalone installation, package runners, project-root discovery, isolated dependencies, and corruption-safe state.",
+    number: "05",
+    status: "Subagents · decision memory · reviewed learning · 2026",
+    title: "Turn experience into policy for the next delivery cycle",
+    text: "The agent operating model captures session insights, stages them as proposed rules, routes them through human review, and recalls only the decisions relevant to later work. The system does not merely remember what agents did; it turns reviewed experience into operating policy.",
     links: [
       {
-        kind: "PR",
-        label: "BASE #2 · state and integration hardening",
-        href: "https://github.com/mh0pe/base-v1/pull/2",
-        evidenceId: "portable-base",
+        kind: "Docs",
+        label: "BASE · session intelligence",
+        href: "https://github.com/mh0pe/base-v1#per-session-meta-memory-psmm--session-intelligence",
       },
       {
-        kind: "PR",
-        label: "CARL #2 · multi-CLI runtime · merged",
-        href: "https://github.com/mh0pe/carl/pull/2",
-        evidenceId: "portable-carl-runtime",
-      },
-      {
-        kind: "PR",
-        label: "CARL #3 · schema validation · merged",
-        href: "https://github.com/mh0pe/carl/pull/3",
-        evidenceId: "portable-carl-schema",
-      },
-      {
-        kind: "PR",
-        label: "PAUL #1 · portable integration",
-        href: "https://github.com/mh0pe/paul/pull/1",
-        evidenceId: "portable-paul",
-      },
-      {
-        kind: "PR",
-        label: "SEED #1 · portable integration",
-        href: "https://github.com/mh0pe/seed/pull/1",
-        evidenceId: "portable-seed",
+        kind: "Docs",
+        label: "CARL · decisions and staged rules",
+        href: "https://github.com/mh0pe/carl#decisions",
       },
     ],
   },
+] as const;
+
+const supportingWork = [
   {
     id: "aws-labs-mcp",
     graphId: "aws-labs-mcp",
@@ -662,8 +801,8 @@ const supportingWork = [
     graphId: "cloud-runtime",
     clusterId: "cloud",
     project: "AWS CDK and jsii",
-    status: "Infrastructure semantics · runtime efficiency",
-    text: "Made Fn::ForEach changes visible in cdk diff, added Cloud Control hotswap for QuickSight, and improved jsii promise cleanup, type/member lookup, and embedded runtime delivery.",
+    status: "Infrastructure semantics · executable documentation · runtime efficiency",
+    text: "Made Fn::ForEach changes visible in cdk diff, added Cloud Control hotswap for QuickSight, kept 803 documented package paths aligned with shipped CDK exports, and improved jsii runtime efficiency.",
     links: [
       {
         kind: "PR",
@@ -676,6 +815,12 @@ const supportingWork = [
         label: "CDK #1457 · QuickSight hotswap",
         href: "https://github.com/aws/aws-cdk-cli/pull/1457",
         evidenceId: "cdk-quicksight",
+      },
+      {
+        kind: "PR",
+        label: "CDK #38675 · executable documentation contract · merged",
+        href: "https://github.com/aws/aws-cdk/pull/38675",
+        evidenceId: "cdk-doc-exports",
       },
       {
         kind: "PR",
@@ -853,30 +998,52 @@ function EmployerMark({
 function ResourceLinks({
   links,
   label,
+  collapseAfter,
 }: {
   links: readonly ResourceLink[];
   label: string;
+  collapseAfter?: number;
 }) {
+  const visibleLinks =
+    collapseAfter === undefined ? links : links.slice(0, collapseAfter);
+  const additionalLinks =
+    collapseAfter === undefined ? [] : links.slice(collapseAfter);
+  const renderLinks = (items: readonly ResourceLink[]) =>
+    items.map((link) => (
+      <li key={link.href}>
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noreferrer"
+          data-evidence-id={link.evidenceId}
+        >
+          <span className="resource-kind">{link.kind}</span>
+          <span className="resource-title">
+            {link.label}
+            <span className="visually-hidden"> (opens in a new tab)</span>
+          </span>
+          <Arrow />
+        </a>
+      </li>
+    ));
+
   return (
-    <ul className="resource-links" aria-label={label}>
-      {links.map((link) => (
-        <li key={link.href}>
-          <a
-            href={link.href}
-            target="_blank"
-            rel="noreferrer"
-            data-evidence-id={link.evidenceId}
-          >
-            <span className="resource-kind">{link.kind}</span>
-            <span className="resource-title">
-              {link.label}
-              <span className="visually-hidden"> (opens in a new tab)</span>
-            </span>
+    <>
+      <ul className="resource-links" aria-label={label}>
+        {renderLinks(visibleLinks)}
+      </ul>
+      {additionalLinks.length > 0 ? (
+        <details className="resource-more">
+          <summary>
+            <span>Additional sources · {additionalLinks.length}</span>
             <Arrow />
-          </a>
-        </li>
-      ))}
-    </ul>
+          </summary>
+          <ul className="resource-links" aria-label={`${label}, additional`}>
+            {renderLinks(additionalLinks)}
+          </ul>
+        </details>
+      ) : null}
+    </>
   );
 }
 
@@ -892,7 +1059,7 @@ export default function Home() {
           <a
             className="brand"
             href="#top"
-            aria-label={`${trust.profile.name}, Principal AI Architect — back to top`}
+            aria-label={`${trust.profile.name}, Principal AI Architect, back to top`}
           >
             <strong>{trust.profile.name}</strong>
             <span>Principal AI Architect</span>
@@ -945,10 +1112,9 @@ export default function Home() {
               </p>
               <div className="hero-proof">
                 <p>
-                  Start with the outcome, then inspect the public code, reviews,
-                  commits, and documentation across my public GitHub profiles.
-                  Every project separates plain-language impact from technical
-                  evidence.
+                  Start with the outcome, then inspect the code, reviews,
+                  commits, and documentation across my GitHub profiles. Each
+                  story separates plain-language impact from technical depth.
                 </p>
                 <nav
                   className="profile-links"
@@ -974,16 +1140,16 @@ export default function Home() {
               aria-label="Public contribution record"
             >
               <div>
+                <dt>Multi-project security orchestration</dt>
+                <dd>v3.7</dd>
+              </div>
+              <div>
                 <dt>Agent platforms from one contract</dt>
                 <dd>15</dd>
               </div>
               <div>
                 <dt>SVG capability layers merged</dt>
                 <dd>7</dd>
-              </div>
-              <div>
-                <dt>Nix Windows fixes merged</dt>
-                <dd>6</dd>
               </div>
               <div>
                 <dt>Public contributions merged</dt>
@@ -998,13 +1164,12 @@ export default function Home() {
             <div className="section-heading">
               <p className="section-code">01 / Selected work</p>
               <div>
-                <h2>What I built, why it matters, and where to inspect it.</h2>
+                <h2>Systems that changed what teams can do.</h2>
                 <p>
-                  Each project begins with the operating result. Technical
-                  details and direct source links follow; an optional source map
-                  traces repositories, changes, commits, and files. The
-                  constellation behind each card represents public contribution
-                  relationships, not literal Git ancestry.
+                  Each project starts with the operating result. Direct sources
+                  and an optional source map reveal the repositories, changes,
+                  commits, and files behind it. The constellation represents
+                  contribution relationships, not literal Git ancestry.
                 </p>
               </div>
             </div>
@@ -1050,6 +1215,7 @@ export default function Home() {
                       <ResourceLinks
                         links={project.links}
                         label={`${project.title} public resources`}
+                        collapseAfter={4}
                       />
                     </div>
                     <div className="project-rail">
@@ -1098,10 +1264,10 @@ export default function Home() {
             <div className="section-heading section-heading-compact">
               <p className="section-code">04 / Active extensions</p>
               <div>
-                <h2>Public implementations extending upstream capability.</h2>
+                <h2>Capabilities available beyond current upstream releases.</h2>
                 <p>
-                  Open-review work is usable from the linked public fork and
-                  labeled separately from upstream merges.
+                  Each implementation is usable from its linked branch. Source
+                  labels keep upstream integration status visible.
                 </p>
               </div>
             </div>
@@ -1139,6 +1305,7 @@ export default function Home() {
                       <ResourceLinks
                         links={item.links}
                         label={`${item.title} public resources`}
+                        collapseAfter={3}
                       />
                     </div>
                     <ContributionCardPlayer
@@ -1166,7 +1333,7 @@ export default function Home() {
               <p className="section-code">05 / Architecture choices</p>
               <div>
                 <h2>
-                  Architecture choices, with the tradeoffs visible in code.
+                  Architecture choices, with the trade-offs visible in code.
                 </h2>
               </div>
             </div>
@@ -1274,11 +1441,13 @@ export default function Home() {
             <div className="consulting-context">
               <div>
                 <p className="section-code">Selected consulting delivery</p>
-                <h3>Enterprise delivery, described without client names.</h3>
+                <h3>
+                  Enterprise systems where trust, scale, and governance matter.
+                </h3>
                 <p>
-                  Five engagements across payments, banking, automotive data,
-                  and cloud governance. Client names stay private; the work
-                  stays concrete.
+                  Five engagements spanning tokenized payments,
+                  acquisition-related banking and security, automotive data
+                  platforms, and governed cloud foundations.
                 </p>
               </div>
               <ul>
@@ -1303,7 +1472,7 @@ export default function Home() {
             <div className="section-heading section-heading-compact">
               <p className="section-code">06 / Established systems</p>
               <div>
-                <h2>More systems, plus the broader public record.</h2>
+                <h2>More systems across cloud and agent infrastructure.</h2>
               </div>
             </div>
             <div className="support-story">
@@ -1316,7 +1485,7 @@ export default function Home() {
                     data-evolution-project={item.id}
                     data-constellation-cluster={item.clusterId}
                     data-evolution-active={
-                      item.id === "portable-frameworks" ? "true" : "false"
+                      item.id === "aws-labs-mcp" ? "true" : "false"
                     }
                   >
                     <ProjectConstellationBackdrop
@@ -1335,6 +1504,7 @@ export default function Home() {
                     <ResourceLinks
                       links={item.links}
                       label={`${item.project} public resources`}
+                      collapseAfter={3}
                     />
                     <ContributionCardPlayer
                       project={{
@@ -1364,28 +1534,20 @@ export default function Home() {
         <section className="evidence-note">
           <div className="shell evidence-note-inner">
             <div>
-              <p className="section-code">Provenance</p>
-              <h2>Public work across mh0pe and awsmadi.</h2>
+              <p className="section-code">Source trail</p>
+              <h2>Follow the work across mh0pe and awsmadi.</h2>
             </div>
             <div>
               <p>
-                This portfolio uses only public GitHub activity from{" "}
-                <strong>mh0pe</strong> and <strong>awsmadi</strong>.
-                GitHub&apos;s recorded authors and Co-authored-by trailers
-                remain intact, including{" "}
-                <strong>
-                  {metrics.copilot_authored_contribution_pull_requests} pull
-                  requests opened by GitHub Copilot on behalf of mh0pe
-                </strong>
-                . Merged upstream, open-review, and public-fork implementations
-                are labeled separately; public forks remain part of the usable
-                engineering record.
+                Each capability opens to the pull request, commit, release, or
+                branch where the work lives. Explore the systems from initial
+                proposal through review, integration, and continued evolution
+                in public source.
               </p>
               <small>
                 Public GitHub record since {trust.profile.public_since}.
-                Contribution snapshot {snapshotDate}. Employment history follows
-                LinkedIn; consulting work is described from first-hand
-                experience without naming clients.
+                Contribution snapshot {snapshotDate}. Career timeline on
+                LinkedIn.
               </small>
               <details className="copilot-evidence">
                 <summary>

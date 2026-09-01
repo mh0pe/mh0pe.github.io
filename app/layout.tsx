@@ -5,8 +5,8 @@ import { headers } from "next/headers";
 
 const title = "Madison Hope Steiner | Principal AI Architect Portfolio";
 const description =
-  "Public systems portfolio of Principal AI Architect Madison Hope Steiner (mh0pe / awsmadi): distributed systems, AI infrastructure, security, and cloud platforms.";
-const siteName = "Madison Hope Steiner — Open-Source Systems Portfolio";
+  "Open-source systems portfolio of Principal AI Architect Madison Hope Steiner (mh0pe / awsmadi): agent teams, distributed systems, security orchestration, and cloud platforms.";
+const siteName = "Madison Hope Steiner | Open-Source Systems Portfolio";
 const canonicalUrl = "https://mh0pe.github.io/";
 const profileUrls = [
   "https://github.com/mh0pe",
@@ -173,7 +173,7 @@ export default function RootLayout({
         />
         <link
           rel="stylesheet"
-          href="/portfolio.css?v=20260825-identity-ux-v2"
+          href="/portfolio.css?v=20260831-recent-work-v1"
         />
       </head>
       <body>{children}</body>

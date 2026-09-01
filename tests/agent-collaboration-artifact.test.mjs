@@ -396,6 +396,16 @@ test("keeps attribution data and rendered evidence within performance budgets", 
     html.match(/<(?!\/|!|\?)[A-Za-z][A-Za-z0-9:-]*(?:\s|>)/g) ?? [];
   const richEvidenceCards =
     section.match(/class="[^"]*\battribution-evidence-item\b[^"]*"/g) ?? [];
+  const constellationMarkup =
+    html.match(
+      /<div[^>]+data-project-constellation="[^"]+"[\s\S]*?<\/svg><\/div>/gi,
+    ) ?? [];
+  const constellationGlyphs = constellationMarkup.flatMap(
+    (markup) => markup.match(/data-node-type=/g) ?? [],
+  );
+  const constellationDecimals = constellationMarkup.flatMap((markup) =>
+    [...markup.matchAll(/-?\d+\.(\d+)/g)].map((match) => match[1].length),
+  );
 
   assert.ok(
     Buffer.byteLength(source) <= 100 * 1024,
@@ -416,6 +426,14 @@ test("keeps attribution data and rendered evidence within performance budgets", 
   assert.ok(
     openingTags.length < 3_500,
     `Rendered portfolio with inline SVG graphs should stay below 3,500 elements; found ${openingTags.length}`,
+  );
+  assert.ok(
+    constellationGlyphs.length >= 240,
+    `Project constellations should retain visual density; found ${constellationGlyphs.length} rendered glyphs`,
+  );
+  assert.ok(
+    Math.max(...constellationDecimals) <= 6,
+    "Project constellation presentation numbers should stay at six decimal places or fewer",
   );
   assert.ok(
     richEvidenceCards.length <= 3,

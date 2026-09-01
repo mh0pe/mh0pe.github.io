@@ -73,12 +73,13 @@ test("keeps the SVG fallback visibly animated when WebGL is unavailable", async 
   assert.match(source, /readyCanvasSessionId === canvasSessionId/);
   assert.match(
     source,
-    /animate=\{!canvasReady && !reduceMotion\}/,
+    /animate=\{!canvasReady && !reduceMotion && !scrollActive\}/,
   );
   assert.doesNotMatch(
     source,
     /animate=\{!canvasReady && !reduceMotion && railVisible\}/,
   );
+  assert.match(source, /const scrollActive = useScrollActivity\(\)/);
   assert.match(
     source,
     /import\s*\{[\s\S]*?ContributionGraphCanvas[\s\S]*?\}\s*from\s*"\.\/ContributionGraphCanvas"/,

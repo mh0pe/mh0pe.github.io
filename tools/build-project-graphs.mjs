@@ -36,6 +36,18 @@ const maxFilesPerEvidence = 10;
 const maxCommitDetailConcurrency = 5;
 const maxGraphNodes = 100;
 const maxGraphEdges = 180;
+const graphSpecRank = new Map(
+  [
+    "automated-security-helper",
+    "cloudformation-guard",
+    "nix-windows",
+    "portable-frameworks",
+    "rules-js-pnp",
+    "lightpanda-svg",
+    "aws-labs-mcp",
+    "cloud-runtime",
+  ].map((id, index) => [id, index]),
+);
 
 const graphSpecs = [
   {
@@ -44,41 +56,34 @@ const graphSpecs = [
     title: "Automated Security Helper",
     attributionRepositories: ["awslabs/automated-security-helper"],
     impact:
-      "One security platform now generates integrations for fifteen agent surfaces, serves isolated MCP sessions, and proves external scans produced real findings.",
+      "One workspace can be secured as a system while every project retains its own execution boundary, policy context, verdict, and traceable output.",
     evidences: [
+      pr(
+        "ash-workspace",
+        "Workspace orchestration stack",
+        "awslabs/automated-security-helper",
+        456,
+        "upstream",
+      ),
+      pr(
+        "ash-mcp-confinement",
+        "Operator-controlled MCP targets",
+        "awslabs/automated-security-helper",
+        477,
+        "upstream",
+      ),
+      pr(
+        "ash-distributed",
+        "Distributed execution and deployable targets",
+        "awslabs/automated-security-helper",
+        494,
+        "public-fork",
+      ),
       pr(
         "ash-transpiler",
         "Fifteen-platform agent transpiler",
         "awslabs/automated-security-helper",
         331,
-        "upstream",
-      ),
-      pr(
-        "ash-mcp-transport",
-        "Production MCP transport",
-        "awslabs/automated-security-helper",
-        335,
-        "upstream",
-      ),
-      pr(
-        "ash-mcp-sessions",
-        "Isolated MCP sessions",
-        "awslabs/automated-security-helper",
-        336,
-        "upstream",
-      ),
-      pr(
-        "ash-scanner-runtime",
-        "Unified scanner lifecycle",
-        "awslabs/automated-security-helper",
-        338,
-        "upstream",
-      ),
-      pr(
-        "ash-external-gate",
-        "Non-vacuous external scan gate",
-        "awslabs/automated-security-helper",
-        440,
         "upstream",
       ),
     ],
@@ -94,7 +99,7 @@ const graphSpecs = [
       "awsmadi/aws-guard-rules-registry",
     ],
     impact:
-      "Infrastructure policy evaluation no longer silently passes or hides classes of invalid input, and the follow-on design preserves indeterminate outcomes instead of collapsing them.",
+      "Policy automation earns trust when each result traces to a rule that loaded, executed, and produced the intended decision.",
     evidences: [
       pr(
         "guard-enforcement",
@@ -118,10 +123,24 @@ const graphSpecs = [
         "public-fork",
       ),
       pr(
-        "guard-registry",
-        "Future-safe security rules",
+        "guard-registry-operands",
+        "Explicit operand semantics",
         "aws-cloudformation/aws-guard-rules-registry",
         285,
+        "public-fork",
+      ),
+      pr(
+        "guard-registry-pack",
+        "Assembled rule-pack assurance",
+        "aws-cloudformation/aws-guard-rules-registry",
+        287,
+        "public-fork",
+      ),
+      pr(
+        "guard-registry-tests",
+        "Executable per-resource expectations",
+        "aws-cloudformation/aws-guard-rules-registry",
+        288,
         "public-fork",
       ),
     ],
@@ -130,57 +149,62 @@ const graphSpecs = [
     id: "nix-windows",
     chapterId: "durability",
     title: "Nix on Windows",
-    attributionRepositories: ["NixOS/nix", "awsmadi/nix"],
+    attributionRepositories: [
+      "NixOS/nix",
+      "awsmadi/nix",
+      "nix-windows/nix-windows-demo",
+      "awsmadi/nix-windows-demo",
+    ],
     impact:
-      "Windows store paths and process state now survive core Nix operations, while a public minimal builder demonstrates end-to-end derivation execution under Wine.",
+      "Nix now has an upstream Windows derivation builder, broader Windows test compilation, and whole-project cross-build assurance.",
     evidences: [
-      pr(
-        "nix-winsock",
-        "Winsock runtime initialization",
-        "NixOS/nix",
-        16342,
-        "upstream",
-      ),
-      pr(
-        "nix-aterm",
-        "Windows store-path serialization",
-        "NixOS/nix",
-        16343,
-        "upstream",
-      ),
-      pr(
-        "nix-test-setup",
-        "Skip-safe test fixtures",
-        "NixOS/nix",
-        16344,
-        "upstream",
-      ),
-      pr(
-        "nix-environment",
-        "Win32 environment semantics",
-        "NixOS/nix",
-        16345,
-        "upstream",
-      ),
-      pr(
-        "nix-setenv",
-        "Portable setEnv contract",
-        "NixOS/nix",
-        16354,
-        "upstream",
-      ),
-      pr(
-        "nix-proxy",
-        "Proxy-variable propagation",
-        "NixOS/nix",
-        16355,
-        "upstream",
-      ),
       pr(
         "nix-builder",
         "Minimal Windows derivation builder",
         "NixOS/nix",
         16347,
+        "upstream",
+      ),
+      pr(
+        "nix-cert-startup",
+        "Certificate-path startup handling",
+        "NixOS/nix",
+        16364,
+        "upstream",
+      ),
+      pr(
+        "nix-big-coff",
+        "Large COFF objects for Windows targets",
+        "NixOS/nix",
+        16367,
+        "upstream",
+      ),
+      pr(
+        "nix-cross-build-ci",
+        "Whole-project Windows cross-build",
+        "NixOS/nix",
+        16368,
+        "upstream",
+      ),
+      pr(
+        "nix-store-deletion",
+        "Handle-relative Windows store deletion",
+        "NixOS/nix",
+        16359,
+        "public-fork",
+      ),
+      pr(
+        "nix-cert-config",
+        "Post-startup certificate configuration",
+        "NixOS/nix",
+        16383,
+        "public-fork",
+      ),
+      pr(
+        "nix-validation-harness",
+        "Independent Windows build-result checks",
+        "nix-windows/nix-windows-demo",
+        1,
         "public-fork",
       ),
     ],
@@ -274,9 +298,11 @@ const graphSpecs = [
       "mh0pe/carl",
       "mh0pe/paul",
       "mh0pe/seed",
+      "johnhuang316/code-index-mcp",
+      "awsmadi/code-index-mcp",
     ],
     impact:
-      "Agent-team, decision-memory, and planning workflows install across multiple coding-agent surfaces with isolated dependencies and recoverable state.",
+      "Reviewed experience becomes operating policy for later agent teams through portable decision memory, delegation, planning, and learning loops.",
     evidences: [
       pr(
         "portable-base",
@@ -290,14 +316,7 @@ const graphSpecs = [
         "CARL multi-CLI runtime",
         "mh0pe/carl",
         2,
-        "upstream",
-      ),
-      pr(
-        "portable-carl-schema",
-        "CARL schema validation",
-        "mh0pe/carl",
-        3,
-        "upstream",
+        "public-fork",
       ),
       pr(
         "portable-paul",
@@ -311,6 +330,13 @@ const graphSpecs = [
         "SEED integration",
         "mh0pe/seed",
         1,
+        "public-fork",
+      ),
+      pr(
+        "code-index-skill",
+        "Index-first agent skill",
+        "johnhuang316/code-index-mcp",
+        111,
         "public-fork",
       ),
     ],
@@ -360,6 +386,8 @@ const graphSpecs = [
     attributionRepositories: [
       "aws/aws-cdk-cli",
       "awsmadi/aws-cdk-cli",
+      "aws/aws-cdk",
+      "awsmadi/aws-cdk",
       "aws/jsii",
       "awsmadi/jsii",
     ],
@@ -380,6 +408,13 @@ const graphSpecs = [
         1457,
         "upstream",
       ),
+      pr(
+        "cdk-doc-exports",
+        "Executable documentation contract",
+        "aws/aws-cdk",
+        38675,
+        "upstream",
+      ),
       pr("jsii-promises", "Promise cleanup", "aws/jsii", 5054, "upstream"),
       pr("jsii-types", "Cached type lookup", "aws/jsii", 5055, "upstream"),
       pr("jsii-members", "Indexed member lookup", "aws/jsii", 5056, "upstream"),
@@ -392,7 +427,14 @@ const graphSpecs = [
       ),
     ],
   },
-];
+].sort((left, right) => {
+  const leftRank = graphSpecRank.get(left.id);
+  const rightRank = graphSpecRank.get(right.id);
+  if (leftRank === undefined || rightRank === undefined) {
+    throw new Error(`Missing contribution graph order for ${left.id} or ${right.id}.`);
+  }
+  return leftRank - rightRank;
+});
 
 function pr(id, label, repository, number, availability) {
   return {

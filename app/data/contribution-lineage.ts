@@ -33,10 +33,10 @@ export interface LineageChapter {
 
 export const contributionLineageSnapshot = {
   publicOnly: true,
-  observedAt: "2026-08-25",
-  observedPullRequests: 165,
-  observedRepositoryFamilies: 43,
-  representedLineageEvents: 39,
+  observedAt: "2026-08-31",
+  observedPullRequests: 206,
+  observedRepositoryFamilies: 44,
+  representedLineageEvents: 34,
   accounts: ["mh0pe", "awsmadi"],
 } as const;
 
@@ -46,102 +46,70 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
     index: "01",
     eyebrow: "Security systems",
     title:
-      "I made security automation portable and infrastructure policy evaluation fail closed.",
+      "I advanced workspace security orchestration and trustworthy infrastructure policy evaluation.",
     repositories:
       "awslabs / automated-security-helper · aws-cloudformation / cloudformation-guard · aws-guard-rules-registry",
     range: "2026",
     tone: "coral",
-    representedLineageEvents: 9,
+    representedLineageEvents: 7,
     summary:
-      "ASH now generates integrations for fifteen agent surfaces, serves isolated MCP sessions, and proves external scans do real work. CloudFormation Guard rejects previously silent failures while follow-on proposals preserve indeterminate outcomes and harden queries, reporting, parsing, and rules.",
+      "ASH now plans and executes project-aware workspace scans with confined MCP targets, while a public implementation extends the model into distributed execution. CloudFormation Guard work follows policy decisions from evaluator semantics through diagnostics, tests, and published rule packs.",
     events: [
       {
-        id: "ash-transpiler",
+        id: "ash-workspace",
         date: "2026-08",
-        label: "Fifteen-platform agent transpiler",
+        label: "Workspace orchestration stack",
         repository: "awslabs/automated-security-helper",
         detail:
-          "Made one source of truth generate integrations for fifteen AI coding-agent platforms.",
+          "Plans validated workspaces, runs isolated project scans, and preserves project identity and policy context through aggregation.",
         availability: "upstream",
         evidenceKind: "PR",
         links: [
           {
-            label: "#331 · merged",
-            href: "https://github.com/awslabs/automated-security-helper/pull/331",
+            label: "#456 · merged to main",
+            href: "https://github.com/awslabs/automated-security-helper/pull/456",
           },
         ],
       },
       {
-        id: "ash-mcp-transport",
+        id: "ash-mcp-confinement",
         date: "2026-08",
-        label: "Production MCP transport",
+        label: "Operator-controlled MCP targets",
         repository: "awslabs/automated-security-helper",
         detail:
-          "Added Streamable HTTP transport and a JSON Patch runtime allowlist for production MCP serving.",
+          "Confines MCP scans to canonical operator-approved roots and refuses symlink escapes across isolated sessions.",
         availability: "upstream",
         evidenceKind: "PR",
         links: [
           {
-            label: "#335 · merged",
-            href: "https://github.com/awslabs/automated-security-helper/pull/335",
+            label: "#477 · merged",
+            href: "https://github.com/awslabs/automated-security-helper/pull/477",
           },
         ],
       },
       {
-        id: "ash-mcp-sessions",
+        id: "ash-distributed",
         date: "2026-08",
-        label: "Isolated MCP sessions",
+        label: "Distributed security execution",
         repository: "awslabs/automated-security-helper",
         detail:
-          "Separated MCP state by session while adding source delivery and a profile registry.",
-        availability: "upstream",
+          "Adds scanner-axis sharding, result collection, and deployable AWS targets as an active public implementation.",
+        availability: "public-fork",
         evidenceKind: "PR",
         links: [
           {
-            label: "#336 · merged",
-            href: "https://github.com/awslabs/automated-security-helper/pull/336",
-          },
-        ],
-      },
-      {
-        id: "ash-scanner-runtime",
-        date: "2026-08",
-        label: "Unified scanner lifecycle",
-        repository: "awslabs/automated-security-helper",
-        detail:
-          "Moved scanner plugins onto a shared template-method lifecycle and migrated the existing implementations.",
-        availability: "upstream",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#338 · merged",
-            href: "https://github.com/awslabs/automated-security-helper/pull/338",
-          },
-        ],
-      },
-      {
-        id: "ash-external-gate",
-        date: "2026-08",
-        label: "Non-vacuous external scan gate",
-        repository: "awslabs/automated-security-helper",
-        detail:
-          "Added a CI gate that requires ASH to scan a target outside its own working directory instead of passing without exercising the external path.",
-        availability: "upstream",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#440 · merged",
-            href: "https://github.com/awslabs/automated-security-helper/pull/440",
+            label: "#494 · public prototype",
+            href: "https://github.com/awslabs/automated-security-helper/pull/494",
           },
         ],
       },
       {
         id: "guard-enforcement",
         date: "2026-08",
-        label: "Fail-open evaluator audit",
+        label: "Verdict integrity",
         repository: "aws-cloudformation/cloudformation-guard",
         detail:
-          "Fixed evaluator and reporter paths that could report compliance—or nothing at all—for input they should reject.",
+          "Corrected evaluator and reporter paths so policy results preserve the intended rule semantics and diagnostics.",
         availability: "upstream",
         evidenceKind: "PR",
         links: [
@@ -184,18 +152,18 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
         ],
       },
       {
-        id: "guard-registry",
+        id: "guard-registry-pack",
         date: "2026-08",
-        label: "Future-safe security rules",
+        label: "Published rule-pack assurance",
         repository: "aws-cloudformation/aws-guard-rules-registry",
         detail:
-          "Makes five security rules state their non-string cases explicitly instead of depending on incomparable NOT IN behavior.",
+          "Validates all assembled rule packs, preserves published identifiers, and ties publication to successful checks.",
         availability: "public-fork",
         evidenceKind: "PR",
         links: [
           {
-            label: "#285 · open",
-            href: "https://github.com/aws-cloudformation/aws-guard-rules-registry/pull/285",
+            label: "#287 · public implementation",
+            href: "https://github.com/aws-cloudformation/aws-guard-rules-registry/pull/287",
           },
         ],
       },
@@ -206,13 +174,13 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
     index: "02",
     eyebrow: "Cloud delivery",
     title:
-      "I made cloud changes easier to see and the runtime beneath them leaner.",
-    repositories: "aws / aws-cdk-cli · aws / jsii",
+      "I made cloud changes easier to see, documentation executable, and the runtime beneath them leaner.",
+    repositories: "aws / aws-cdk-cli · aws / aws-cdk · aws / jsii",
     range: "2026",
     tone: "cyan",
-    representedLineageEvents: 6,
+    representedLineageEvents: 7,
     summary:
-      "CDK surfaces Fn::ForEach changes and hotswaps QuickSight through CCAPI. jsii clears completed promises, caches lookups, and ships a smaller embedded runtime.",
+      "CDK surfaces Fn::ForEach changes, hotswaps QuickSight through CCAPI, and checks documented package paths against shipped exports. jsii clears completed promises, caches lookups, and ships a smaller embedded runtime.",
     events: [
       {
         id: "cdk-foreach",
@@ -243,6 +211,22 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
           {
             label: "#1457 · merged",
             href: "https://github.com/aws/aws-cdk-cli/pull/1457",
+          },
+        ],
+      },
+      {
+        id: "cdk-doc-exports",
+        date: "2026-08",
+        label: "Executable documentation contract",
+        repository: "aws/aws-cdk",
+        detail:
+          "Checks 803 documented aws-cdk-lib package paths against the exports that ship, keeping examples aligned with the product surface.",
+        availability: "upstream",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#38675 · merged",
+            href: "https://github.com/aws/aws-cdk/pull/38675",
           },
         ],
       },
@@ -317,13 +301,14 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
     index: "03",
     eyebrow: "Agent infrastructure",
     title:
-      "I made agent tooling portable across documents, transports, sessions, and coding surfaces.",
-    repositories: "awslabs / mcp · mh0pe / base-v1 · carl · paul · seed",
+      "I helped turn emerging agent frameworks into portable, learning operating systems.",
+    repositories:
+      "awslabs / mcp · mh0pe / base-v1 · carl · paul · seed · johnhuang316 / code-index-mcp",
     range: "2026",
     tone: "violet",
-    representedLineageEvents: 9,
+    representedLineageEvents: 7,
     summary:
-      "The work expands document ingestion, adds portable transport and isolated browser sessions, and packages agent-team, decision-memory, and planning workflows with recoverable state and isolated dependencies.",
+      "The work combines richer agent inputs and isolated browser sessions with portable agent teams, decision memory, verified delivery, and a human-reviewed loop that turns experience into policy for later sessions.",
     events: [
       {
         id: "mcp-doc-loader",
@@ -338,38 +323,6 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
           {
             label: "#2586 · merged",
             href: "https://github.com/awslabs/mcp/pull/2586",
-          },
-        ],
-      },
-      {
-        id: "mcp-transport",
-        date: "2026-03",
-        label: "Streamable HTTP + SSE",
-        repository: "awslabs/mcp",
-        detail:
-          "Implemented Streamable HTTP and SSE transport across the public MCP server collection.",
-        availability: "public-fork",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#2645 · closed upstream",
-            href: "https://github.com/awslabs/mcp/pull/2645",
-          },
-        ],
-      },
-      {
-        id: "mcp-assets",
-        date: "2026-03",
-        label: "Document asset extraction",
-        repository: "awslabs/mcp",
-        detail:
-          "Made embedded document assets available as first-class MCP outputs for downstream agents.",
-        availability: "public-fork",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#2658 · closed upstream",
-            href: "https://github.com/awslabs/mcp/pull/2658",
           },
         ],
       },
@@ -411,29 +364,13 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
         label: "CARL multi-CLI runtime",
         repository: "mh0pe/carl",
         detail:
-          "Seeds CARL state at session start so hooks work when the framework runs as a plugin.",
-        availability: "upstream",
+          "Seeds project-local decision state at session start and validates it across older and current schema resolvers.",
+        availability: "public-fork",
         evidenceKind: "PR",
         links: [
           {
             label: "#2 · merged",
             href: "https://github.com/mh0pe/carl/pull/2",
-          },
-        ],
-      },
-      {
-        id: "portable-carl-schema",
-        date: "2026-08",
-        label: "CARL schema validation",
-        repository: "mh0pe/carl",
-        detail:
-          "Corrected schema identity so older JSON Schema resolvers validate CARL configuration reliably.",
-        availability: "upstream",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#3 · merged",
-            href: "https://github.com/mh0pe/carl/pull/3",
           },
         ],
       },
@@ -466,6 +403,22 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
           {
             label: "#1 · public implementation",
             href: "https://github.com/mh0pe/seed/pull/1",
+          },
+        ],
+      },
+      {
+        id: "code-index-skill",
+        date: "2026-08",
+        label: "Index-first agent context",
+        repository: "johnhuang316/code-index-mcp",
+        detail:
+          "Packages staged code discovery, tool routing, and subagent guidance as an installable agent skill.",
+        availability: "public-fork",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#111 · public implementation",
+            href: "https://github.com/johnhuang316/code-index-mcp/pull/111",
           },
         ],
       },
@@ -602,123 +555,100 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
     index: "05",
     eyebrow: "Durable platform semantics",
     title:
-      "I carried reproducible system semantics across Windows and zero-install JavaScript builds.",
-    repositories: "NixOS / nix · aspect-build / rules_js",
+      "I carried reproducible build semantics across Windows and zero-install JavaScript projects.",
+    repositories:
+      "NixOS / nix · nix-windows / nix-windows-demo · aspect-build / rules_js",
     range: "2026",
     tone: "gold",
-    representedLineageEvents: 8,
+    representedLineageEvents: 6,
     summary:
-      "Nix now initializes its Windows socket runtime and preserves store paths, test skips, environment semantics, and proxy state across core operations, while a public builder and an integrity-bound Yarn PnP importer demonstrate the next end-to-end paths.",
+      "Nix now has an upstream Windows derivation builder, whole-project cross-build coverage, broader test compilation, and clearer lifecycle semantics. Public branches extend store cleanup and validation, while the Yarn PnP importer brings the same integrity focus to Bazel.",
     events: [
-      {
-        id: "nix-winsock",
-        date: "2026-08",
-        label: "Winsock runtime initialization",
-        repository: "NixOS/nix",
-        detail:
-          "Initializes Winsock through the existing library startup path and reports socket failures with the native Windows error source.",
-        availability: "upstream",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#16342 · open",
-            href: "https://github.com/NixOS/nix/pull/16342",
-          },
-        ],
-      },
-      {
-        id: "nix-aterm",
-        date: "2026-08",
-        label: "Windows store-path serialization",
-        repository: "NixOS/nix",
-        detail:
-          "Made the ATerm format preserve a Windows Nix store directory through serialization and parsing.",
-        availability: "upstream",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#16343 · merged",
-            href: "https://github.com/NixOS/nix/pull/16343",
-          },
-        ],
-      },
-      {
-        id: "nix-test-setup",
-        date: "2026-08",
-        label: "Skip-safe test fixtures",
-        repository: "NixOS/nix",
-        detail:
-          "Guarded derived GoogleTest setup so a skip in the base fixture does not leave invalid state behind.",
-        availability: "upstream",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#16344 · merged",
-            href: "https://github.com/NixOS/nix/pull/16344",
-          },
-        ],
-      },
-      {
-        id: "nix-environment",
-        date: "2026-08",
-        label: "Win32 environment semantics",
-        repository: "NixOS/nix",
-        detail:
-          "Fixed Windows environment accessors so an empty value remains distinct from an absent variable.",
-        availability: "upstream",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#16345 · merged",
-            href: "https://github.com/NixOS/nix/pull/16345",
-          },
-        ],
-      },
-      {
-        id: "nix-setenv",
-        date: "2026-08",
-        label: "Portable setEnv contract",
-        repository: "NixOS/nix",
-        detail:
-          "Made the Windows setEnv implementation follow the portable success return convention.",
-        availability: "upstream",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#16354 · merged",
-            href: "https://github.com/NixOS/nix/pull/16354",
-          },
-        ],
-      },
-      {
-        id: "nix-proxy",
-        date: "2026-08",
-        label: "Proxy-variable propagation",
-        repository: "NixOS/nix",
-        detail:
-          "Preserved uppercase proxy-variable names so command execution receives the expected environment.",
-        availability: "upstream",
-        evidenceKind: "PR",
-        links: [
-          {
-            label: "#16355 · merged",
-            href: "https://github.com/NixOS/nix/pull/16355",
-          },
-        ],
-      },
       {
         id: "nix-builder",
         date: "2026-08",
-        label: "Minimal Windows derivation builder",
+        label: "Windows derivation builder",
         repository: "NixOS/nix",
         detail:
-          "Adds a minimal public Windows builder that demonstrates derivation execution under Wine.",
+          "Executes supported derivations, registers valid store outputs, and reports build results through a deliberately scoped path validated under Wine.",
+        availability: "upstream",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#16347 · merged",
+            href: "https://github.com/NixOS/nix/pull/16347",
+          },
+        ],
+      },
+      {
+        id: "nix-cross-build-ci",
+        date: "2026-08",
+        label: "Whole-project Windows build assurance",
+        repository: "NixOS/nix",
+        detail:
+          "Enables large COFF objects across Windows targets and expands CI to cross-build every Windows component.",
+        availability: "upstream",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#16367 · merged",
+            href: "https://github.com/NixOS/nix/pull/16367",
+          },
+          {
+            label: "#16368 · merged",
+            href: "https://github.com/NixOS/nix/pull/16368",
+          },
+        ],
+      },
+      {
+        id: "nix-cert-startup",
+        date: "2026-08",
+        label: "Reportable certificate configuration",
+        repository: "NixOS/nix",
+        detail:
+          "Makes invalid certificate-path configuration reportable at startup, with a public branch moving the complete read into normal configuration loading.",
+        availability: "upstream",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#16364 · merged",
+            href: "https://github.com/NixOS/nix/pull/16364",
+          },
+          {
+            label: "#16383 · public implementation",
+            href: "https://github.com/NixOS/nix/pull/16383",
+          },
+        ],
+      },
+      {
+        id: "nix-store-deletion",
+        date: "2026-08",
+        label: "Handle-relative store cleanup",
+        repository: "NixOS/nix",
+        detail:
+          "Removes read-only Windows store trees through directory handles while preserving symlink targets and bytes-freed accounting.",
         availability: "public-fork",
         evidenceKind: "PR",
         links: [
           {
-            label: "#16347 · open",
-            href: "https://github.com/NixOS/nix/pull/16347",
+            label: "#16359 · public implementation",
+            href: "https://github.com/NixOS/nix/pull/16359",
+          },
+        ],
+      },
+      {
+        id: "nix-validation-harness",
+        date: "2026-08",
+        label: "Independent build-result checks",
+        repository: "nix-windows/nix-windows-demo",
+        detail:
+          "Verifies build status, emitted store path, and produced content independently, with bounded diagnostics and reliable virtual-machine cleanup.",
+        availability: "public-fork",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#1 · public implementation",
+            href: "https://github.com/nix-windows/nix-windows-demo/pull/1",
           },
         ],
       },

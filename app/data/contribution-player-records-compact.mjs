@@ -1,4 +1,4 @@
-export const COMPACT_CONTRIBUTION_PLAYER_RECORDS_VERSION = 2;
+export const COMPACT_CONTRIBUTION_PLAYER_RECORDS_VERSION = 3;
 
 const availabilityValues = ["upstream", "public-fork"];
 const integrationStatuses = [
@@ -46,6 +46,15 @@ function requiredString(value, label) {
   return value;
 }
 
+function requiredSha(value, label) {
+  const sha = requiredString(value, label);
+  invariant(
+    /^[0-9a-f]{40}$/i.test(sha),
+    `Compact player records contain invalid ${label}.`,
+  );
+  return sha;
+}
+
 function optionalString(value, label) {
   return value === null ? null : requiredString(value, label);
 }
@@ -76,6 +85,21 @@ function encodedPath(path) {
 
 function fileHref(repository, referenceSha, path) {
   return `https://github.com/${repository}/blob/${referenceSha}/${encodedPath(path)}`;
+}
+
+function fileReferenceSha(repository, href, path) {
+  const url = new URL(href);
+  const match = url.pathname.match(
+    /^\/([^/]+\/[^/]+)\/blob\/([0-9a-f]{40})\/(.+)$/i,
+  );
+  invariant(
+    url.protocol === "https:" &&
+      url.hostname === "github.com" &&
+      match?.[1] === repository &&
+      match?.[3] === encodedPath(path),
+    `File URL is not derivable for ${repository}:${path}.`,
+  );
+  return match[2];
 }
 
 export function packContributionPlayerRecordCatalog(records) {
@@ -138,22 +162,22 @@ export function packContributionPlayerRecordCatalog(records) {
               ];
             }),
             change.files.map((file) => {
-              invariant(
-                file.href ===
-                  fileHref(
-                    change.repository,
-                    change.referenceSha,
-                    file.path,
-                  ),
-                `File URL is not derivable for ${change.id}:${file.path}.`,
+              const referenceSha = fileReferenceSha(
+                change.repository,
+                file.href,
+                file.path,
               );
-              return [
+              const packedFile = [
                 file.path,
                 enumCode(fileStatuses, file.status, "file status"),
                 file.additions,
                 file.deletions,
                 file.changes,
               ];
+              if (referenceSha !== change.referenceSha) {
+                packedFile.push(referenceSha);
+              }
+              return packedFile;
             }),
           ];
         }),
@@ -189,12 +213,12 @@ export function unpackContributionPlayerRecordCatalog(catalog) {
           packedChange[4],
           "change kind",
         );
-        const referenceSha = requiredString(
+        const referenceSha = requiredSha(
           packedChange[8],
           "reference SHA",
         );
         const commits = packedChange[9].map((packedCommit) => {
-          const sha = requiredString(packedCommit[0], "commit SHA");
+          const sha = requiredSha(packedCommit[0], "commit SHA");
           return {
             sha,
             label: requiredString(packedCommit[1], "commit label"),
@@ -226,9 +250,13 @@ export function unpackContributionPlayerRecordCatalog(catalog) {
           commits,
           files: packedChange[10].map((packedFile) => {
             const path = requiredString(packedFile[0], "file path");
+            const fileReferenceSha =
+              packedFile.length > 5
+                ? requiredSha(packedFile[5], "file reference SHA")
+                : referenceSha;
             return {
               path,
-              href: fileHref(repository, referenceSha, path),
+              href: fileHref(repository, fileReferenceSha, path),
               status: enumValue(
                 fileStatuses,
                 packedFile[1],

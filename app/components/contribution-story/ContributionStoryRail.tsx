@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { modelForAgent } from "../attribution-model";
 import { contributionLineageChapters } from "../../data/contribution-lineage";
 import {
   ContributionGraphCanvas,
@@ -1038,7 +1039,7 @@ export function ContributionStoryRail({
                 <div className="project-evolution-authorship">
                   <span>Portfolio identities</span>
                   <strong>mh0pe · awsmadi</strong>
-                  <small>Agent shapes show the models connected to this work.</small>
+                  <small>Model shapes connect recorded metadata to this work.</small>
                 </div>
                 <a
                   href={beat.href}
@@ -1163,14 +1164,14 @@ export function ContributionStoryRail({
                   {activeGraph.agents.length > 0 ? (
                     <div
                       className="project-evolution-agents"
-                      aria-label="GitHub-recorded AI coauthor signals in this repository family"
+                      aria-label="Models recorded in related commit metadata"
                     >
-                      <span>Recorded agent signals</span>
+                      <span>Recorded model signals</span>
                       <ul>
                         {activeGraph.agents.map((agent) => (
                           <li data-agent-marker={agent.marker} key={agent.id}>
                             <i aria-hidden="true" />
-                            <span>{agent.label}</span>
+                            <span>{modelForAgent(agent).label}</span>
                           </li>
                         ))}
                       </ul>

@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { LazyMotion, domAnimation, useReducedMotion } from "motion/react";
 import * as m from "motion/react-m";
 import {
@@ -28,6 +35,7 @@ export interface LineageAgentSignal {
   readonly label: string;
   readonly provider: string;
   readonly marker: string;
+  readonly tone: string;
   readonly commitCount: number;
   readonly codeAdditions: number;
 }
@@ -514,8 +522,8 @@ export function ContributionConstellation({
             <p>
               Two public identities meet at the origin. Colored clusters become
               system families; their orbiting marks become source-linked
-              capabilities. Distinct agent shapes show where collaboration
-              helped move the work forward.
+              capabilities. Distinct model colors and shapes reveal the model
+              signals recorded in the commits behind each system.
             </p>
           </div>
         </div>
@@ -552,7 +560,7 @@ export function ContributionConstellation({
                     >
                       ✦
                     </span>
-                    {agentLens ? "Hide agent signals" : "Show agent signals"}
+                    {agentLens ? "Hide model signals" : "Show model signals"}
                   </button>
                 </div>
               </div>
@@ -814,6 +822,7 @@ export function ContributionConstellation({
                               >
                                 <m.g
                                   className="lineage-agent-node"
+                                  data-model-id={signal.id}
                                   data-marker={signal.marker}
                                   data-focused={isFocused ? "true" : "false"}
                                   initial={false}
@@ -826,7 +835,12 @@ export function ContributionConstellation({
                                           : 0.12,
                                     scale: signalScale,
                                   }}
-                                  style={{ transformOrigin: "center" }}
+                                  style={
+                                    {
+                                      "--model-signal": signal.tone,
+                                      transformOrigin: "center",
+                                    } as CSSProperties
+                                  }
                                   transition={
                                     reduceMotion
                                       ? { duration: 0 }
@@ -898,8 +912,8 @@ export function ContributionConstellation({
               {agentLens ? (
                 <div className="lineage-agent-legend">
                   <div>
-                    <strong>Agent collaboration</strong>
-                    <span>Models connected to the selected work</span>
+                    <strong>Model spectrum</strong>
+                    <span>Models recorded in the selected work</span>
                   </div>
                   {activeAgentSignals.length > 0 ? (
                     <div>
@@ -917,16 +931,22 @@ export function ContributionConstellation({
                         >
                           ✦
                         </span>
-                        All agent signals
+                        All model signals
                       </button>
                       {activeAgentSignals.map((signal) => (
                         <button
                           type="button"
                           data-marker={signal.marker}
+                          data-model-id={signal.id}
                           data-active={
                             focusedAgentId === signal.id ? "true" : "false"
                           }
                           aria-pressed={focusedAgentId === signal.id}
+                          style={
+                            {
+                              "--model-signal": signal.tone,
+                            } as CSSProperties
+                          }
                           onClick={() =>
                             setFocusedAgentId((current) =>
                               current === signal.id ? "all" : signal.id,
@@ -951,8 +971,7 @@ export function ContributionConstellation({
                     </div>
                   ) : (
                     <p>
-                      No agent author or coauthor signal is recorded for this
-                      system.
+                      No model signal is recorded for this system.
                     </p>
                   )}
                 </div>
@@ -1081,8 +1100,8 @@ export function ContributionConstellation({
           <p>
             <strong>What the lines mean.</strong> This is a curated map of
             public work, not a literal Git graph. Every named point opens to the
-            PR, commit, or fork that carries the capability. Agent shapes
-            distinguish the models connected to the work.
+            PR, commit, or fork that carries the capability. Model colors and
+            shapes distinguish exact model records from platform-only signals.
           </p>
           <p>
             Public snapshot ·{" "}

@@ -219,3 +219,103 @@ test("agent focus narrows evidence without hiding the comparison chart", () => {
   assert.equal(evidence.length, 1);
   assert.equal(evidence[0].agentId, "agent-b");
 });
+
+test("v2 keeps models distinct from platforms and preserves multi-model totals", () => {
+  const {
+    aggregateAttribution,
+    attributionModels,
+    DEFAULT_ATTRIBUTION_FILTERS,
+    modelIdsForCommit,
+    readAgentAttributionData,
+  } = model;
+  const data = readAgentAttributionData({
+    ...fixture,
+    schemaVersion: 2,
+    methodology: {
+      ...fixture.methodology,
+      modelSignalPolicy: "recorded-models-with-platform-fallback",
+    },
+    agents: [
+      {
+        id: "model-a",
+        label: "Model A",
+        provider: "Provider A",
+        aliases: [],
+        marker: "circle",
+        kind: "model",
+      },
+      {
+        id: "model-b",
+        label: "Model B",
+        provider: "Provider B",
+        aliases: [],
+        marker: "diamond",
+        kind: "model",
+      },
+      {
+        id: "platform-a",
+        label: "Platform A",
+        provider: "Platform A",
+        aliases: [],
+        marker: "ring",
+        kind: "platform",
+      },
+      {
+        id: "shared",
+        label: "Shared",
+        provider: "Multiple",
+        aliases: [],
+        marker: "hexagon",
+        kind: "aggregate",
+      },
+    ],
+    commits: [
+      {
+        ...fixture.commits[0],
+        agentId: "model-a",
+        modelIds: ["model-a"],
+        platformIds: ["platform-a"],
+      },
+      {
+        ...fixture.commits[2],
+        agentId: "platform-a",
+        modelIds: [],
+        platformIds: ["platform-a"],
+        additions: { code: 30, allText: 30 },
+      },
+      {
+        ...fixture.commits[2],
+        sha: "c".repeat(40),
+        url: `https://github.com/public-account/beta/commit/${"c".repeat(40)}`,
+        agentId: "shared",
+        modelIds: ["model-a", "model-b"],
+        platformIds: [],
+        additions: { code: 60, allText: 60 },
+      },
+    ],
+  });
+
+  assert.deepEqual(
+    attributionModels(data).map((entry) => [entry.id, entry.kind]),
+    [
+      ["model-a", "model"],
+      ["model-b", "model"],
+      ["model-not-recorded", "unrecorded"],
+    ],
+  );
+  assert.deepEqual(modelIdsForCommit(data, data.commits[1]), [
+    "model-not-recorded",
+  ]);
+  assert.deepEqual(
+    aggregateAttribution(data, DEFAULT_ATTRIBUTION_FILTERS).map((row) => [
+      row.agent.id,
+      row.additions,
+      row.commits,
+    ]),
+    [
+      ["model-a", 130, 1.5],
+      ["model-b", 30, 0.5],
+      ["model-not-recorded", 30, 1],
+    ],
+  );
+});

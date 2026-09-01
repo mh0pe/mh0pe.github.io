@@ -1,3 +1,4 @@
+import { modelForAgent } from "../attribution-model";
 import { createContributionTimeline } from "./timeline";
 import type {
   ContributionGraph,
@@ -210,7 +211,9 @@ function commitItems(
   graph: ContributionGraph,
   change: ContributionPlayerChangeRecord,
 ): readonly ContributionPlayerItem[] {
-  const agentById = new Map(graph.agents.map((agent) => [agent.id, agent]));
+  const agentById = new Map(
+    graph.agents.map((agent) => [agent.id, modelForAgent(agent)]),
+  );
 
   return change.commits.map((commit) => {
     const node = graphNodeForCommit(graph, change.id, commit.sha);
@@ -254,7 +257,7 @@ function commitItems(
         ...(exactFileEdges.length > 0
           ? [{ label: "Exact files", value: String(exactFileEdges.length) }]
           : []),
-        ...(agent ? [{ label: "Agent", value: agent }] : []),
+        ...(agent ? [{ label: "Recorded model", value: agent }] : []),
         ...metricFacts(additions, deletions),
       ],
       commitId: commit.sha,

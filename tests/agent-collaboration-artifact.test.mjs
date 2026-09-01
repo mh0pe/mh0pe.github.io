@@ -90,7 +90,7 @@ test("publishes the bounded public attribution schema", async () => {
     ],
     "Attribution artifact",
   );
-  assert.equal(data.schemaVersion, 1);
+  assert.equal(data.schemaVersion, 2);
   assertExactKeys(
     data.snapshot,
     ["accounts", "generatedAt", "publicOnly", "sourceExportGeneratedAt"],
@@ -109,6 +109,7 @@ test("publishes the bounded public attribution schema", async () => {
       "globalShaDeduplication",
       "mergeCommitsExcluded",
       "metricLabel",
+      "modelSignalPolicy",
       "sharedAgentPolicy",
     ],
     "Methodology",
@@ -120,6 +121,10 @@ test("publishes the bounded public attribution schema", async () => {
   assert.equal(data.methodology.mergeCommitsExcluded, true);
   assert.equal(data.methodology.globalShaDeduplication, true);
   assert.equal(data.methodology.sharedAgentPolicy, "shared-bucket");
+  assert.equal(
+    data.methodology.modelSignalPolicy,
+    "recorded-models-with-platform-fallback",
+  );
 
   assertExactKeys(
     data.filters,
@@ -150,10 +155,23 @@ test("publishes the bounded public attribution schema", async () => {
   for (const [index, agent] of data.agents.entries()) {
     assertExactKeys(
       agent,
-      ["aliases", "id", "label", "marker", "provider"],
+      ["aliases", "id", "kind", "label", "marker", "provider"],
       `Agent ${index}`,
     );
   }
+  assert.equal(
+    data.agents.find((agent) => agent.id === "github-copilot")?.kind,
+    "platform",
+  );
+  assert.equal(
+    data.agents.find((agent) => agent.id === "openai-codex")?.kind,
+    "platform",
+  );
+  assert.ok(
+    data.agents
+      .filter((agent) => agent.kind === "model")
+      .every((agent) => !/copilot|codex/i.test(agent.label)),
+  );
 
   const shas = new Set();
   for (const [index, commit] of data.commits.entries()) {
@@ -166,6 +184,8 @@ test("publishes the bounded public attribution schema", async () => {
         "agentId",
         "date",
         "deletions",
+        "modelIds",
+        "platformIds",
         "prLinks",
         "repository",
         "repositories",
@@ -185,6 +205,26 @@ test("publishes the bounded public attribution schema", async () => {
     );
     assert.ok(commit.repositories.includes(commit.repository));
     assert.ok(data.agents.some((agent) => agent.id === commit.agentId));
+    assert.ok(Array.isArray(commit.modelIds));
+    assert.ok(Array.isArray(commit.platformIds));
+    assert.ok(
+      commit.modelIds.every((modelId) =>
+        data.agents.some(
+          (agent) => agent.id === modelId && agent.kind === "model",
+        ),
+      ),
+    );
+    assert.ok(
+      commit.platformIds.every((platformId) =>
+        data.agents.some(
+          (agent) => agent.id === platformId && agent.kind === "platform",
+        ),
+      ),
+    );
+    assert.ok(
+      commit.modelIds.length > 0 || commit.platformIds.length > 0,
+      `Commit ${commit.sha} should preserve a model or platform signal`,
+    );
     const commitUrl = new URL(commit.url);
     const commitUrlMatch = commitUrl.pathname.match(
       /^\/([^/]+\/[^/]+)\/commit\/([a-f0-9]{40})$/i,
@@ -244,10 +284,14 @@ test("artifact values contain no private or source-level payloads", async () => 
     "defaultScope",
     "generatedAt",
     "id",
+    "kind",
     "label",
     "marker",
     "metrics",
     "metricLabel",
+    "modelIds",
+    "modelSignalPolicy",
+    "platformIds",
     "provider",
     "repository",
     "repositories",
@@ -326,7 +370,7 @@ test("server-renders the default collaboration explorer as evidence UI", async (
   );
 
   assert.match(section, /03 \/ The public record/i);
-  assert.match(section, /The work carries its own provenance\./i);
+  assert.match(section, /Models recorded in the work\./i);
   assert.match(
     section,
     /<details class="attribution-record">(?![^>]*\bopen\b)/i,
@@ -339,7 +383,7 @@ test("server-renders the default collaboration explorer as evidence UI", async (
   );
   assert.match(
     section,
-    /GitHub-reported added lines in AI-associated commits/i,
+    /GitHub-reported added lines in commits with model signals/i,
   );
   assert.match(section, /Repository/i);
   assert.match(section, /Delivery surface/i);
@@ -350,7 +394,9 @@ test("server-renders the default collaboration explorer as evidence UI", async (
   assert.match(section, /Code/i);
   assert.match(section, /Claude Opus 4\.8/i);
   assert.match(section, /Claude Sonnet 4\.6/i);
-  assert.match(section, /GitHub Copilot/i);
+  assert.match(section, /Model not recorded/i);
+  assert.match(section, /Model focus/i);
+  assert.doesNotMatch(section, /GitHub Copilot|Copilot-authored/i);
   assert.match(section, /role="status"/i);
   assert.match(section, /aria-live="polite"/i);
   assert.match(section, /<button\b/i);

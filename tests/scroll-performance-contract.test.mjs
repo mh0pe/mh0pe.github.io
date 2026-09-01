@@ -46,3 +46,31 @@ test("rapid scrolling suspends expensive contribution motion", async () => {
     /(?:project-story \.project|frontier-story \.frontier-list article|support-story \.support-list article)[\s\S]{0,420}transition:[\s\S]{0,180}box-shadow/,
   );
 });
+
+test("story layouts do not reserve space for the retired standalone player", async () => {
+  const css = await source("public/portfolio.css");
+
+  for (const className of ["project-story", "frontier-story", "support-story"]) {
+    const rule = css.match(new RegExp(`\\.${className}\\s*\\{([^}]*)\\}`))?.[1];
+    assert.ok(rule, `expected a base .${className} rule`);
+    assert.match(rule, /display:\s*block;/);
+    assert.doesNotMatch(rule, /grid-template-columns:/);
+  }
+
+  assert.match(
+    css,
+    /\.decision-list article:nth-child\(4\)[\s\S]*?grid-column:\s*1 \/ 7/,
+  );
+  assert.match(
+    css,
+    /\.decision-list article:nth-child\(5\)[\s\S]*?grid-column:\s*7 \/ 13/,
+  );
+  assert.match(
+    css,
+    /@media screen and \(min-width: 68\.001rem\)[\s\S]*?\.lineage-stage-shell\s*\{[\s\S]*?position:\s*sticky/,
+  );
+  assert.match(
+    css,
+    /@media screen and \(min-width: 68\.001rem\)[\s\S]*?\.support-story > \.support-list\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2/,
+  );
+});

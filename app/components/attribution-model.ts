@@ -17,6 +17,13 @@ export interface AttributionAgent {
   readonly provider: string;
   readonly aliases: readonly string[];
   readonly marker: string;
+  readonly kind?: "model" | "platform" | "aggregate";
+}
+
+export interface AttributionModel extends Omit<AttributionAgent, "kind"> {
+  readonly kind: "model" | "unrecorded" | "multiple";
+  readonly sourceIds: readonly string[];
+  readonly tone: string;
 }
 
 export interface AttributionPullRequestLink {
@@ -34,6 +41,8 @@ export interface AttributionCommit {
   readonly account: string;
   readonly accounts: readonly string[];
   readonly agentId: string;
+  readonly modelIds?: readonly string[];
+  readonly platformIds?: readonly string[];
   readonly surfaces: readonly AttributionCommitSurface[];
   readonly prLinks: readonly AttributionPullRequestLink[];
   readonly additions: {
@@ -47,7 +56,7 @@ export interface AttributionCommit {
 }
 
 export interface AgentAttributionData {
-  readonly schemaVersion: 1;
+  readonly schemaVersion: 1 | 2;
   readonly snapshot: {
     readonly generatedAt: string;
     readonly sourceExportGeneratedAt: string;
@@ -60,6 +69,7 @@ export interface AgentAttributionData {
     readonly globalShaDeduplication: boolean;
     readonly defaultScope: "code";
     readonly sharedAgentPolicy: "shared-bucket";
+    readonly modelSignalPolicy?: "recorded-models-with-platform-fallback";
   };
   readonly filters: {
     readonly repositories: readonly string[];
@@ -84,7 +94,7 @@ export function readAgentAttributionData(value: unknown): AgentAttributionData {
     typeof value !== "object" ||
     value === null ||
     !("schemaVersion" in value) ||
-    value.schemaVersion !== 1 ||
+    (value.schemaVersion !== 1 && value.schemaVersion !== 2) ||
     !("agents" in value) ||
     !Array.isArray(value.agents) ||
     !("commits" in value) ||
@@ -98,15 +108,167 @@ export function readAgentAttributionData(value: unknown): AgentAttributionData {
     throw new Error("Agent attribution data failed its public schema check.");
   }
 
+  if (value.schemaVersion === 2) {
+    const agents = new Map(
+      value.agents.map((agent) => [
+        typeof agent === "object" && agent !== null && "id" in agent
+          ? agent.id
+          : null,
+        agent,
+      ]),
+    );
+    const valid =
+      value.agents.every(
+        (agent) =>
+          typeof agent === "object" &&
+          agent !== null &&
+          "kind" in agent &&
+          ["model", "platform", "aggregate"].includes(String(agent.kind)),
+      ) &&
+      value.commits.every((commit) => {
+        if (
+          typeof commit !== "object" ||
+          commit === null ||
+          !("modelIds" in commit) ||
+          !Array.isArray(commit.modelIds) ||
+          !("platformIds" in commit) ||
+          !Array.isArray(commit.platformIds)
+        ) {
+          return false;
+        }
+        return (
+          commit.modelIds.every((id: unknown) => {
+            const agent = agents.get(id);
+            return (
+              typeof agent === "object" &&
+              agent !== null &&
+              "kind" in agent &&
+              agent.kind === "model"
+            );
+          }) &&
+          commit.platformIds.every((id: unknown) => {
+            const agent = agents.get(id);
+            return (
+              typeof agent === "object" &&
+              agent !== null &&
+              "kind" in agent &&
+              agent.kind === "platform"
+            );
+          })
+        );
+      });
+    if (!valid) {
+      throw new Error("Model attribution data failed its identity check.");
+    }
+  }
+
   return value as AgentAttributionData;
 }
 
 export interface AttributionAgentSummary {
-  readonly agent: AttributionAgent;
+  readonly agent: AttributionModel;
   readonly additions: number;
   readonly commits: number;
   readonly value: number;
   readonly percentage: number;
+}
+
+export const UNRECORDED_MODEL_ID = "model-not-recorded";
+export const MULTIPLE_MODELS_ID = "multiple-recorded-models";
+
+const modelTones: Readonly<Record<string, string>> = {
+  "claude-opus-4-8": "#bca8ff",
+  "claude-opus-4-6": "#ff9b7d",
+  "claude-sonnet-4-6": "#c9f36b",
+  "claude-fable-5": "#ffd27a",
+  [UNRECORDED_MODEL_ID]: "#8ea3aa",
+  [MULTIPLE_MODELS_ID]: "#68e4ea",
+};
+
+export function modelTone(id: string): string {
+  return modelTones[id] ?? "#68e4ea";
+}
+
+export function modelForAgent(agent: AttributionAgent): AttributionModel {
+  const isModel =
+    agent.kind === "model" ||
+    (agent.kind === undefined &&
+      agent.id !== "github-copilot" &&
+      agent.id !== "openai-codex" &&
+      agent.id !== "shared");
+  if (isModel) {
+    return {
+      ...agent,
+      kind: "model",
+      sourceIds: [agent.id],
+      tone: modelTone(agent.id),
+    };
+  }
+  if (agent.kind === "aggregate" || agent.id === "shared") {
+    return {
+      id: MULTIPLE_MODELS_ID,
+      label: "Multiple recorded models",
+      provider: "Commit metadata",
+      aliases: [],
+      marker: "hexagon",
+      kind: "multiple",
+      sourceIds: [agent.id],
+      tone: modelTone(MULTIPLE_MODELS_ID),
+    };
+  }
+  return {
+    id: UNRECORDED_MODEL_ID,
+    label: "Model not recorded",
+    provider: "Platform metadata only",
+    aliases: [],
+    marker: "circle",
+    kind: "unrecorded",
+    sourceIds: [agent.id],
+    tone: modelTone(UNRECORDED_MODEL_ID),
+  };
+}
+
+export function modelIdsForCommit(
+  data: AgentAttributionData,
+  commit: AttributionCommit,
+): readonly string[] {
+  if (commit.modelIds && commit.modelIds.length > 0) {
+    return [...new Set(commit.modelIds)];
+  }
+  if (commit.platformIds && commit.platformIds.length > 0) {
+    return [UNRECORDED_MODEL_ID];
+  }
+  const agent = data.agents.find((candidate) => candidate.id === commit.agentId);
+  return agent ? [modelForAgent(agent).id] : [UNRECORDED_MODEL_ID];
+}
+
+export function attributionModels(
+  data: AgentAttributionData,
+): readonly AttributionModel[] {
+  const catalog = new Map<string, AttributionModel>();
+  for (const agent of data.agents) {
+    const model = modelForAgent(agent);
+    const current = catalog.get(model.id);
+    catalog.set(
+      model.id,
+      current
+        ? {
+            ...current,
+            sourceIds: [...new Set([...current.sourceIds, ...model.sourceIds])],
+          }
+        : model,
+    );
+  }
+  const used = new Set(
+    data.commits.flatMap((commit) => modelIdsForCommit(data, commit)),
+  );
+  return [...catalog.values()]
+    .filter((model) => used.has(model.id))
+    .sort((left, right) => {
+      const leftFallback = left.kind === "model" ? 0 : 1;
+      const rightFallback = right.kind === "model" ? 0 : 1;
+      return leftFallback - rightFallback || left.label.localeCompare(right.label);
+    });
 }
 
 export const ATTRIBUTION_QUERY_KEYS = {
@@ -150,9 +312,8 @@ export function attributionRepositories(
 
 export function attributionAgents(
   data: AgentAttributionData,
-): readonly AttributionAgent[] {
-  const agentIds = new Set(data.commits.map((commit) => commit.agentId));
-  return data.agents.filter((agent) => agentIds.has(agent.id));
+): readonly AttributionModel[] {
+  return attributionModels(data);
 }
 
 export function parseAttributionSearch(
@@ -163,7 +324,7 @@ export function parseAttributionSearch(
     search.startsWith("?") ? search.slice(1) : search,
   );
   const repositories = attributionRepositories(data);
-  const agentIds = attributionAgents(data).map((agent) => agent.id);
+  const agentIds = attributionModels(data).map((agent) => agent.id);
 
   const repository = params.get(ATTRIBUTION_QUERY_KEYS.repository);
   const surface = params.get(ATTRIBUTION_QUERY_KEYS.surface);
@@ -254,7 +415,9 @@ export function attributionEvidence(
   filters: AttributionFilters,
 ): readonly AttributionCommit[] {
   const commits = filterAttributionCommits(data, filters).filter(
-    (commit) => filters.agent === "all" || commit.agentId === filters.agent,
+    (commit) =>
+      filters.agent === "all" ||
+      modelIdsForCommit(data, commit).includes(filters.agent),
   );
 
   return [...commits].sort((left, right) => {
@@ -281,29 +444,35 @@ export function aggregateAttribution(
   data: AgentAttributionData,
   filters: AttributionFilters,
 ): readonly AttributionAgentSummary[] {
-  const agents = new Map(data.agents.map((agent) => [agent.id, agent]));
+  const agents = new Map(
+    attributionModels(data).map((agent) => [agent.id, agent]),
+  );
   const rows = new Map<
     string,
-    { agent: AttributionAgent; additions: number; commits: number }
+    { agent: AttributionModel; additions: number; commits: number }
   >();
 
   for (const commit of filterAttributionCommits(data, filters)) {
-    const agent = agents.get(commit.agentId);
-    if (!agent) {
-      continue;
-    }
+    const modelIds = modelIdsForCommit(data, commit);
+    const share = 1 / Math.max(1, modelIds.length);
+    for (const modelId of modelIds) {
+      const agent = agents.get(modelId);
+      if (!agent) {
+        continue;
+      }
 
-    const row = rows.get(agent.id) ?? {
-      agent,
-      additions: 0,
-      commits: 0,
-    };
-    row.additions +=
-      filters.scope === "code"
-        ? commit.additions.code
-        : commit.additions.allText;
-    row.commits += 1;
-    rows.set(agent.id, row);
+      const row = rows.get(agent.id) ?? {
+        agent,
+        additions: 0,
+        commits: 0,
+      };
+      row.additions +=
+        (filters.scope === "code"
+          ? commit.additions.code
+          : commit.additions.allText) * share;
+      row.commits += share;
+      rows.set(agent.id, row);
+    }
   }
 
   const total = [...rows.values()].reduce(

@@ -4,26 +4,26 @@ import test from "node:test";
 import { expectedProjectGraphIds } from "./project-catalog.mjs";
 
 const root = new URL("../", import.meta.url);
-const approvedConsultingContexts = [
+const approvedOrganizationContexts = [
   {
     label: "Global payments network",
-    text: "Built a tokenized-asset platform for a global payments network.",
+    text: "Tokenized-asset platform architecture designed for enterprise trust, security, and governance.",
   },
   {
     label: "Major U.S. financial institution",
-    text: "Delivered acquisition-related platform work, matters requiring attention (MRA) remediation, and broader security engineering.",
+    text: "Acquisition-related platform integration, regulatory remediation, and security engineering across a complex banking environment.",
   },
   {
     label: "Global automotive and mobility manufacturer",
-    text: "Built data-lake foundations for enterprise mobility and manufacturing analytics.",
+    text: "Data-lake foundations for enterprise mobility and manufacturing analytics.",
   },
   {
     label: "International vehicle manufacturer",
-    text: "Delivered data-lake capabilities for a second multinational vehicle manufacturer.",
+    text: "Data-lake capabilities for large-scale operational and analytical workloads.",
   },
   {
     label: "Global investment manager",
-    text: "Built and streamlined AWS account vending for governed cloud-account provisioning at enterprise scale.",
+    text: "Governed AWS account provisioning streamlined for secure, repeatable cloud adoption at enterprise scale.",
   },
 ];
 
@@ -95,6 +95,13 @@ test("server-renders an executive open-source portfolio", async () => {
     expectedProjectGraphIds.length,
     "every source player should use progressive disclosure",
   );
+  assert.equal(
+    (html.match(/class="project-model-spectrum"/g) ?? []).length,
+    expectedProjectGraphIds.length,
+    "every project card should expose its model-metadata state",
+  );
+  assert.match(html, /data-model-id=/i);
+  assert.match(html, /Model spectrum/i);
   assert.deepEqual(
     [...html.matchAll(/data-project-constellation="([^"]+)"/g)].map(
       (match) => match[1],
@@ -121,7 +128,8 @@ test("server-renders an executive open-source portfolio", async () => {
     /I(?:&#x27;|&apos;|')m Madison Hope Steiner, a Principal AI Architect[\s\S]*?systems that teams can operate at enterprise scale/i,
   );
   assert.doesNotMatch(html, /I build the infrastructure behind production AI agents/i);
-  assert.match(html, /Professional experience/i);
+  assert.match(html, /Organizational impact/i);
+  assert.match(html, /Contexted impact/i);
   assert.match(html, /Amazon Web Services/i);
   assert.match(html, /Chainalysis/i);
   assert.match(html, /Cameo/i);
@@ -132,8 +140,9 @@ test("server-renders an executive open-source portfolio", async () => {
   assert.match(html, /Quiver Media/i);
   assert.match(html, /Tinder/i);
   assert.match(html, /Joint Business Solutions/i);
-  assert.match(html, /Current employer/i);
-  assert.match(html, /Former employers/i);
+  assert.doesNotMatch(html, /Current employer/i);
+  assert.doesNotMatch(html, /Former employers/i);
+  assert.match(html, /Product and platform contexts/i);
   assert.match(html, /class="career-ledger"/i);
   assert.equal(
     (
@@ -149,10 +158,10 @@ test("server-renders an executive open-source portfolio", async () => {
   assert.match(html, /International vehicle manufacturer/i);
   assert.match(html, /Global investment manager/i);
   assert.match(html, /tokenized-asset platform/i);
-  assert.match(html, /matters requiring attention \(MRA\) remediation/i);
+  assert.match(html, /regulatory remediation/i);
   assert.match(html, /data-lake foundations/i);
-  assert.match(html, /AWS account vending/i);
-  assert.match(html, /no endorsement is implied/i);
+  assert.match(html, /Governed AWS account provisioning/i);
+  assert.match(html, /They do not imply endorsement/i);
   assert.match(
     html,
     /This is a personal portfolio\.[\s\S]*?nothing on this site is a statement made on behalf of any current or former employer\./i,
@@ -240,14 +249,7 @@ test("server-renders an executive open-source portfolio", async () => {
   assert.match(html, /awslabs\.github\.io\/automated-security-helper/i);
   assert.match(html, /lightpanda\.io\/docs/i);
   assert.match(html, /opens in a new tab/i);
-  assert.match(
-    html,
-    new RegExp(
-      `View ${summary.combined.copilot_authored_contribution_pull_requests} Copilot-authored pull requests in the public record`,
-      "i",
-    ),
-  );
-  assert.match(html, /mh0pe\/forgemax\/pull\/15/i);
+  assert.doesNotMatch(html, /Copilot-authored pull requests/i);
   assert.match(html, new RegExp(String(trust.profile.public_since)));
   assert.match(
     html,
@@ -262,12 +264,12 @@ test("server-renders an executive open-source portfolio", async () => {
     html,
     /Co-authored-by|described without client names|Client names stay private|without naming clients/i,
   );
-  const consultingStart = html.indexOf('class="consulting-context"');
-  const consultingEnd = html.indexOf('id="record"', consultingStart);
-  assert.ok(consultingStart >= 0 && consultingEnd > consultingStart);
-  const consultingHtml = html.slice(consultingStart, consultingEnd);
-  assert.equal((consultingHtml.match(/<li>/g) ?? []).length, 5);
-  assert.doesNotMatch(consultingHtml, /<(?:a|img|svg)\b/i);
+  const impactStart = html.indexOf('class="impact-context"');
+  const impactEnd = html.indexOf('id="record"', impactStart);
+  assert.ok(impactStart >= 0 && impactEnd > impactStart);
+  const impactHtml = html.slice(impactStart, impactEnd);
+  assert.equal((impactHtml.match(/<li>/g) ?? []).length, 5);
+  assert.doesNotMatch(impactHtml, /<(?:a|img|svg)\b/i);
   assert.ok(html.indexOf('id="work"') < html.indexOf('id="trust"'));
   assert.doesNotMatch(html, /upstream stars|upstream forks/i);
   assert.match(html, /github\.com\/mh0pe/i);
@@ -337,10 +339,17 @@ test("uses bounded public data sources consistently", async () => {
   assert.equal(summary.public_only, true);
   assert.equal(trust.public_only, true);
   assert.equal(professionalHistory.employers.length, 10);
-  assert.equal(professionalHistory.consulting_contexts.length, 5);
+  assert.equal(professionalHistory.organization_contexts.length, 5);
   assert.deepEqual(
-    professionalHistory.consulting_contexts,
-    approvedConsultingContexts,
+    professionalHistory.organization_contexts,
+    approvedOrganizationContexts,
+  );
+  assert.ok(
+    professionalHistory.employers.every(
+      (employer) =>
+        typeof employer.scope === "string" && employer.scope.length > 20,
+    ),
+    "every organization should carry meaningful context, not only a logo",
   );
   assert.match(professionalHistory.profile_url, /^https:\/\/www\.linkedin\.com\//);
   assert.match(summary.collection_status, /^(complete|verified_baseline)$/);
@@ -545,20 +554,20 @@ test("ships responsive, accessible, print-ready interaction styles", async () =>
   assert.match(styles, /\.career-logo\s*\{[\s\S]*?overflow:\s*hidden/);
   assert.match(
     styles,
-    /\.consulting-context ul\s*\{[\s\S]*?repeat\(6,\s*minmax\(0,\s*1fr\)\)/,
+    /\.impact-context ul\s*\{[\s\S]*?repeat\(6,\s*minmax\(0,\s*1fr\)\)/,
   );
   assert.match(
     styles,
-    /@media \(max-width: 30rem\)[\s\S]*?\.career-history-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/,
+    /@media \(max-width: 30rem\)[\s\S]*?\.career-history-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)/,
   );
   assert.match(
     styles,
-    /@media \(max-width: 30rem\)[\s\S]*?\.career-history-grid li:last-child\s*\{[\s\S]*?grid-column:\s*1\s*\/\s*-1/,
+    /@media \(max-width: 30rem\)[\s\S]*?\.career-history-grid li\s*\{[\s\S]*?grid-template-columns:\s*6\.5rem\s+minmax\(0,\s*1fr\)/,
   );
   assert.match(styles, /\[id\]\s*\{[\s\S]*?scroll-margin-top:\s*7rem/);
   assert.doesNotMatch(styles, /--logo-scale/);
   assert.match(styles, /\.resource-links/);
-  assert.match(styles, /\.copilot-evidence/);
+  assert.doesNotMatch(styles, /\.copilot-evidence/);
   assert.doesNotMatch(styles, /employer-grid|employer-mark--cielo/);
   assert.doesNotMatch(styles, /Helvetica Neue|Inter|Times New Roman/);
   assert.doesNotMatch(styles, /-webkit-text-stroke/);

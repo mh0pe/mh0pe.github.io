@@ -10,7 +10,8 @@
       "logo": "/logos/svg/aws.svg",
       "logo_treatment": "source_vector",
       "width": 304,
-      "height": 182
+      "height": 182,
+      "scope": "Cloud infrastructure, application security, developer tooling, agent systems, and infrastructure-as-code reliability."
     },
     {
       "name": "Chainalysis",
@@ -18,7 +19,8 @@
       "logo": "/logos/svg/chainalysis.svg",
       "logo_treatment": "source_vector",
       "width": 617,
-      "height": 100
+      "height": 100,
+      "scope": "Blockchain data and compliance infrastructure for high-trust financial systems."
     },
     {
       "name": "Cameo",
@@ -26,7 +28,8 @@
       "logo": "/logos/svg/cameo.svg",
       "logo_treatment": "source_vector",
       "width": 825,
-      "height": 207
+      "height": 207,
+      "scope": "Consumer marketplace systems connecting creators and audiences at scale."
     },
     {
       "name": "Trōv",
@@ -34,7 +37,8 @@
       "logo": "/logos/svg/trov.svg",
       "logo_treatment": "mirrored_source_vector",
       "width": 800,
-      "height": 420
+      "height": 420,
+      "scope": "Digital insurance platforms shaped around configurable, data-driven coverage."
     },
     {
       "name": "Rakuten AirMap, Inc.",
@@ -42,7 +46,8 @@
       "logo": "/logos/svg/rakuten-airmap.svg",
       "logo_treatment": "derived_vector",
       "width": 620,
-      "height": 363
+      "height": 363,
+      "scope": "Airspace and mobility platforms for unmanned aircraft ecosystems."
     },
     {
       "name": "F.T. Industries",
@@ -50,7 +55,8 @@
       "logo": null,
       "logo_treatment": "wordmark",
       "width": null,
-      "height": null
+      "height": null,
+      "scope": "Business systems engineering across operational workflows."
     },
     {
       "name": "cielo24",
@@ -58,7 +64,8 @@
       "logo": "/logos/svg/cielo24.svg",
       "logo_treatment": "derived_vector",
       "width": 350,
-      "height": 113
+      "height": 113,
+      "scope": "Media accessibility systems, including durable audit trails for non-standard data models."
     },
     {
       "name": "Quiver Media",
@@ -66,7 +73,8 @@
       "logo": "/logos/svg/quiver-media.svg",
       "logo_treatment": "derived_vector",
       "width": 150,
-      "height": 47
+      "height": 47,
+      "scope": "Digital media distribution and platform operations."
     },
     {
       "name": "Tinder",
@@ -74,7 +82,8 @@
       "logo": "/logos/svg/tinder.svg",
       "logo_treatment": "source_vector",
       "width": 500,
-      "height": 94
+      "height": 94,
+      "scope": "High-scale consumer product systems and web experiences."
     },
     {
       "name": "Joint Business Solutions",
@@ -82,29 +91,30 @@
       "logo": "/logos/svg/joint-business-solutions.svg",
       "logo_treatment": "derived_vector",
       "width": 120,
-      "height": 120
+      "height": 120,
+      "scope": "Business software and systems integration."
     }
   ],
-  "consulting_contexts": [
+  "organization_contexts": [
     {
       "label": "Global payments network",
-      "text": "Built a tokenized-asset platform for a global payments network."
+      "text": "Tokenized-asset platform architecture designed for enterprise trust, security, and governance."
     },
     {
       "label": "Major U.S. financial institution",
-      "text": "Delivered acquisition-related platform work, matters requiring attention (MRA) remediation, and broader security engineering."
+      "text": "Acquisition-related platform integration, regulatory remediation, and security engineering across a complex banking environment."
     },
     {
       "label": "Global automotive and mobility manufacturer",
-      "text": "Built data-lake foundations for enterprise mobility and manufacturing analytics."
+      "text": "Data-lake foundations for enterprise mobility and manufacturing analytics."
     },
     {
       "label": "International vehicle manufacturer",
-      "text": "Delivered data-lake capabilities for a second multinational vehicle manufacturer."
+      "text": "Data-lake capabilities for large-scale operational and analytical workloads."
     },
     {
       "label": "Global investment manager",
-      "text": "Built and streamlined AWS account vending for governed cloud-account provisioning at enterprise scale."
+      "text": "Governed AWS account provisioning streamlined for secure, repeatable cloud adoption at enterprise scale."
     }
   ]
 }

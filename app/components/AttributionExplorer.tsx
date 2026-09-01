@@ -15,8 +15,10 @@ import {
   aggregateAttribution,
   attributionAgents,
   attributionEvidence,
+  attributionModels,
   attributionRepositories,
   filtersEqual,
+  modelIdsForCommit,
   parseAttributionSearch,
   readAgentAttributionData,
   serializeAttributionSearch,
@@ -139,12 +141,12 @@ function SegmentedControl<T extends string>({
 
 function EvidenceItem({
   commit,
-  agentLabel,
+  modelLabel,
   scope,
   compact = false,
 }: {
   readonly commit: AttributionCommit;
-  readonly agentLabel: string;
+  readonly modelLabel: string;
   readonly scope: AttributionScope;
   readonly compact?: boolean;
 }) {
@@ -167,7 +169,7 @@ function EvidenceItem({
           <Arrow />
         </a>
         <span>
-          {agentLabel} · {integerFormatter.format(additions)}{" "}
+          {modelLabel} · {integerFormatter.format(additions)}{" "}
           {scope === "code" ? "code" : "text"} additions ·{" "}
           <time dateTime={commit.date}>
             {dateFormatter.format(new Date(commit.date))}
@@ -201,7 +203,7 @@ function EvidenceItem({
         </time>
       </div>
       <p className="attribution-evidence-meta">
-        {agentLabel} · {integerFormatter.format(additions)}{" "}
+        {modelLabel} · {integerFormatter.format(additions)}{" "}
         {scope === "code" ? "code" : "text"} additions · {deliverySurface}
       </p>
       <div className="attribution-evidence-links">
@@ -258,7 +260,7 @@ function filterSummary(
   filters: AttributionFilters,
   commitCount: number,
   repositoryCount: number,
-  agentLabel: string,
+  modelLabel: string,
 ): string {
   const repositories =
     filters.repository === "all"
@@ -267,11 +269,11 @@ function filterSummary(
         }`
       : filters.repository;
 
-  return `${integerFormatter.format(commitCount)} AI-associated ${
+  return `${integerFormatter.format(commitCount)} ${
     commitCount === 1 ? "commit" : "commits"
   } across ${repositories}; ${surfaceLabel(filters.surface)}; ${scopeLabel(
     filters.scope,
-  )}; evidence focus: ${agentLabel}.`;
+  )}; model focus: ${modelLabel}.`;
 }
 
 export default function AttributionExplorer() {
@@ -299,15 +301,17 @@ export default function AttributionExplorer() {
     [data, filters],
   );
   const agents = useMemo(
-    () => new Map(data.agents.map((agent) => [agent.id, agent])),
+    () => new Map(attributionModels(data).map((agent) => [agent.id, agent])),
     [data],
   );
   const visibleCommits = useMemo(
     () =>
       evidence.filter(
-        (commit) => filters.agent === "all" || commit.agentId === filters.agent,
+        (commit) =>
+          filters.agent === "all" ||
+          modelIdsForCommit(data, commit).includes(filters.agent),
       ),
-    [evidence, filters.agent],
+    [data, evidence, filters.agent],
   );
   const repositoryCount = useMemo(
     () => new Set(evidence.flatMap((commit) => commit.repositories)).size,
@@ -315,7 +319,7 @@ export default function AttributionExplorer() {
   );
   const focusedAgentLabel =
     filters.agent === "all"
-      ? "all agents"
+      ? "all models"
       : (agents.get(filters.agent)?.label ?? filters.agent);
   const summary = filterSummary(
     filters,
@@ -412,12 +416,12 @@ export default function AttributionExplorer() {
           <p className="section-code">03 / The public record</p>
           <div>
             <h2 id="agent-collaboration-title">
-              The work carries its own provenance.
+              Models recorded in the work.
             </h2>
             <p>
-              The constellation is the story. Open the record to filter public
-              commits and inspect how GitHub preserves human authorship
-              alongside recorded agent signals.
+              Commit metadata becomes a model spectrum across projects,
+              repositories, and source paths. Open the record to filter the
+              work and follow each signal back to its public commit.
             </p>
           </div>
         </div>
@@ -431,7 +435,7 @@ export default function AttributionExplorer() {
             <div className="attribution-overview">
               <div className="attribution-method">
                 <p className="attribution-kicker">Measurement</p>
-                <p>GitHub-reported added lines in AI-associated commits.</p>
+                <p>GitHub-reported added lines in commits with model signals.</p>
                 <ul>
                   <li>
                     {data.methodology.globalShaDeduplication
@@ -444,8 +448,8 @@ export default function AttributionExplorer() {
                       : "Merge commits are included."}
                   </li>
                   <li>
-                    Multi-agent commits use a shared bucket rather than an
-                    invented split.
+                    Multi-model commits preserve every recorded model and share
+                    visual weight so each commit still counts once.
                   </li>
                   <li>
                     The Code view excludes documentation, lockfiles, generated
@@ -454,15 +458,15 @@ export default function AttributionExplorer() {
                   </li>
                 </ul>
                 <details className="attribution-identity-disclosure">
-                  <summary>Recorded identity mapping</summary>
+                  <summary>Recorded model mapping</summary>
                   <dl>
-                    {data.agents.map((agent) => (
-                      <div key={agent.id}>
-                        <dt>{agent.label}</dt>
+                    {attributionModels(data).map((model) => (
+                      <div key={model.id}>
+                        <dt>{model.label}</dt>
                         <dd>
-                          {agent.aliases.length > 0
-                            ? agent.aliases.join(", ")
-                            : "No additional aliases"}
+                          {model.kind === "model"
+                            ? `${model.provider} model recorded in commit metadata`
+                            : model.provider}
                         </dd>
                       </div>
                     ))}
@@ -491,7 +495,7 @@ export default function AttributionExplorer() {
             <div className="attribution-workspace">
               <form
                 className="attribution-filters"
-                aria-label="Filter agent collaboration evidence"
+                aria-label="Filter model collaboration evidence"
                 onSubmit={(event) => event.preventDefault()}
               >
                 <div className="attribution-select">
@@ -546,14 +550,14 @@ export default function AttributionExplorer() {
                 />
 
                 <div className="attribution-select">
-                  <label htmlFor={agentId}>Evidence focus</label>
+                  <label htmlFor={agentId}>Model focus</label>
                   <select
                     id={agentId}
                     value={filters.agent}
                     onChange={handleAgentChange}
                     aria-controls={evidenceId}
                   >
-                    <option value="all">All agents</option>
+                    <option value="all">All models</option>
                     {selectableAgents.map((agent) => (
                       <option value={agent.id} key={agent.id}>
                         {agent.label}
@@ -579,15 +583,15 @@ export default function AttributionExplorer() {
               >
                 <div className="attribution-chart-heading">
                   <div>
-                    <p className="attribution-kicker">Distribution</p>
+                    <p className="attribution-kicker">Model spectrum</p>
                     <h3>
                       {filters.metric === "additions"
-                        ? "GitHub-reported added lines"
-                        : "AI-associated commits"}
+                        ? "Added lines in associated commits"
+                        : "Commits with model signals"}
                     </h3>
                   </div>
                   <p>
-                    Select an agent to focus the linked evidence. The
+                    Select a model to focus the linked evidence. The
                     distribution remains visible for comparison.
                   </p>
                 </div>
@@ -602,10 +606,15 @@ export default function AttributionExplorer() {
                       );
                       const traceStyle = {
                         "--attribution-trace-scale": traceScale,
+                        "--agent-accent": row.agent.tone,
                       } as CSSProperties;
 
                       return (
-                        <li key={row.agent.id} data-marker={row.agent.marker}>
+                        <li
+                          key={row.agent.id}
+                          data-marker={row.agent.marker}
+                          data-model-id={row.agent.id}
+                        >
                           <button
                             type="button"
                             className={`attribution-trace${
@@ -656,7 +665,7 @@ export default function AttributionExplorer() {
                   </ol>
                 ) : (
                   <p className="attribution-empty">
-                    No measured AI-associated commits match this view. Clear or
+                    No commits with model signals match this view. Clear or
                     adjust a filter to continue exploring.
                   </p>
                 )}
@@ -685,9 +694,9 @@ export default function AttributionExplorer() {
                     <li key={commit.sha}>
                       <EvidenceItem
                         commit={commit}
-                        agentLabel={
-                          agents.get(commit.agentId)?.label ?? commit.agentId
-                        }
+                        modelLabel={modelIdsForCommit(data, commit)
+                          .map((id) => agents.get(id)?.label ?? id)
+                          .join(" + ")}
                         scope={filters.scope}
                       />
                     </li>
@@ -696,7 +705,7 @@ export default function AttributionExplorer() {
               ) : (
                 <p className="attribution-empty">
                   No linked commit evidence matches the current evidence focus.
-                  Select another agent or clear the filters.
+                  Select another model or clear the filters.
                 </p>
               )}
 
@@ -720,10 +729,9 @@ export default function AttributionExplorer() {
                         <li key={commit.sha}>
                           <EvidenceItem
                             commit={commit}
-                            agentLabel={
-                              agents.get(commit.agentId)?.label ??
-                              commit.agentId
-                            }
+                            modelLabel={modelIdsForCommit(data, commit)
+                              .map((id) => agents.get(id)?.label ?? id)
+                              .join(" + ")}
                             scope={filters.scope}
                             compact
                           />
@@ -745,12 +753,12 @@ export default function AttributionExplorer() {
                   >
                     <table className="attribution-table">
                       <caption>
-                        Exact agent collaboration values for the current
+                        Exact model-signal values for the current
                         repository, delivery surface, and content scope.
                       </caption>
                       <thead>
                         <tr>
-                          <th scope="col">Agent</th>
+                          <th scope="col">Model</th>
                           <th scope="col">
                             {filters.scope === "code"
                               ? "Code additions"

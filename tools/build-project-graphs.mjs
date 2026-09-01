@@ -1368,11 +1368,18 @@ function buildAgentSummary(spec, attribution, agentCatalog) {
     });
   }
   return [...buckets.entries()]
-    .map(([agentId, totals]) => ({
-      ...agentCatalog.get(agentId),
-      ...totals,
-      attributionScope: "repository-family",
-    }))
+    .map(([agentId, totals]) => {
+      const agent = agentCatalog.get(agentId);
+      return {
+        id: agent?.id,
+        label: agent?.label,
+        provider: agent?.provider,
+        aliases: agent?.aliases,
+        marker: agent?.marker,
+        ...totals,
+        attributionScope: "repository-family",
+      };
+    })
     .filter((agent) => agent.id)
     .sort(
       (left, right) =>

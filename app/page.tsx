@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { ActiveNav } from "./components/ActiveNav";
 import AttributionExplorer from "./components/AttributionExplorer";
 import {
+  attributionModels,
+  modelIdsForCommit,
   readAgentAttributionData,
   type AgentAttributionData,
 } from "./components/attribution-model";
@@ -12,7 +14,10 @@ import {
   type LineageAgentCluster,
 } from "./components/ContributionConstellation";
 import { ContributionCardPlayer } from "./components/contribution-story/ContributionCardPlayer";
-import { ProjectConstellationBackdrop } from "./components/contribution-story/ProjectConstellationBackdrop";
+import {
+  ProjectConstellationBackdrop,
+  ProjectModelSpectrum,
+} from "./components/contribution-story/ProjectConstellationBackdrop";
 import { HeroSignalGraphic } from "./components/HeroSignalGraphic";
 import agentAttribution from "./data/agent-attribution.json";
 import history from "./data/public-history-summary.json";
@@ -88,7 +93,9 @@ const lineageRepositories: Readonly<Record<string, readonly string[]>> = {
 function buildLineageAgentClusters(
   data: AgentAttributionData,
 ): readonly LineageAgentCluster[] {
-  const agents = new Map(data.agents.map((agent) => [agent.id, agent]));
+  const models = new Map(
+    attributionModels(data).map((model) => [model.id, model]),
+  );
 
   return Object.entries(lineageRepositories).map(
     ([chapterId, repositories]) => {
@@ -107,25 +114,30 @@ function buildLineageAgentClusters(
           continue;
         }
 
-        const current = buckets.get(commit.agentId) ?? {
-          commitCount: 0,
-          codeAdditions: 0,
-        };
-        buckets.set(commit.agentId, {
-          commitCount: current.commitCount + 1,
-          codeAdditions: current.codeAdditions + commit.additions.code,
-        });
+        const modelIds = modelIdsForCommit(data, commit);
+        const share = 1 / Math.max(1, modelIds.length);
+        for (const modelId of modelIds) {
+          const current = buckets.get(modelId) ?? {
+            commitCount: 0,
+            codeAdditions: 0,
+          };
+          buckets.set(modelId, {
+            commitCount: current.commitCount + share,
+            codeAdditions: current.codeAdditions + commit.additions.code * share,
+          });
+        }
       }
 
       const signals = [...buckets.entries()]
-        .map(([agentId, totals]) => {
-          const agent = agents.get(agentId);
-          return agent
+        .map(([modelId, totals]) => {
+          const model = models.get(modelId);
+          return model
             ? {
-                id: agent.id,
-                label: agent.label,
-                provider: agent.provider,
-                marker: agent.marker,
+                id: model.id,
+                label: model.label,
+                provider: model.provider,
+                marker: model.marker,
+                tone: model.tone,
                 ...totals,
               }
             : null;
@@ -888,59 +900,6 @@ const morePublicWork = [
   },
 ] as const;
 
-const copilotPullRequests = [
-  {
-    kind: "PR",
-    label: "diskonaut #1 · cross-platform builds",
-    href: "https://github.com/mh0pe/diskonaut/pull/1",
-  },
-  {
-    kind: "PR",
-    label: "Forgemax #1 · concurrent startup",
-    href: "https://github.com/mh0pe/forgemax/pull/1",
-  },
-  {
-    kind: "PR",
-    label: "Forgemax #2 · configuration and security",
-    href: "https://github.com/mh0pe/forgemax/pull/2",
-  },
-  {
-    kind: "PR",
-    label: "Forgemax #3 · security automation",
-    href: "https://github.com/mh0pe/forgemax/pull/3",
-  },
-  {
-    kind: "PR",
-    label: "Forgemax #4 · README graphics",
-    href: "https://github.com/mh0pe/forgemax/pull/4",
-  },
-  {
-    kind: "PR",
-    label: "Forgemax #5 · documentation review",
-    href: "https://github.com/mh0pe/forgemax/pull/5",
-  },
-  {
-    kind: "PR",
-    label: "Forgemax #7 · CodeQL workflow",
-    href: "https://github.com/mh0pe/forgemax/pull/7",
-  },
-  {
-    kind: "PR",
-    label: "Forgemax #8 · CodeQL correction",
-    href: "https://github.com/mh0pe/forgemax/pull/8",
-  },
-  {
-    kind: "PR",
-    label: "Forgemax #9 · CodeQL runner",
-    href: "https://github.com/mh0pe/forgemax/pull/9",
-  },
-  {
-    kind: "PR",
-    label: "Forgemax #15 · typo suppressions",
-    href: "https://github.com/mh0pe/forgemax/pull/15",
-  },
-] as const;
-
 type Employer = (typeof professionalHistory.employers)[number];
 type ResourceLink = {
   readonly kind: string;
@@ -949,11 +908,11 @@ type ResourceLink = {
   readonly evidenceId?: string;
 };
 
-const currentEmployer =
+const leadOrganization =
   professionalHistory.employers.find(
     (employer) => employer.relationship === "Current employer",
   ) ?? professionalHistory.employers[0];
-const formerEmployers = professionalHistory.employers.filter(
+const otherOrganizations = professionalHistory.employers.filter(
   (employer) => employer.relationship !== "Current employer",
 );
 
@@ -1240,6 +1199,14 @@ export default function Home() {
                       </a>
                       <span className="delivery">{project.status}</span>
                     </div>
+                    <ProjectModelSpectrum
+                      project={{
+                        id: project.id,
+                        title: project.title,
+                        graphId: project.graphId,
+                        clusterId: project.clusterId,
+                      }}
+                    />
                     <ContributionCardPlayer
                       project={{
                         id: project.id,
@@ -1308,6 +1275,14 @@ export default function Home() {
                         collapseAfter={3}
                       />
                     </div>
+                    <ProjectModelSpectrum
+                      project={{
+                        id: item.id,
+                        title: item.title,
+                        graphId: item.graphId,
+                        clusterId: item.clusterId,
+                      }}
+                    />
                     <ContributionCardPlayer
                       project={{
                         id: item.id,
@@ -1366,20 +1341,20 @@ export default function Home() {
           <div className="shell">
             <div className="trusted-heading">
               <div>
-                <p className="section-code">Professional experience</p>
-                <p className="trusted-kicker">Professional history</p>
+                <p className="section-code">Organizational impact</p>
+                <p className="trusted-kicker">Contexted impact</p>
               </div>
               <div>
                 <h2 id="trusted-heading">
-                  Organizations where I built production systems.
+                  Systems shaped where scale, trust, and product reach matter.
                 </h2>
                 <p>
-                  Roles across cloud infrastructure, security, fintech, media,
-                  mobility, and consumer products.
+                  Work spanning cloud platforms, security, financial
+                  infrastructure, mobility data, media, and consumer products.
                 </p>
                 <p className="trust-qualification">
-                  Current and former employers. Logos identify professional
-                  history; no endorsement is implied.
+                  Organization marks identify places where this work took
+                  shape. They do not imply endorsement.
                 </p>
                 <a
                   className="trusted-source"
@@ -1387,7 +1362,7 @@ export default function Home() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  View employment history on LinkedIn <Arrow />
+                  Professional context on LinkedIn <Arrow />
                 </a>
               </div>
             </div>
@@ -1395,63 +1370,72 @@ export default function Home() {
             <div className="career-ledger">
               <article
                 className="career-current"
-                aria-labelledby="current-employer-heading"
+                aria-labelledby="lead-organization-heading"
               >
                 <header>
                   <div>
-                    <h3 id="current-employer-heading">Current employer</h3>
-                    <small>Cloud infrastructure and developer tooling</small>
+                    <h3 id="lead-organization-heading">
+                      Cloud and developer systems
+                    </h3>
+                    <small>{leadOrganization.scope}</small>
                   </div>
                   <span aria-hidden="true">01</span>
                 </header>
                 <EmployerMark
-                  employer={currentEmployer}
+                  employer={leadOrganization}
                   className="career-current-mark"
                 />
-                <strong>{currentEmployer.name}</strong>
+                <strong>{leadOrganization.name}</strong>
               </article>
 
               <section
                 className="career-history"
-                aria-labelledby="former-organizations-heading"
+                aria-labelledby="organization-contexts-heading"
               >
                 <header className="career-history-header">
                   <div>
-                    <h3 id="former-organizations-heading">Former employers</h3>
-                    <span>Earlier product and platform roles.</span>
+                    <h3 id="organization-contexts-heading">
+                      Product and platform contexts
+                    </h3>
+                    <span>
+                      Organizations connected by the systems, audiences, and
+                      operating constraints that shaped the work.
+                    </span>
                   </div>
                   <strong aria-hidden="true">
-                    {String(formerEmployers.length).padStart(2, "0")}
+                    {String(otherOrganizations.length).padStart(2, "0")}
                   </strong>
                 </header>
                 <ul className="career-history-grid">
-                  {formerEmployers.map((employer) => (
+                  {otherOrganizations.map((employer) => (
                     <li key={employer.name}>
                       <EmployerMark
                         employer={employer}
                         className="career-logo"
                       />
-                      <span className="career-org-name">{employer.name}</span>
+                      <span className="career-org-copy">
+                        <strong className="career-org-name">
+                          {employer.name}
+                        </strong>
+                        <small>{employer.scope}</small>
+                      </span>
                     </li>
                   ))}
                 </ul>
               </section>
             </div>
 
-            <div className="consulting-context">
+            <div className="impact-context">
               <div>
-                <p className="section-code">Selected consulting delivery</p>
-                <h3>
-                  Enterprise systems where trust, scale, and governance matter.
-                </h3>
+                <p className="section-code">Systems in context</p>
+                <h3>Impact shaped by the environment around it.</h3>
                 <p>
-                  Five engagements spanning tokenized payments,
-                  acquisition-related banking and security, automotive data
-                  platforms, and governed cloud foundations.
+                  Selected work across payments, banking, mobility data, and
+                  governed cloud foundations.
                 </p>
               </div>
               <ul>
-                {professionalHistory.consulting_contexts.map(
+                {professionalHistory.organization_contexts.map(
                   (context, index) => (
                     <li key={context.label}>
                       <span>{String(index + 1).padStart(2, "0")}</span>
@@ -1506,6 +1490,14 @@ export default function Home() {
                       label={`${item.project} public resources`}
                       collapseAfter={3}
                     />
+                    <ProjectModelSpectrum
+                      project={{
+                        id: item.id,
+                        title: item.project,
+                        graphId: item.graphId,
+                        clusterId: item.clusterId,
+                      }}
+                    />
                     <ContributionCardPlayer
                       project={{
                         id: item.id,
@@ -1549,17 +1541,6 @@ export default function Home() {
                 Contribution snapshot {snapshotDate}. Career timeline on
                 LinkedIn.
               </small>
-              <details className="copilot-evidence">
-                <summary>
-                  View {metrics.copilot_authored_contribution_pull_requests}{" "}
-                  Copilot-authored pull requests in the public record{" "}
-                  <Arrow />
-                </summary>
-                <ResourceLinks
-                  links={copilotPullRequests}
-                  label="GitHub Copilot PR evidence"
-                />
-              </details>
             </div>
           </div>
         </section>

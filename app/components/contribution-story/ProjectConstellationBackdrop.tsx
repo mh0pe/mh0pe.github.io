@@ -12,6 +12,12 @@ import {
   type ReactNode,
 } from "react";
 import { getContributionGraph } from "./graph-loaders";
+import {
+  modelForAgent,
+  modelTone,
+  UNRECORDED_MODEL_ID,
+  type AttributionModel,
+} from "../attribution-model";
 import { publishPortfolioLineageFocus } from "./lineage-focus";
 import { useScrollActivity } from "./scroll-activity";
 import type {
@@ -151,7 +157,7 @@ function starPoints(x: number, y: number, radius: number) {
 
 function nodeGlyph(
   node: ContributionGraphNode,
-  marker: string | null,
+  model: AttributionModel | null,
   active: boolean,
 ): ReactNode {
   const radius = nodeRadius(node);
@@ -159,9 +165,15 @@ function nodeGlyph(
   const y = svgNumber(node.y);
   const common = {
     "data-active": active ? "true" : "false",
-    "data-agent-marker": marker ?? undefined,
+    "data-agent-marker": model?.marker ?? undefined,
+    "data-model-id": model?.id ?? undefined,
+    "data-model-kind": model?.kind ?? undefined,
     "data-node-type": node.type,
+    style: model
+      ? ({ "--model-signal": model.tone } as CSSProperties)
+      : undefined,
   };
+  const marker = model?.marker ?? null;
 
   if (marker === "triangle") {
     return (
@@ -235,6 +247,109 @@ function nodeGlyph(
     );
   }
   return <circle {...common} cx={x} cy={y} key={node.id} r={radius} />;
+}
+
+type ProjectModelSignal = AttributionModel & {
+  readonly recordedCommitCount: number;
+};
+
+function projectModelSignals(
+  agents: readonly {
+    readonly id: string;
+    readonly label: string;
+    readonly provider: string;
+    readonly aliases: readonly string[];
+    readonly marker: string;
+    readonly recordedCommitCount: number;
+  }[],
+): readonly ProjectModelSignal[] {
+  const signals = new Map<string, ProjectModelSignal>();
+  for (const agent of agents) {
+    const model = modelForAgent(agent);
+    const current = signals.get(model.id);
+    signals.set(model.id, {
+      ...model,
+      sourceIds: [
+        ...new Set([...(current?.sourceIds ?? []), ...model.sourceIds]),
+      ],
+      recordedCommitCount:
+        (current?.recordedCommitCount ?? 0) + agent.recordedCommitCount,
+    });
+  }
+  return [...signals.values()].sort(
+    (left, right) =>
+      right.recordedCommitCount - left.recordedCommitCount ||
+      left.label.localeCompare(right.label),
+  );
+}
+
+export function ProjectModelSpectrum({
+  project,
+}: {
+  readonly project: ContributionStoryProject;
+}) {
+  const graph = getContributionGraph(project.graphId);
+  const signals = projectModelSignals(graph.agents);
+  const displaySignals: readonly ProjectModelSignal[] =
+    signals.length > 0
+      ? signals
+      : [
+          {
+            id: UNRECORDED_MODEL_ID,
+            label: "Model not recorded",
+            provider: "No model signal in this snapshot",
+            aliases: [],
+            marker: "circle",
+            kind: "unrecorded",
+            sourceIds: [],
+            tone: modelTone(UNRECORDED_MODEL_ID),
+            recordedCommitCount: 0,
+          },
+        ];
+
+  return (
+    <div
+      className="project-model-spectrum"
+      aria-label={`Model metadata for commits related to ${project.title}`}
+    >
+      <div className="project-model-spectrum-heading">
+        <span>Model spectrum</span>
+        <small>Related commit metadata</small>
+      </div>
+      <ul>
+        {displaySignals.map((signal) => (
+          <li
+            data-model-id={signal.id}
+            data-model-kind={signal.kind}
+            data-model-marker={signal.marker}
+            key={signal.id}
+            style={
+              { "--model-signal": signal.tone } as CSSProperties
+            }
+            title={
+              signal.recordedCommitCount > 0
+                ? `${signal.label}: ${signal.recordedCommitCount} related ${
+                    signal.recordedCommitCount === 1 ? "commit" : "commits"
+                  }`
+                : "No model signal is recorded for this project in the current public snapshot."
+            }
+          >
+            <i aria-hidden="true" />
+            <span>
+              <strong>{signal.label}</strong>
+              <small>
+                {signal.recordedCommitCount > 0
+                  ? `${signal.recordedCommitCount} related ${
+                      signal.recordedCommitCount === 1 ? "commit" : "commits"
+                    }`
+                  : "No model signal in this snapshot"}
+              </small>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 function edgePath(edges: readonly ResolvedEdge[]) {
@@ -353,8 +468,11 @@ export function ProjectConstellationBackdrop({
     () => new Map(graph.nodes.map((node) => [node.id, node])),
     [graph.nodes],
   );
-  const markerByAgentId = useMemo(
-    () => new Map(graph.agents.map((agent) => [agent.id, agent.marker])),
+  const modelByAgentId = useMemo(
+    () =>
+      new Map(
+        graph.agents.map((agent) => [agent.id, modelForAgent(agent)]),
+      ),
     [graph.agents],
   );
   const backdropNodes = useMemo(
@@ -600,7 +718,7 @@ export function ProjectConstellationBackdrop({
             nodeGlyph(
               node,
               node.agentId
-                ? (markerByAgentId.get(node.agentId) ?? null)
+                ? (modelByAgentId.get(node.agentId) ?? null)
                 : null,
               nodeIsActive(node, selectedEvidenceId),
             ),

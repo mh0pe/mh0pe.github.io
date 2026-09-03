@@ -416,12 +416,13 @@ export default function AttributionExplorer() {
           <p className="section-code">03 / The public record</p>
           <div>
             <h2 id="agent-collaboration-title">
-              Models recorded in the work.
+              Models behind the work.
             </h2>
             <p>
-              Commit metadata becomes a model spectrum across projects,
-              repositories, and source paths. Open the record to filter the
-              work and follow each signal back to its public commit.
+              Commit-level evidence and date-aware author rules become a model
+              spectrum across projects, repositories, and source paths. Open
+              the record to filter the work and follow each result back to its
+              public commit.
             </p>
           </div>
         </div>
@@ -435,8 +436,16 @@ export default function AttributionExplorer() {
             <div className="attribution-overview">
               <div className="attribution-method">
                 <p className="attribution-kicker">Measurement</p>
-                <p>GitHub-reported added lines in commits with model signals.</p>
+                <p>{data.methodology.metricLabel}.</p>
                 <ul>
+                  {data.methodology.modelSignalPolicy ===
+                  "recorded-models-with-awsmadi-date-default" ? (
+                    <li>
+                      Explicit model metadata takes precedence. Otherwise,
+                      awsmadi commits use the newest public Claude Opus model
+                      available on the authored date.
+                    </li>
+                  ) : null}
                   <li>
                     {data.methodology.globalShaDeduplication
                       ? "Shared fork and upstream SHAs count once."
@@ -458,14 +467,14 @@ export default function AttributionExplorer() {
                   </li>
                 </ul>
                 <details className="attribution-identity-disclosure">
-                  <summary>Recorded model mapping</summary>
+                  <summary>Model attribution mapping</summary>
                   <dl>
                     {attributionModels(data).map((model) => (
                       <div key={model.id}>
                         <dt>{model.label}</dt>
                         <dd>
                           {model.kind === "model"
-                            ? `${model.provider} model recorded in commit metadata`
+                            ? `${model.provider} model represented by commit evidence or the dated author rule`
                             : model.provider}
                         </dd>
                       </div>
@@ -587,7 +596,7 @@ export default function AttributionExplorer() {
                     <h3>
                       {filters.metric === "additions"
                         ? "Added lines in associated commits"
-                        : "Commits with model signals"}
+                        : "Model-attributed commits"}
                     </h3>
                   </div>
                   <p>
@@ -665,7 +674,7 @@ export default function AttributionExplorer() {
                   </ol>
                 ) : (
                   <p className="attribution-empty">
-                    No commits with model signals match this view. Clear or
+                    No model-attributed commits match this view. Clear or
                     adjust a filter to continue exploring.
                   </p>
                 )}
@@ -753,7 +762,7 @@ export default function AttributionExplorer() {
                   >
                     <table className="attribution-table">
                       <caption>
-                        Exact model-signal values for the current
+                        Exact model-attribution values for the current
                         repository, delivery surface, and content scope.
                       </caption>
                       <thead>

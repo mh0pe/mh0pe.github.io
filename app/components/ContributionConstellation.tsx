@@ -523,7 +523,7 @@ export function ContributionConstellation({
               Two public identities meet at the origin. Colored clusters become
               system families; their orbiting marks become source-linked
               capabilities. Distinct model colors and shapes reveal the model
-              signals recorded in the commits behind each system.
+              attribution carried by the commits behind each system.
             </p>
           </div>
         </div>
@@ -546,22 +546,24 @@ export function ContributionConstellation({
                 </div>
                 <div className="lineage-stage-actions">
                   <span>{activeChapter.range}</span>
-                  <button
-                    type="button"
-                    aria-pressed={agentLens}
-                    onClick={() => {
-                      setAgentLens((current) => !current);
-                      setFocusedAgentId("all");
-                    }}
-                  >
-                    <span
-                      className="lineage-agent-lens-glyph"
-                      aria-hidden="true"
+                  {activeAgentSignals.length > 0 ? (
+                    <button
+                      type="button"
+                      aria-pressed={agentLens}
+                      onClick={() => {
+                        setAgentLens((current) => !current);
+                        setFocusedAgentId("all");
+                      }}
                     >
-                      ✦
-                    </span>
-                    {agentLens ? "Hide model signals" : "Show model signals"}
-                  </button>
+                      <span
+                        className="lineage-agent-lens-glyph"
+                        aria-hidden="true"
+                      >
+                        ✦
+                      </span>
+                      {agentLens ? "Hide model signals" : "Show model signals"}
+                    </button>
+                  ) : null}
                 </div>
               </div>
 
@@ -909,14 +911,13 @@ export function ContributionConstellation({
                 </div>
               </div>
 
-              {agentLens ? (
+              {agentLens && activeAgentSignals.length > 0 ? (
                 <div className="lineage-agent-legend">
                   <div>
                     <strong>Model spectrum</strong>
-                    <span>Models recorded in the selected work</span>
+                    <span>Models attributed across the selected work</span>
                   </div>
-                  {activeAgentSignals.length > 0 ? (
-                    <div>
+                  <div>
                       <button
                         type="button"
                         data-active={
@@ -931,7 +932,7 @@ export function ContributionConstellation({
                         >
                           ✦
                         </span>
-                        All model signals
+                        All attributed models
                       </button>
                       {activeAgentSignals.map((signal) => (
                         <button
@@ -968,12 +969,7 @@ export function ContributionConstellation({
                           </span>
                         </button>
                       ))}
-                    </div>
-                  ) : (
-                    <p>
-                      No model signal is recorded for this system.
-                    </p>
-                  )}
+                  </div>
                 </div>
               ) : null}
 

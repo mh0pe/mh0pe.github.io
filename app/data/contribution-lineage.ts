@@ -33,10 +33,10 @@ export interface LineageChapter {
 
 export const contributionLineageSnapshot = {
   publicOnly: true,
-  observedAt: "2026-08-31",
-  observedPullRequests: 206,
+  observedAt: "2026-09-03",
+  observedPullRequests: 213,
   observedRepositoryFamilies: 44,
-  representedLineageEvents: 34,
+  representedLineageEvents: 39,
   accounts: ["mh0pe", "awsmadi"],
 } as const;
 
@@ -51,9 +51,9 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
       "awslabs / automated-security-helper · aws-cloudformation / cloudformation-guard · aws-guard-rules-registry",
     range: "2026",
     tone: "coral",
-    representedLineageEvents: 7,
+    representedLineageEvents: 10,
     summary:
-      "ASH now plans and executes project-aware workspace scans with confined MCP targets, while a public implementation extends the model into distributed execution. CloudFormation Guard work follows policy decisions from evaluator semantics through diagnostics, tests, and published rule packs.",
+      "ASH now plans project-aware workspace scans, confines agent-selected targets, supplies a pinned scanner environment, and distinguishes an empty result from failed execution. CloudFormation Guard work follows policy decisions from evaluator semantics through diagnostics, tests, and published rule packs.",
     events: [
       {
         id: "ash-workspace",
@@ -100,6 +100,58 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
           {
             label: "#494 · public prototype",
             href: "https://github.com/awslabs/automated-security-helper/pull/494",
+          },
+        ],
+      },
+      {
+        id: "ash-nix-toolchain",
+        date: "2026-09",
+        label: "Pinned scanner execution",
+        repository: "awslabs/automated-security-helper",
+        detail:
+          "Supplies ten multi-language scanner tools from a hash-pinned Nix flake across Linux and macOS without requiring a prebuilt container image.",
+        availability: "upstream",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#508 · merged",
+            href: "https://github.com/awslabs/automated-security-helper/pull/508",
+          },
+        ],
+      },
+      {
+        id: "ash-scan-integrity",
+        date: "2026-09",
+        label: "Scan-set and finding-path integrity",
+        repository: "awslabs/automated-security-helper",
+        detail:
+          "Scopes nested ignore rules to their actual subtrees, reports exclusions, and anchors secret findings to the scan root across Windows drives.",
+        availability: "upstream",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#501 · merged",
+            href: "https://github.com/awslabs/automated-security-helper/pull/501",
+          },
+          {
+            label: "#502 · merged",
+            href: "https://github.com/awslabs/automated-security-helper/pull/502",
+          },
+        ],
+      },
+      {
+        id: "ash-failure-guard",
+        date: "2026-09",
+        label: "Truthful scanner failure semantics",
+        repository: "awslabs/automated-security-helper",
+        detail:
+          "Migrates cdk-nag to its real 3.x validation API and reports an all-target execution failure as an error instead of a clean empty result.",
+        availability: "public-fork",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#514 · implementation",
+            href: "https://github.com/awslabs/automated-security-helper/pull/514",
           },
         ],
       },
@@ -560,9 +612,9 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
       "NixOS / nix · nix-windows / nix-windows-demo · aspect-build / rules_js",
     range: "2026",
     tone: "gold",
-    representedLineageEvents: 6,
+    representedLineageEvents: 8,
     summary:
-      "Nix now has an upstream Windows derivation builder, whole-project cross-build coverage, broader test compilation, and clearer lifecycle semantics. Public branches extend store cleanup and validation, while the Yarn PnP importer brings the same integrity focus to Bazel.",
+      "Nix now has an upstream Windows derivation builder and whole-project cross-build coverage. The current implementation adds enforceable libstore tests, content-addressed outputs, evaluator startup, and recursive Nix operation, while the Yarn PnP importer brings the same integrity focus to Bazel.",
     events: [
       {
         id: "nix-builder",
@@ -653,6 +705,38 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
         ],
       },
       {
+        id: "nix-libstore-runtime",
+        date: "2026-09",
+        label: "Windows libstore and output semantics",
+        repository: "NixOS/nix",
+        detail:
+          "Makes libstore tests enforceable on Windows, repairs the path semantics they expose, and enables content-addressed and fixed-output derivations plus evaluator startup.",
+        availability: "public-fork",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#16411 · implementation",
+            href: "https://github.com/NixOS/nix/pull/16411",
+          },
+        ],
+      },
+      {
+        id: "nix-recursive-runtime",
+        date: "2026-09",
+        label: "Recursive Nix on Windows",
+        repository: "NixOS/nix",
+        detail:
+          "Moves the recursive daemon into the shared builder and isolates the three platform differences behind narrow hooks.",
+        availability: "public-fork",
+        evidenceKind: "PR",
+        links: [
+          {
+            label: "#16414 · implementation",
+            href: "https://github.com/NixOS/nix/pull/16414",
+          },
+        ],
+      },
+      {
         id: "rules-js-pnp",
         date: "2026-08",
         label: "Yarn PnP zero-install importer",
@@ -663,7 +747,7 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
         evidenceKind: "PR",
         links: [
           {
-            label: "#2957 · open",
+            label: "#2957 · implementation",
             href: "https://github.com/aspect-build/rules_js/pull/2957",
           },
         ],

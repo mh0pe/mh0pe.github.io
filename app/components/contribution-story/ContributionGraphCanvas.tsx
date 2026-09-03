@@ -74,8 +74,15 @@ const nodeTypes: readonly ContributionGraphNodeType[] = [
 ];
 
 const agentColors: Record<string, string> = {
+  "claude-opus-5": "#d7b3ff",
   "claude-opus-4-8": "#bca8ff",
+  "claude-opus-4-7": "#c6a0ff",
   "claude-opus-4-6": "#ff9b7d",
+  "claude-opus-4-5": "#ffad8b",
+  "claude-opus-4-1": "#f5bf76",
+  "claude-opus-4": "#e7ca73",
+  "claude-3-opus": "#d2d987",
+  "claude-sonnet-5": "#8ce3d2",
   "claude-sonnet-4-6": "#c9f36b",
   "claude-fable-5": "#ffd27a",
   "github-copilot": "#68e4ea",

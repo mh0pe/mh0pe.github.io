@@ -1161,19 +1161,22 @@ export function ContributionStoryRail({
                     </ul>
                   </div>
 
-                  {activeGraph.agents.length > 0 ? (
+                  {activeGraph.agents.some((agent) => modelForAgent(agent)) ? (
                     <div
                       className="project-evolution-agents"
                       aria-label="Models recorded in related commit metadata"
                     >
-                      <span>Recorded model signals</span>
+                      <span>Attributed models</span>
                       <ul>
-                        {activeGraph.agents.map((agent) => (
-                          <li data-agent-marker={agent.marker} key={agent.id}>
-                            <i aria-hidden="true" />
-                            <span>{modelForAgent(agent).label}</span>
-                          </li>
-                        ))}
+                        {activeGraph.agents.flatMap((agent) => {
+                          const model = modelForAgent(agent);
+                          return model ? (
+                            <li data-agent-marker={agent.marker} key={agent.id}>
+                              <i aria-hidden="true" />
+                              <span>{model.label}</span>
+                            </li>
+                          ) : [];
+                        })}
                       </ul>
                     </div>
                   ) : null}

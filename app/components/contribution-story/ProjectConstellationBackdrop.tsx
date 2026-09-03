@@ -14,8 +14,6 @@ import {
 import { getContributionGraph } from "./graph-loaders";
 import {
   modelForAgent,
-  modelTone,
-  UNRECORDED_MODEL_ID,
   type AttributionModel,
 } from "../attribution-model";
 import { publishPortfolioLineageFocus } from "./lineage-focus";
@@ -266,6 +264,9 @@ function projectModelSignals(
   const signals = new Map<string, ProjectModelSignal>();
   for (const agent of agents) {
     const model = modelForAgent(agent);
+    if (!model) {
+      continue;
+    }
     const current = signals.get(model.id);
     signals.set(model.id, {
       ...model,
@@ -290,22 +291,9 @@ export function ProjectModelSpectrum({
 }) {
   const graph = getContributionGraph(project.graphId);
   const signals = projectModelSignals(graph.agents);
-  const displaySignals: readonly ProjectModelSignal[] =
-    signals.length > 0
-      ? signals
-      : [
-          {
-            id: UNRECORDED_MODEL_ID,
-            label: "Model not recorded",
-            provider: "No model signal in this snapshot",
-            aliases: [],
-            marker: "circle",
-            kind: "unrecorded",
-            sourceIds: [],
-            tone: modelTone(UNRECORDED_MODEL_ID),
-            recordedCommitCount: 0,
-          },
-        ];
+  if (signals.length === 0) {
+    return null;
+  }
 
   return (
     <div
@@ -317,7 +305,7 @@ export function ProjectModelSpectrum({
         <small>Related commit metadata</small>
       </div>
       <ul>
-        {displaySignals.map((signal) => (
+        {signals.map((signal) => (
           <li
             data-model-id={signal.id}
             data-model-kind={signal.kind}
@@ -326,23 +314,16 @@ export function ProjectModelSpectrum({
             style={
               { "--model-signal": signal.tone } as CSSProperties
             }
-            title={
-              signal.recordedCommitCount > 0
-                ? `${signal.label}: ${signal.recordedCommitCount} related ${
-                    signal.recordedCommitCount === 1 ? "commit" : "commits"
-                  }`
-                : "No model signal is recorded for this project in the current public snapshot."
-            }
+            title={`${signal.label}: ${signal.recordedCommitCount} related ${
+              signal.recordedCommitCount === 1 ? "commit" : "commits"
+            }`}
           >
             <i aria-hidden="true" />
             <span>
               <strong>{signal.label}</strong>
               <small>
-                {signal.recordedCommitCount > 0
-                  ? `${signal.recordedCommitCount} related ${
-                      signal.recordedCommitCount === 1 ? "commit" : "commits"
-                    }`
-                  : "No model signal in this snapshot"}
+                {signal.recordedCommitCount} related{" "}
+                {signal.recordedCommitCount === 1 ? "commit" : "commits"}
               </small>
             </span>
           </li>

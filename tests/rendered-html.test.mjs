@@ -195,14 +195,14 @@ test("server-renders an executive open-source portfolio", async () => {
   assert.match(html, /Automated Security Helper/i);
   assert.match(
     html,
-    /Workspace mode shipped in v3\.7\.0[\s\S]*?distributed public implementation available/i,
+    /Workspace mode shipped in v3\.7\.0[\s\S]*?pinned Nix scanner execution merged/i,
   );
   assert.match(html, /CloudFormation Guard correctness/i);
   assert.match(html, /Shipped in Guard 3\.2\.1/i);
   assert.match(html, /Nix on Windows/i);
   assert.match(
     html,
-    /Derivation builder and whole-project cross-build coverage merged[\s\S]*?reports build results under Wine/i,
+    /Derivation builder merged[\s\S]*?broader Windows runtime capabilities available[\s\S]*?content-addressed and fixed-output derivations/i,
   );
   assert.match(html, /Integrity-bound Yarn PnP for Bazel/i);
   assert.match(html, /zero-install importer/i);
@@ -306,7 +306,7 @@ test("pins the refreshed project catalog and positioning copy in source", async 
   assert.match(page, /SVG capability layers merged[\s\S]*?<dd>7<\/dd>/);
   assert.match(
     page,
-    /Derivation builder and whole-project cross-build coverage merged/,
+    /Derivation builder merged · broader Windows runtime capabilities available/,
   );
   assert.match(page, /Seven capability layers merged upstream/);
   assert.doesNotMatch(page, /I build the infrastructure/);

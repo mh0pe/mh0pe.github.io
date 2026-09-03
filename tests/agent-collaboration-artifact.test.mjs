@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { gzipSync } from "node:zlib";
+import { expandAgentAttributionData } from "../app/data/agent-attribution-contract.mjs";
 
 const root = new URL("../", import.meta.url);
 const approvedAccounts = new Set(["mh0pe", "awsmadi"]);
@@ -32,7 +33,8 @@ async function attributionArtifact() {
     new URL("app/data/agent-attribution.json", root),
     "utf8",
   );
-  return { source, data: JSON.parse(source) };
+  const raw = JSON.parse(source);
+  return { source, raw, data: expandAgentAttributionData(raw) };
 }
 
 function isRecord(value) {
@@ -75,7 +77,26 @@ function collaborationSection(html) {
 }
 
 test("publishes the bounded public attribution schema", async () => {
-  const { data } = await attributionArtifact();
+  const { raw, data } = await attributionArtifact();
+
+  assert.equal(raw.schemaVersion, 3);
+  assertExactKeys(
+    raw,
+    [
+      "agents",
+      "commits",
+      "coverage",
+      "filters",
+      "methodology",
+      "pullRequests",
+      "repositories",
+      "schemaVersion",
+      "snapshot",
+    ],
+    "Compact attribution artifact",
+  );
+  assert.ok(Array.isArray(raw.repositories) && raw.repositories.length > 0);
+  assert.ok(Array.isArray(raw.pullRequests));
 
   assertExactKeys(
     data,
@@ -116,14 +137,14 @@ test("publishes the bounded public attribution schema", async () => {
   );
   assert.equal(
     data.methodology.metricLabel,
-    "GitHub-reported added lines in AI-associated commits",
+    "GitHub-reported added lines in model-attributed commits",
   );
   assert.equal(data.methodology.mergeCommitsExcluded, true);
   assert.equal(data.methodology.globalShaDeduplication, true);
   assert.equal(data.methodology.sharedAgentPolicy, "shared-bucket");
   assert.equal(
     data.methodology.modelSignalPolicy,
-    "recorded-models-with-platform-fallback",
+    "recorded-models-with-awsmadi-date-default",
   );
 
   assertExactKeys(
@@ -161,10 +182,6 @@ test("publishes the bounded public attribution schema", async () => {
   }
   assert.equal(
     data.agents.find((agent) => agent.id === "github-copilot")?.kind,
-    "platform",
-  );
-  assert.equal(
-    data.agents.find((agent) => agent.id === "openai-codex")?.kind,
     "platform",
   );
   assert.ok(
@@ -319,11 +336,11 @@ test("artifact values contain no private or source-level payloads", async () => 
 test("matches the audited public snapshot totals", async () => {
   const { data } = await attributionArtifact();
 
-  assert.equal(data.coverage.candidateShas, 126);
+  assert.equal(data.coverage.candidateShas, 1_634);
   assert.equal(data.coverage.duplicateOccurrencesRemoved, 29);
-  assert.equal(data.coverage.mergeCommitsExcluded, 8);
+  assert.equal(data.coverage.mergeCommitsExcluded, 141);
   assert.equal(data.coverage.zeroDiffCommits, 10);
-  assert.equal(data.coverage.measuredShas, 108);
+  assert.equal(data.coverage.measuredShas, 1_483);
   assert.deepEqual(data.coverage.warnings, []);
   assert.equal(data.commits.length, data.coverage.measuredShas);
 
@@ -334,7 +351,7 @@ test("matches the audited public snapshot totals", async () => {
     }),
     { code: 0, allText: 0 },
   );
-  assert.deepEqual(totals, { code: 46_418, allText: 48_104 });
+  assert.deepEqual(totals, { code: 379_449, allText: 448_676 });
 
   const byAgent = new Map();
   for (const commit of data.commits) {
@@ -350,11 +367,17 @@ test("matches the audited public snapshot totals", async () => {
   }
 
   assert.deepEqual(Object.fromEntries([...byAgent].sort()), {
+    "claude-3-opus": { commits: 9, code: 213, allText: 246 },
     "claude-fable-5": { commits: 16, code: 21_031, allText: 22_494 },
-    "claude-opus-4-6": { commits: 10, code: 603, allText: 634 },
+    "claude-opus-4": { commits: 1, code: 0, allText: 3 },
+    "claude-opus-4-5": { commits: 11, code: 2_392, allText: 2_911 },
+    "claude-opus-4-6": { commits: 96, code: 17_236, allText: 52_998 },
+    "claude-opus-4-7": { commits: 322, code: 92_269, allText: 100_332 },
     "claude-opus-4-8": { commits: 36, code: 15_418, allText: 15_432 },
+    "claude-opus-5": { commits: 944, code: 219_257, allText: 242_446 },
     "claude-sonnet-4-6": { commits: 5, code: 5_884, allText: 5_904 },
     "github-copilot": { commits: 41, code: 3_482, allText: 3_640 },
+    "openai-codex": { commits: 2, code: 2_267, allText: 2_270 },
   });
 });
 
@@ -370,7 +393,7 @@ test("server-renders the default collaboration explorer as evidence UI", async (
   );
 
   assert.match(section, /03 \/ The public record/i);
-  assert.match(section, /Models recorded in the work\./i);
+  assert.match(section, /Models behind the work\./i);
   assert.match(
     section,
     /<details class="attribution-record">(?![^>]*\bopen\b)/i,
@@ -383,7 +406,7 @@ test("server-renders the default collaboration explorer as evidence UI", async (
   );
   assert.match(
     section,
-    /GitHub-reported added lines in commits with model signals/i,
+    /GitHub-reported added lines in model-attributed commits/i,
   );
   assert.match(section, /Repository/i);
   assert.match(section, /Delivery surface/i);
@@ -394,7 +417,7 @@ test("server-renders the default collaboration explorer as evidence UI", async (
   assert.match(section, /Code/i);
   assert.match(section, /Claude Opus 4\.8/i);
   assert.match(section, /Claude Sonnet 4\.6/i);
-  assert.match(section, /Model not recorded/i);
+  assert.doesNotMatch(section, /Model not recorded|No model data/i);
   assert.match(section, /Model focus/i);
   assert.doesNotMatch(section, /GitHub Copilot|Copilot-authored/i);
   assert.match(section, /role="status"/i);
@@ -454,20 +477,20 @@ test("keeps attribution data and rendered evidence within performance budgets", 
   );
 
   assert.ok(
-    Buffer.byteLength(source) <= 100 * 1024,
-    "Attribution JSON should remain at or below 100 KB raw",
+    Buffer.byteLength(source) <= 128 * 1024,
+    "Compact attribution JSON should remain at or below 128 KB raw",
   );
   assert.ok(
-    gzipSync(source).byteLength <= 20 * 1024,
-    "Attribution JSON should remain at or below 20 KB gzip",
+    gzipSync(source).byteLength <= 52 * 1024,
+    "Compact attribution JSON should remain at or below 52 KB gzip",
   );
   assert.ok(
     Buffer.byteLength(html) <= 400 * 1024,
     "Rendered portfolio with inline contribution graphs should remain at or below 400 KB raw",
   );
   assert.ok(
-    gzipSync(html).byteLength <= 52 * 1024,
-    "Rendered portfolio with inline contribution graphs should remain at or below 52 KB gzip",
+    gzipSync(html).byteLength <= 56 * 1024,
+    "Rendered portfolio with inline contribution graphs should remain at or below 56 KB gzip",
   );
   assert.ok(
     openingTags.length < 3_500,

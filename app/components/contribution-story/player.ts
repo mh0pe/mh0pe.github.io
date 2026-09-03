@@ -257,7 +257,7 @@ function commitItems(
         ...(exactFileEdges.length > 0
           ? [{ label: "Exact files", value: String(exactFileEdges.length) }]
           : []),
-        ...(agent ? [{ label: "Recorded model", value: agent }] : []),
+        ...(agent ? [{ label: "Attributed model", value: agent }] : []),
         ...metricFacts(additions, deletions),
       ],
       commitId: commit.sha,

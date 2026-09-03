@@ -1,27 +1,27 @@
 {
   "accounts": {
     "awsmadi": {
-      "attributed_contribution_pull_requests": 133,
-      "authored_pull_requests": 133,
+      "attributed_contribution_pull_requests": 140,
+      "authored_pull_requests": 140,
       "authored_pull_requests_by_state": {
         "closed_unmerged": 16,
-        "merged": 97,
-        "open": 19,
+        "merged": 102,
+        "open": 21,
         "open_draft": 1
       },
       "copilot_authored_contribution_pull_requests": 0,
-      "merged_attributed_contribution_pull_requests": 97,
-      "merged_authored_pull_requests": 97,
-      "merged_authored_pull_requests_to_external_repositories": 97,
+      "merged_attributed_contribution_pull_requests": 102,
+      "merged_authored_pull_requests": 102,
+      "merged_authored_pull_requests_to_external_repositories": 102,
       "owned_branch_authored_commit_occurrences": 0,
       "owned_branch_committer_commit_occurrences": 0,
       "public_owned_nonfork_repositories": 0,
       "public_owned_repositories": 14,
-      "pull_requests_with_owned_head": 46,
+      "pull_requests_with_owned_head": 48,
       "search_discovered_detail_author_mismatches": 0,
-      "search_discovered_pull_requests": 133,
-      "strict_authored_commit_occurrences": 1129,
-      "strict_committer_commit_occurrences": 1025
+      "search_discovered_pull_requests": 140,
+      "strict_authored_commit_occurrences": 1338,
+      "strict_committer_commit_occurrences": 1234
     },
     "mh0pe": {
       "attributed_contribution_pull_requests": 73,
@@ -29,47 +29,47 @@
       "authored_pull_requests_by_state": {
         "closed_unmerged": 7,
         "merged": 26,
-        "open": 28,
-        "open_draft": 2
+        "open": 27,
+        "open_draft": 3
       },
       "copilot_authored_contribution_pull_requests": 10,
       "merged_attributed_contribution_pull_requests": 33,
       "merged_authored_pull_requests": 26,
       "merged_authored_pull_requests_to_external_repositories": 12,
-      "owned_branch_authored_commit_occurrences": 1,
-      "owned_branch_committer_commit_occurrences": 1,
+      "owned_branch_authored_commit_occurrences": 3,
+      "owned_branch_committer_commit_occurrences": 3,
       "public_owned_nonfork_repositories": 1,
       "public_owned_repositories": 24,
       "pull_requests_with_owned_head": 65,
       "search_discovered_detail_author_mismatches": 10,
       "search_discovered_pull_requests": 73,
-      "strict_authored_commit_occurrences": 142,
-      "strict_committer_commit_occurrences": 143
+      "strict_authored_commit_occurrences": 144,
+      "strict_committer_commit_occurrences": 145
     }
   },
   "collection_status": "complete",
   "combined": {
-    "account_resolved_commit_occurrences": 1296,
-    "attributed_contribution_pull_requests": 206,
-    "authored_pull_requests": 196,
-    "collected_commit_occurrences": 1506,
+    "account_resolved_commit_occurrences": 1507,
+    "attributed_contribution_pull_requests": 213,
+    "authored_pull_requests": 203,
+    "collected_commit_occurrences": 1717,
     "copilot_authored_contribution_pull_requests": 10,
     "distinct_pr_target_repositories": 44,
-    "merged_attributed_contribution_pull_requests": 130,
-    "merged_attributed_contribution_pull_requests_to_external_repositories": 109,
+    "merged_attributed_contribution_pull_requests": 135,
+    "merged_attributed_contribution_pull_requests_to_external_repositories": 114,
     "merged_attributed_contribution_pull_requests_to_owned_repositories": 21,
-    "merged_authored_pull_requests": 123,
-    "merged_authored_pull_requests_to_external_repositories": 109,
+    "merged_authored_pull_requests": 128,
+    "merged_authored_pull_requests_to_external_repositories": 114,
     "merged_authored_pull_requests_to_owned_repositories": 14,
-    "owned_branch_commit_occurrences": 1,
+    "owned_branch_commit_occurrences": 3,
     "public_owned_nonfork_repositories": 1,
     "public_owned_repositories": 38,
-    "pull_request_commit_memberships": 1800,
-    "pull_requests": 206,
-    "pull_requests_with_owned_head": 111,
+    "pull_request_commit_memberships": 2009,
+    "pull_requests": 213,
+    "pull_requests_with_owned_head": 113,
     "search_discovered_detail_author_mismatches": 10,
-    "search_discovered_pull_requests": 206,
-    "submitted_pr_context_commit_occurrences": 1505
+    "search_discovered_pull_requests": 213,
+    "submitted_pr_context_commit_occurrences": 1714
   },
   "counting_rules": {
     "attributed_contribution_pull_requests": "Every public PR returned by GitHub Search for is:pr is:public author:<account>. Copilot-authored PRs returned by an account query count as account-directed contributions while retaining Copilot as the detail author.",
@@ -81,15 +81,15 @@
     "strict_authored_commits": "Unique repository-plus-SHA occurrences whose GitHub-resolved author login equals an included account.",
     "submitted_pr_context_commits": "Every surviving commit on every Search-discovered submitted PR. Context commits remain separate from strict account authorship counts."
   },
-  "cutoff_date": "2026-08-31",
+  "cutoff_date": "2026-09-03",
   "fork_delivery_audit": {
     "repositories_audited": 37,
-    "fork_only_commits": 1248,
-    "residual_commits_without_collected_pr": 684,
-    "account_attributed_residual_commits": 259,
-    "pr_covered_shas_excluded": 1640
+    "fork_only_commits": 1438,
+    "residual_commits_without_collected_pr": 714,
+    "account_attributed_residual_commits": 274,
+    "pr_covered_shas_excluded": 1856
   },
-  "generated_at": "2026-08-31T21:39:01.870029Z",
+  "generated_at": "2026-09-03T15:29:34.002047Z",
   "public_only": true,
   "schema_version": "1.0.0"
 }

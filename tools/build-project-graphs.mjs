@@ -17,6 +17,7 @@ import {
 } from "../app/data/contribution-graph-contract.mjs";
 import { writeCompactGraphCatalog } from "./build-compact-project-graphs.mjs";
 import { writeProjectPlayerRecords } from "./build-project-player-records.mjs";
+import { expandAgentAttributionData } from "../app/data/agent-attribution-contract.mjs";
 
 const execFileAsync = promisify(execFile);
 const siteRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -56,7 +57,7 @@ const graphSpecs = [
     title: "Automated Security Helper",
     attributionRepositories: ["awslabs/automated-security-helper"],
     impact:
-      "One workspace can be secured as a system while every project retains its own execution boundary, policy context, verdict, and traceable output.",
+      "One workspace can be secured as a system while scanner supply, file selection, execution failures, policy context, and traceable output remain explicit.",
     evidences: [
       pr(
         "ash-workspace",
@@ -78,6 +79,46 @@ const graphSpecs = [
         "awslabs/automated-security-helper",
         494,
         "public-fork",
+      ),
+      pr(
+        "ash-scan-integrity",
+        "Nested ignore and scan-path integrity",
+        "awslabs/automated-security-helper",
+        501,
+        "upstream",
+        { maxCommits: 1, maxFiles: 1 },
+      ),
+      pr(
+        "ash-secret-paths",
+        "Stable detect-secrets scan roots",
+        "awslabs/automated-security-helper",
+        502,
+        "upstream",
+        { maxCommits: 1, maxFiles: 1 },
+      ),
+      pr(
+        "ash-nix-toolchain",
+        "Pinned multi-language scanner execution",
+        "awslabs/automated-security-helper",
+        508,
+        "upstream",
+        { maxCommits: 1, maxFiles: 1 },
+      ),
+      pr(
+        "ash-failure-guard",
+        "cdk-nag 3.x and per-target failures",
+        "awslabs/automated-security-helper",
+        514,
+        "public-fork",
+        { maxCommits: 1, maxFiles: 1 },
+      ),
+      pr(
+        "ash-dependency-lanes",
+        "Dependency upgrades grouped by blast radius",
+        "awslabs/automated-security-helper",
+        515,
+        "upstream",
+        { maxCommits: 1, maxFiles: 1 },
       ),
       pr(
         "ash-transpiler",
@@ -156,7 +197,7 @@ const graphSpecs = [
       "awsmadi/nix-windows-demo",
     ],
     impact:
-      "Nix now has an upstream Windows derivation builder, broader Windows test compilation, and whole-project cross-build assurance.",
+      "Nix on Windows now spans build execution, enforceable libstore tests, content-addressed outputs, evaluator startup, and recursive operation.",
     evidences: [
       pr(
         "nix-builder",
@@ -206,6 +247,22 @@ const graphSpecs = [
         "nix-windows/nix-windows-demo",
         1,
         "public-fork",
+      ),
+      pr(
+        "nix-libstore-runtime",
+        "Windows libstore gate and output semantics",
+        "NixOS/nix",
+        16411,
+        "public-fork",
+        { maxCommits: 1, maxFiles: 2 },
+      ),
+      pr(
+        "nix-recursive-runtime",
+        "Recursive Nix on Windows",
+        "NixOS/nix",
+        16414,
+        "public-fork",
+        { maxCommits: 1, maxFiles: 2 },
       ),
     ],
   },
@@ -436,7 +493,7 @@ const graphSpecs = [
   return leftRank - rightRank;
 });
 
-function pr(id, label, repository, number, availability) {
+function pr(id, label, repository, number, availability, sampling = undefined) {
   return {
     id,
     label,
@@ -445,7 +502,16 @@ function pr(id, label, repository, number, availability) {
     availability,
     kind: "pull-request",
     href: `https://github.com/${repository}/pull/${number}`,
+    ...(sampling ? { sampling } : {}),
   };
+}
+
+function evidenceCommitLimit(evidence) {
+  return evidence.sampling?.maxCommits ?? maxCommitsPerEvidence;
+}
+
+function evidenceFileLimit(evidence) {
+  return evidence.sampling?.maxFiles ?? maxFilesPerEvidence;
 }
 
 async function readJsonLines(path) {
@@ -592,7 +658,7 @@ async function hydrateSampledCommitDetails(
   fetchCommitDetail = ({ repository, sha }) => ghCommitDetail(repository, sha),
 ) {
   const selections = items.map((item) =>
-    sampleEvenly(item.evidence.commits, maxCommitsPerEvidence),
+    sampleEvenly(item.evidence.commits, evidenceCommitLimit(item.evidence)),
   );
   const detailsByKey = new Map();
 
@@ -999,6 +1065,7 @@ function changedFileWeight(file) {
 }
 
 function selectRepresentativeFiles(evidence, selectedCommits) {
+  const fileLimit = evidenceFileLimit(evidence);
   const aggregateByPath = new Map(
     evidence.files.map((file) => [file.filename, file]),
   );
@@ -1022,7 +1089,7 @@ function selectRepresentativeFiles(evidence, selectedCommits) {
         right.weight - left.weight ||
         left.file.filename.localeCompare(right.file.filename),
     )
-    .slice(0, Math.min(6, maxFilesPerEvidence))
+    .slice(0, Math.min(6, fileLimit))
     .map((entry) => entry.file);
   const selectedByPath = new Map(
     exactCandidates.map((file) => [file.filename, file]),
@@ -1033,7 +1100,7 @@ function selectRepresentativeFiles(evidence, selectedCommits) {
       left.filename.localeCompare(right.filename),
   );
   for (const file of aggregateCandidates) {
-    if (selectedByPath.size >= maxFilesPerEvidence) {
+    if (selectedByPath.size >= fileLimit) {
       break;
     }
     selectedByPath.set(file.filename, file);
@@ -1047,7 +1114,7 @@ function exactDetailCoverage(evidence) {
   }
   const sampledCommits =
     evidence.sampledCommits ??
-    sampleEvenly(evidence.commits, maxCommitsPerEvidence);
+    sampleEvenly(evidence.commits, evidenceCommitLimit(evidence));
   const resolved = sampledCommits.filter((entry) =>
     Array.isArray(entry.exactFiles),
   ).length;
@@ -1138,7 +1205,7 @@ function buildGraph(spec, evidences, agentBySha, prByUrl, agents) {
 
     const selectedCommits =
       evidence.sampledCommits ??
-      sampleEvenly(evidence.commits, maxCommitsPerEvidence);
+      sampleEvenly(evidence.commits, evidenceCommitLimit(evidence));
     const commitNodeIdBySha = new Map();
     for (const entry of selectedCommits) {
       const agentId = agentBySha.get(entry.sha) ?? null;
@@ -1464,7 +1531,9 @@ function assertPublicSafeGraph(graph) {
 async function main() {
   const [pullRequests, attribution, historyManifest] = await Promise.all([
     readJsonLines(resolve(historyRoot, "pull_requests.jsonl")),
-    readFile(attributionPath, "utf8").then(JSON.parse),
+    readFile(attributionPath, "utf8")
+      .then(JSON.parse)
+      .then(expandAgentAttributionData),
     readFile(resolve(historyRoot, "manifest.json"), "utf8").then(JSON.parse),
   ]);
   if (

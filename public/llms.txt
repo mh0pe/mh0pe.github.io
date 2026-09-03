@@ -11,7 +11,7 @@ Madison Hope Steiner is a Principal AI Architect whose public engineering identi
 
 ## Public work represented
 
-The portfolio covers workspace-scale security orchestration, agent teams, durable decision memory, organizational learning systems, cloud architecture, Nix on Windows, browser runtimes, and developer tooling. Each project links to public repositories, pull requests, commits, files, reviews, and documentation where available.
+The portfolio covers workspace-scale security orchestration, reproducible scanner execution, agent teams, durable decision memory, organizational learning systems, cloud architecture, Nix runtime work on Windows, browser runtimes, and developer tooling. Each project links to public repositories, pull requests, commits, files, reviews, and documentation where available.
 
 ## Evidence policy
 

@@ -1,3 +1,5 @@
+import { expandAgentAttributionData } from "../data/agent-attribution-contract.mjs";
+
 export type AttributionSurface = "all" | "pr" | "fork-only";
 export type AttributionCommitSurface = "pr" | "owned-nonfork" | "fork-only";
 export type AttributionScope = "code" | "all-text";
@@ -21,7 +23,7 @@ export interface AttributionAgent {
 }
 
 export interface AttributionModel extends Omit<AttributionAgent, "kind"> {
-  readonly kind: "model" | "unrecorded" | "multiple";
+  readonly kind: "model" | "multiple";
   readonly sourceIds: readonly string[];
   readonly tone: string;
 }
@@ -69,7 +71,9 @@ export interface AgentAttributionData {
     readonly globalShaDeduplication: boolean;
     readonly defaultScope: "code";
     readonly sharedAgentPolicy: "shared-bucket";
-    readonly modelSignalPolicy?: "recorded-models-with-platform-fallback";
+    readonly modelSignalPolicy?:
+      | "recorded-models-with-platform-fallback"
+      | "recorded-models-with-awsmadi-date-default";
   };
   readonly filters: {
     readonly repositories: readonly string[];
@@ -90,6 +94,10 @@ export interface AgentAttributionData {
 }
 
 export function readAgentAttributionData(value: unknown): AgentAttributionData {
+  const expanded = expandAgentAttributionData(value);
+  if (expanded !== value) {
+    return readAgentAttributionData(expanded);
+  }
   if (
     typeof value !== "object" ||
     value === null ||
@@ -173,15 +181,20 @@ export interface AttributionAgentSummary {
   readonly percentage: number;
 }
 
-export const UNRECORDED_MODEL_ID = "model-not-recorded";
 export const MULTIPLE_MODELS_ID = "multiple-recorded-models";
 
 const modelTones: Readonly<Record<string, string>> = {
+  "claude-opus-5": "#d6b4ff",
   "claude-opus-4-8": "#bca8ff",
+  "claude-opus-4-7": "#9e90ff",
   "claude-opus-4-6": "#ff9b7d",
+  "claude-opus-4-5": "#ffb36f",
+  "claude-opus-4-1": "#8bdfe8",
+  "claude-opus-4": "#68c8e8",
+  "claude-3-opus": "#71aee8",
+  "claude-sonnet-5": "#e2f775",
   "claude-sonnet-4-6": "#c9f36b",
   "claude-fable-5": "#ffd27a",
-  [UNRECORDED_MODEL_ID]: "#8ea3aa",
   [MULTIPLE_MODELS_ID]: "#68e4ea",
 };
 
@@ -189,7 +202,9 @@ export function modelTone(id: string): string {
   return modelTones[id] ?? "#68e4ea";
 }
 
-export function modelForAgent(agent: AttributionAgent): AttributionModel {
+export function modelForAgent(
+  agent: AttributionAgent,
+): AttributionModel | null {
   const isModel =
     agent.kind === "model" ||
     (agent.kind === undefined &&
@@ -216,16 +231,7 @@ export function modelForAgent(agent: AttributionAgent): AttributionModel {
       tone: modelTone(MULTIPLE_MODELS_ID),
     };
   }
-  return {
-    id: UNRECORDED_MODEL_ID,
-    label: "Model not recorded",
-    provider: "Platform metadata only",
-    aliases: [],
-    marker: "circle",
-    kind: "unrecorded",
-    sourceIds: [agent.id],
-    tone: modelTone(UNRECORDED_MODEL_ID),
-  };
+  return null;
 }
 
 export function modelIdsForCommit(
@@ -235,11 +241,12 @@ export function modelIdsForCommit(
   if (commit.modelIds && commit.modelIds.length > 0) {
     return [...new Set(commit.modelIds)];
   }
-  if (commit.platformIds && commit.platformIds.length > 0) {
-    return [UNRECORDED_MODEL_ID];
+  if (data.schemaVersion === 2) {
+    return [];
   }
   const agent = data.agents.find((candidate) => candidate.id === commit.agentId);
-  return agent ? [modelForAgent(agent).id] : [UNRECORDED_MODEL_ID];
+  const model = agent ? modelForAgent(agent) : null;
+  return model ? [model.id] : [];
 }
 
 export function attributionModels(
@@ -248,6 +255,9 @@ export function attributionModels(
   const catalog = new Map<string, AttributionModel>();
   for (const agent of data.agents) {
     const model = modelForAgent(agent);
+    if (!model) {
+      continue;
+    }
     const current = catalog.get(model.id);
     catalog.set(
       model.id,
@@ -415,9 +425,13 @@ export function attributionEvidence(
   filters: AttributionFilters,
 ): readonly AttributionCommit[] {
   const commits = filterAttributionCommits(data, filters).filter(
-    (commit) =>
-      filters.agent === "all" ||
-      modelIdsForCommit(data, commit).includes(filters.agent),
+    (commit) => {
+      const modelIds = modelIdsForCommit(data, commit);
+      return (
+        modelIds.length > 0 &&
+        (filters.agent === "all" || modelIds.includes(filters.agent))
+      );
+    },
   );
 
   return [...commits].sort((left, right) => {

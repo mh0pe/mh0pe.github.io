@@ -220,7 +220,7 @@ test("agent focus narrows evidence without hiding the comparison chart", () => {
   assert.equal(evidence[0].agentId, "agent-b");
 });
 
-test("v2 keeps models distinct from platforms and preserves multi-model totals", () => {
+test("v2 keeps models distinct and omits platform-only rows from model totals", () => {
   const {
     aggregateAttribution,
     attributionModels,
@@ -300,12 +300,9 @@ test("v2 keeps models distinct from platforms and preserves multi-model totals",
     [
       ["model-a", "model"],
       ["model-b", "model"],
-      ["model-not-recorded", "unrecorded"],
     ],
   );
-  assert.deepEqual(modelIdsForCommit(data, data.commits[1]), [
-    "model-not-recorded",
-  ]);
+  assert.deepEqual(modelIdsForCommit(data, data.commits[1]), []);
   assert.deepEqual(
     aggregateAttribution(data, DEFAULT_ATTRIBUTION_FILTERS).map((row) => [
       row.agent.id,
@@ -315,7 +312,6 @@ test("v2 keeps models distinct from platforms and preserves multi-model totals",
     [
       ["model-a", 130, 1.5],
       ["model-b", 30, 0.5],
-      ["model-not-recorded", 30, 1],
     ],
   );
 });

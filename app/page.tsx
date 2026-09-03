@@ -196,13 +196,13 @@ const featuredProjects = [
     repository: "awslabs / automated-security-helper",
     repositoryHref: "https://github.com/awslabs/automated-security-helper",
     period: "Contributor and public maintainer activity · 2024–2026",
-    focus: "Workspace orchestration, MCP confinement, and deployable execution",
+    focus: "Workspace orchestration, reproducible toolchains, and scan integrity",
     status:
-      "Workspace mode shipped in v3.7.0 · distributed public implementation available",
+      "Workspace mode shipped in v3.7.0 · pinned Nix scanner execution merged",
     context:
       "ASH coordinates source, dependency, infrastructure, and agent-workflow security across developer environments.",
     value:
-      "Advanced ASH into workspace-scale security orchestration with inspectable plans, independently scoped project scans, project-aware reporting, workspace policy, and confined MCP access. A linked public implementation extends that model to distributed execution and deployable AWS targets.",
+      "Advanced ASH into workspace-scale security orchestration, then strengthened the execution beneath it with a pinned multi-language scanner environment, correctly scoped ignore rules, stable finding paths, and explicit failure semantics.",
     contributions: [
       {
         evidenceId: "ash-workspace",
@@ -217,8 +217,16 @@ const featuredProjects = [
         text: "Built a public execute-and-collect architecture with scanner sharding and deployable AgentCore, Fargate, Lambda, and CodePipeline targets.",
       },
       {
-        evidenceId: "ash-assurance-python",
-        text: "Strengthened measurement with broader Python package coverage and TypeScript gates whose denominator is pinned to the intended source set.",
+        evidenceId: "ash-nix-toolchain",
+        text: "Added a hash-pinned Nix mode that supplies ten scanners across Linux and macOS, x86-64 and ARM, without requiring adopters to build a container image.",
+      },
+      {
+        evidenceId: "ash-scan-integrity",
+        text: "Closed false-confidence paths by applying nested ignore rules to the correct subtree, reporting their effect, and making secret-finding paths stable across Windows drives.",
+      },
+      {
+        evidenceId: "ash-failure-guard",
+        text: "Made all-target scanner failures observable as execution errors and migrated the cdk-nag integration to its real 3.x policy-validation API.",
       },
     ],
     links: [
@@ -264,14 +272,43 @@ const featuredProjects = [
         evidenceId: "ash-distributed",
       },
       {
-        kind: "Capability",
-        label: "#499 · Python package coverage depth",
+        kind: "PR",
+        label: "#499 · Python package coverage depth · merged",
         href: "https://github.com/awslabs/automated-security-helper/pull/499",
       },
       {
         kind: "Capability",
         label: "#500 · TypeScript CI with pinned scope",
         href: "https://github.com/awslabs/automated-security-helper/pull/500",
+      },
+      {
+        kind: "PR",
+        label: "#501 · nested ignore semantics and exclusion reporting · merged",
+        href: "https://github.com/awslabs/automated-security-helper/pull/501",
+        evidenceId: "ash-scan-integrity",
+      },
+      {
+        kind: "PR",
+        label: "#502 · stable detect-secrets scan roots · merged",
+        href: "https://github.com/awslabs/automated-security-helper/pull/502",
+        evidenceId: "ash-secret-paths",
+      },
+      {
+        kind: "PR",
+        label: "#508 · pinned Nix scanner mode · merged",
+        href: "https://github.com/awslabs/automated-security-helper/pull/508",
+        evidenceId: "ash-nix-toolchain",
+      },
+      {
+        kind: "Capability",
+        label: "#514 · cdk-nag 3.x and per-target failure reporting",
+        href: "https://github.com/awslabs/automated-security-helper/pull/514",
+        evidenceId: "ash-failure-guard",
+      },
+      {
+        kind: "PR",
+        label: "#515 · dependency upgrade lanes by risk · merged",
+        href: "https://github.com/awslabs/automated-security-helper/pull/515",
       },
       {
         kind: "PR",
@@ -388,12 +425,12 @@ const featuredProjects = [
     repository: "NixOS / nix + awsmadi / nix",
     repositoryHref: "https://github.com/NixOS/nix",
     period: "Contributor · 2026",
-    focus: "Windows build execution, cross-build assurance, and lifecycle semantics",
-    status: "Derivation builder and whole-project cross-build coverage merged",
+    focus: "Windows build execution, libstore assurance, and recursive operation",
+    status: "Derivation builder merged · broader Windows runtime capabilities available",
     context:
       "Nix brings reproducible build and package semantics to a growing Windows implementation.",
     value:
-      "Advanced the Windows build chain from its portability foundation to an upstream derivation builder, whole-project cross-build coverage, broader test compilation, and clearer platform-specific lifecycle semantics.",
+      "Advanced the Windows build chain from its portability foundation to an upstream derivation builder and whole-project cross-build coverage, then extended libstore testing, content-addressed outputs, evaluator startup, and recursive Nix operation.",
     contributions: [
       {
         evidenceId: "nix-builder",
@@ -404,8 +441,12 @@ const featuredProjects = [
         text: "Enabled large COFF objects across Windows targets and expanded CI from a narrow utility suite to the complete MinGW cross-build graph.",
       },
       {
-        evidenceId: "nix-cert-startup",
-        text: "Improved certificate-path startup handling, with public-branch capabilities for handle-relative store cleanup and post-startup configuration loading.",
+        evidenceId: "nix-libstore-runtime",
+        text: "Turned Windows libstore tests into a real merge gate while enabling content-addressed and fixed-output derivations and restoring evaluator startup under Wine.",
+      },
+      {
+        evidenceId: "nix-recursive-runtime",
+        text: "Lifted the recursive-Nix daemon into the shared builder and supplied the narrow platform hooks needed to make it available on Windows.",
       },
     ],
     links: [
@@ -455,6 +496,18 @@ const featuredProjects = [
         label: "Windows validation harness · independent result checks",
         href: "https://github.com/nix-windows/nix-windows-demo/pull/1",
         evidenceId: "nix-validation-harness",
+      },
+      {
+        kind: "Capability",
+        label: "#16411 · Windows libstore gate and content-addressed outputs",
+        href: "https://github.com/NixOS/nix/pull/16411",
+        evidenceId: "nix-libstore-runtime",
+      },
+      {
+        kind: "Capability",
+        label: "#16414 · recursive Nix on Windows",
+        href: "https://github.com/NixOS/nix/pull/16414",
+        evidenceId: "nix-recursive-runtime",
       },
       {
         kind: "PR",
@@ -1233,8 +1286,9 @@ export default function Home() {
               <div>
                 <h2>Capabilities available beyond current upstream releases.</h2>
                 <p>
-                  Each implementation is usable from its linked branch. Source
-                  labels keep upstream integration status visible.
+                  Explore the project constellation or open the linked work to
+                  trace each capability from decision through code, tests, and
+                  review.
                 </p>
               </div>
             </div>

@@ -13,6 +13,12 @@
     "export:pages": "node tools/export-github-pages.mjs",
     "refresh:graphs": "node tools/build-project-graphs.mjs",
     "refresh:player-records": "node tools/refresh-project-player-records.mjs",
+    "refresh:credential-badges": "node tools/refresh-credential-badges.mjs",
+    "motion:studio": "remotion studio remotion/index.ts",
+    "motion:render": "remotion still remotion/index.ts OperatingArc public/motion/operating-arc-poster.jpg --frame=149 --image-format=jpeg --jpeg-quality=88 --overwrite && remotion render remotion/index.ts OperatingArc public/motion/operating-arc.mp4 --codec=h264 --crf=26 --muted --overwrite",
+    "motion:verify": "node --test tests/motion-artifact.test.mjs",
+    "preview:pages": "node tools/serve-pages.mjs",
+    "qa:viewports": "node tools/viewport-audit.mjs",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "npm run build:pages && node --test tests/*.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern pages-dist"
@@ -29,6 +35,7 @@
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.47.0",
     "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@remotion/cli": "4.0.520",
     "@tailwindcss/postcss": "4.2.1",
     "@types/d3-force": "^3.0.10",
     "@types/node": "22.19.19",
@@ -40,7 +47,9 @@
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.11",
     "react-server-dom-webpack": "19.2.6",
+    "remotion": "4.0.520",
     "tailwindcss": "4.2.1",
+    "tsx": "4.23.13",
     "typescript": "5.9.3",
     "vinext": "0.0.50",
     "vite": "8.1.5",
@@ -61,6 +70,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@11.11.0+sha512.4463f65fd80ed80d69bc1d4bf163ee94f605c7380fc318bb5b2ebe15f8cd12d49c51a4d59e951b401e764d3b6ca751cbf51bc50ed7001a6bcb4935e684c34882"
+  "license": "ISC"
 }

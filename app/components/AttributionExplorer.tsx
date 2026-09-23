@@ -30,6 +30,7 @@ import {
   type AttributionSurface,
 } from "./attribution-model";
 import agentAttribution from "../data/agent-attribution.json";
+import BklitModelBar from "./v3/BklitModelBar";
 
 export type {
   AgentAttributionData,
@@ -45,6 +46,7 @@ export type {
 } from "./attribution-model";
 
 const integerFormatter = new Intl.NumberFormat("en-US");
+const INLINE_COMMIT_EVIDENCE_LIMIT = 12;
 const percentageFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
 });
@@ -153,7 +155,7 @@ function EvidenceItem({
   const additions =
     scope === "code" ? commit.additions.code : commit.additions.allText;
   const deliverySurface = commit.surfaces.includes("pr")
-    ? "PR work"
+    ? "Change sent for review"
     : commit.surfaces.includes("fork-only")
       ? "public fork implementation"
       : "owned public repository";
@@ -165,11 +167,11 @@ function EvidenceItem({
           <span>{commit.repository}</span>
           <span aria-hidden="true"> / </span>
           <code>{commit.sha.slice(0, 7)}</code>
-          <span className="visually-hidden"> commit (opens in a new tab)</span>
+          <span className="visually-hidden"> code change (opens in a new tab)</span>
           <Arrow />
         </a>
         <span>
-          {modelLabel} · {integerFormatter.format(additions)}{" "}
+          Model association: {modelLabel} · {integerFormatter.format(additions)}{" "}
           {scope === "code" ? "code" : "text"} additions ·{" "}
           <time dateTime={commit.date}>
             {dateFormatter.format(new Date(commit.date))}
@@ -203,13 +205,15 @@ function EvidenceItem({
         </time>
       </div>
       <p className="attribution-evidence-meta">
-        {modelLabel} · {integerFormatter.format(additions)}{" "}
+        Model association: {modelLabel} · {integerFormatter.format(additions)}{" "}
         {scope === "code" ? "code" : "text"} additions · {deliverySurface}
       </p>
       <div className="attribution-evidence-links">
         <a href={commit.url} target="_blank" rel="noreferrer">
-          View commit
-          <span className="visually-hidden"> (opens in a new tab)</span>
+          Open code change
+          <span className="visually-hidden">
+            {` in ${commit.repository}, ${commit.sha.slice(0, 7)} (opens in a new tab)`}
+          </span>
           <Arrow />
         </a>
         {commit.prLinks.map((pullRequest) => (
@@ -237,17 +241,17 @@ function metricValue(
     metric === "additions"
       ? "added lines"
       : row.value === 1
-        ? "commit"
-        : "commits"
+      ? "code change"
+      : "code changes"
   }`;
 }
 
 function surfaceLabel(surface: AttributionSurface): string {
   if (surface === "pr") {
-    return "PR work";
+    return "changes sent for review";
   }
   if (surface === "fork-only") {
-    return "public fork implementations";
+    return "independent public versions";
   }
   return "all public delivery surfaces";
 }
@@ -265,23 +269,28 @@ function filterSummary(
   const repositories =
     filters.repository === "all"
       ? `${integerFormatter.format(repositoryCount)} ${
-          repositoryCount === 1 ? "repository" : "repositories"
+          repositoryCount === 1 ? "project" : "projects"
         }`
       : filters.repository;
 
   return `${integerFormatter.format(commitCount)} ${
-    commitCount === 1 ? "commit" : "commits"
+    commitCount === 1 ? "code change" : "code changes"
   } across ${repositories}; ${surfaceLabel(filters.surface)}; ${scopeLabel(
     filters.scope,
   )}; model focus: ${modelLabel}.`;
 }
 
-export default function AttributionExplorer() {
+type AttributionExplorerProps = {
+  sectionCode?: string;
+};
+
+export default function AttributionExplorer({
+  sectionCode = "03 / Model composition",
+}: AttributionExplorerProps = {}) {
   const data = agentAttributionData;
   const [filters, setFilters] = useState<AttributionFilters>(
     DEFAULT_ATTRIBUTION_FILTERS,
   );
-  const [evidenceLoaded, setEvidenceLoaded] = useState(false);
   const urlReady = useRef(false);
   const recordRef = useRef<HTMLDetailsElement | null>(null);
   const chartId = useId();
@@ -293,7 +302,7 @@ export default function AttributionExplorer() {
   const repositories = useMemo(() => attributionRepositories(data), [data]);
   const selectableAgents = useMemo(() => attributionAgents(data), [data]);
   const rows = useMemo(
-    () => aggregateAttribution(data, filters),
+    () => aggregateAttribution(data, filters).filter((row) => row.value > 0),
     [data, filters],
   );
   const evidence = useMemo(
@@ -402,6 +411,10 @@ export default function AttributionExplorer() {
   const hasActiveFilters = !filtersEqual(filters, DEFAULT_ATTRIBUTION_FILTERS);
   const representativeEvidence = visibleCommits.slice(0, 3);
   const remainingEvidence = visibleCommits.slice(representativeEvidence.length);
+  const inlineCommitEvidence = remainingEvidence.slice(
+    0,
+    INLINE_COMMIT_EVIDENCE_LIMIT,
+  );
   const selectedMetricTotal = rows.reduce((total, row) => total + row.value, 0);
 
   return (
@@ -413,42 +426,41 @@ export default function AttributionExplorer() {
     >
       <div className="shell">
         <div className="section-heading attribution-heading">
-          <p className="section-code">03 / The public record</p>
+          <p className="section-code">{sectionCode}</p>
           <div>
             <h2 id="agent-collaboration-title">
-              Models behind the work.
+              Where model collaboration appears in the work.
             </h2>
             <p>
-              Commit-level evidence and date-aware author rules become a model
-              spectrum across projects, repositories, and source paths. Open
-              the record to filter the work and follow each result back to its
-              public commit.
+              Filter the view, compare the work, and follow any result to its
+              linked code change.
             </p>
           </div>
         </div>
 
-        <details className="attribution-record" ref={recordRef}>
+        <details className="attribution-record" ref={recordRef} open>
           <summary className="attribution-record-summary">
-            <span>Explore the public record</span>
-            <span aria-hidden="true">Filters · commits · exact values</span>
+            <span>Explore model collaboration</span>
+            <span aria-hidden="true">Filters · code changes · public work</span>
           </summary>
           <div className="attribution-record-body">
             <div className="attribution-overview">
-              <div className="attribution-method">
-                <p className="attribution-kicker">Measurement</p>
-                <p>{data.methodology.metricLabel}.</p>
-                <ul>
+              <details className="attribution-method">
+                <summary>How this view works</summary>
+                <div className="attribution-method__body">
+                  <p>{data.methodology.metricLabel}.</p>
+                  <ul>
                   {data.methodology.modelSignalPolicy ===
                   "recorded-models-with-awsmadi-date-default" ? (
                     <li>
-                      Explicit model metadata takes precedence. Otherwise,
-                      awsmadi commits use the newest public Claude Opus model
-                      available on the authored date.
+                      Explicit model markers take precedence. When none is
+                      present, this portfolio assigns awsmadi commits to the
+                      newest public Claude Opus model available on the authored date.
                     </li>
                   ) : null}
                   <li>
                     {data.methodology.globalShaDeduplication
-                      ? "Shared fork and upstream SHAs count once."
+                      ? "The same commit shared by a fork and its upstream project counts once."
                       : "Each recorded commit occurrence is counted."}
                   </li>
                   <li>
@@ -465,23 +477,20 @@ export default function AttributionExplorer() {
                     output, and binaries; executable agent instructions count as
                     code.
                   </li>
-                </ul>
-                <details className="attribution-identity-disclosure">
-                  <summary>Model attribution mapping</summary>
-                  <dl>
-                    {attributionModels(data).map((model) => (
-                      <div key={model.id}>
-                        <dt>{model.label}</dt>
-                        <dd>
-                          {model.kind === "model"
-                            ? `${model.provider} model represented by commit evidence or the dated author rule`
-                            : model.provider}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                </details>
-              </div>
+                  </ul>
+                  <details className="attribution-identity-disclosure">
+                    <summary>Model attribution mapping</summary>
+                    <dl>
+                      {attributionModels(data).map((model) => (
+                        <div key={model.id}>
+                          <dt>{model.label}</dt>
+                          <dd>{model.provider}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </details>
+                </div>
+              </details>
               <div className="attribution-current">
                 <p className="attribution-kicker">Current view</p>
                 <p
@@ -492,30 +501,24 @@ export default function AttributionExplorer() {
                 >
                   {summary}
                 </p>
-                <p className="attribution-snapshot">
-                  Public GitHub snapshot ·{" "}
-                  <time dateTime={data.snapshot.generatedAt}>
-                    {dateFormatter.format(new Date(data.snapshot.generatedAt))}
-                  </time>
-                </p>
               </div>
             </div>
 
             <div className="attribution-workspace">
               <form
                 className="attribution-filters"
-                aria-label="Filter model collaboration evidence"
+                aria-label="Filter model collaboration"
                 onSubmit={(event) => event.preventDefault()}
               >
                 <div className="attribution-select">
-                  <label htmlFor={repositoryId}>Repository</label>
+                  <label htmlFor={repositoryId}>Project</label>
                   <select
                     id={repositoryId}
                     value={filters.repository}
                     onChange={handleRepositoryChange}
                     aria-controls={`${chartId} ${evidenceId}`}
                   >
-                    <option value="all">All repositories</option>
+                    <option value="all">All projects</option>
                     {repositories.map((repository) => (
                       <option value={repository} key={repository}>
                         {repository}
@@ -525,41 +528,41 @@ export default function AttributionExplorer() {
                 </div>
 
                 <SegmentedControl<AttributionSurface>
-                  legend="Delivery surface"
+                  legend="Work type"
                   value={filters.surface}
                   onChange={(surface) => updateFilter("surface", surface)}
                   controls={`${chartId} ${evidenceId}`}
                   options={[
                     { value: "all", label: "All public" },
-                    { value: "pr", label: "PR work" },
-                    { value: "fork-only", label: "Public forks" },
+                    { value: "pr", label: "Changes sent for review" },
+                    { value: "fork-only", label: "Independent public versions" },
                   ]}
                 />
 
                 <SegmentedControl<AttributionScope>
-                  legend="Content scope"
+                  legend="What to measure"
                   value={filters.scope}
                   onChange={(scope) => updateFilter("scope", scope)}
                   controls={`${chartId} ${evidenceId}`}
                   options={[
                     { value: "code", label: "Code" },
-                    { value: "all-text", label: "All text" },
+                    { value: "all-text", label: "Code and documentation" },
                   ]}
                 />
 
                 <SegmentedControl<AttributionMetric>
-                  legend="Metric"
+                  legend="Count by"
                   value={filters.metric}
                   onChange={(metric) => updateFilter("metric", metric)}
                   controls={chartId}
                   options={[
-                    { value: "additions", label: "Added lines" },
-                    { value: "commits", label: "Commits" },
+                    { value: "additions", label: "Lines added" },
+                    { value: "commits", label: "Code changes" },
                   ]}
                 />
 
                 <div className="attribution-select">
-                  <label htmlFor={agentId}>Model focus</label>
+                  <label htmlFor={agentId}>Model</label>
                   <select
                     id={agentId}
                     value={filters.agent}
@@ -588,15 +591,14 @@ export default function AttributionExplorer() {
               <div
                 className="attribution-chart"
                 id={chartId}
-                aria-labelledby="agent-collaboration-title"
               >
                 <div className="attribution-chart-heading">
                   <div>
-                    <p className="attribution-kicker">Model spectrum</p>
+                    <p className="attribution-kicker">Model mix</p>
                     <h3>
                       {filters.metric === "additions"
-                        ? "Added lines in associated commits"
-                        : "Model-attributed commits"}
+                        ? "Lines added with model associations"
+                        : "Code changes with model associations"}
                     </h3>
                   </div>
                   <p>
@@ -609,12 +611,7 @@ export default function AttributionExplorer() {
                   <ol className="attribution-traces">
                     {rows.map((row) => {
                       const isSelected = filters.agent === row.agent.id;
-                      const traceScale = Math.max(
-                        0,
-                        Math.min(1, row.percentage / 100),
-                      );
                       const traceStyle = {
-                        "--attribution-trace-scale": traceScale,
                         "--agent-accent": row.agent.tone,
                       } as CSSProperties;
 
@@ -657,7 +654,10 @@ export default function AttributionExplorer() {
                               className="attribution-trace-track"
                               aria-hidden="true"
                             >
-                              <span className="attribution-trace-fill" />
+                              <BklitModelBar
+                                percentage={row.percentage}
+                                selected={isSelected}
+                              />
                             </span>
                             <span className="attribution-trace-value">
                               <strong>
@@ -674,8 +674,8 @@ export default function AttributionExplorer() {
                   </ol>
                 ) : (
                   <p className="attribution-empty">
-                    No model-attributed commits match this view. Clear or
-                    adjust a filter to continue exploring.
+                    No code changes match these filters. Clear or adjust a filter
+                    to continue exploring.
                   </p>
                 )}
               </div>
@@ -684,16 +684,16 @@ export default function AttributionExplorer() {
             <div className="attribution-evidence" id={evidenceId}>
               <div className="attribution-evidence-intro">
                 <div>
-                  <p className="attribution-kicker">Linked evidence</p>
+                  <p className="attribution-kicker">Linked work</p>
                   <h3>
                     {filters.agent === "all"
-                      ? "Representative public commits"
-                      : `${focusedAgentLabel} evidence`}
+                      ? "Linked code changes"
+                      : `${focusedAgentLabel} code changes`}
                   </h3>
                 </div>
                 <p>
-                  Ranked by the current metric, with commit and pull-request
-                  links for verification.
+                  Ranked by the selected measure, with direct links to the code
+                  and review history.
                 </p>
               </div>
 
@@ -713,47 +713,44 @@ export default function AttributionExplorer() {
                 </ol>
               ) : (
                 <p className="attribution-empty">
-                  No linked commit evidence matches the current evidence focus.
-                  Select another model or clear the filters.
+                  No linked code changes match the current focus. Select another
+                  model or clear the filters.
                 </p>
               )}
 
               {remainingEvidence.length > 0 ? (
-                <details
-                  className="attribution-evidence-disclosure"
-                  onToggle={(event) => {
-                    if (event.currentTarget.open) {
-                      setEvidenceLoaded(true);
-                    }
-                  }}
-                >
+                <details className="attribution-evidence-disclosure">
                   <summary>
-                    View {integerFormatter.format(remainingEvidence.length)}{" "}
-                    more linked{" "}
-                    {remainingEvidence.length === 1 ? "commit" : "commits"}
+                    Inspect {integerFormatter.format(inlineCommitEvidence.length)}{" "}
+                    additional linked{" "}
+                    {inlineCommitEvidence.length === 1 ? "code change" : "code changes"}
                   </summary>
-                  {evidenceLoaded ? (
-                    <ol>
-                      {remainingEvidence.map((commit) => (
-                        <li key={commit.sha}>
-                          <EvidenceItem
-                            commit={commit}
-                            modelLabel={modelIdsForCommit(data, commit)
-                              .map((id) => agents.get(id)?.label ?? id)
-                              .join(" + ")}
-                            scope={filters.scope}
-                            compact
-                          />
-                        </li>
-                      ))}
-                    </ol>
-                  ) : null}
+                  <p className="attribution-evidence-limit">
+                    Showing a bounded sample from {integerFormatter.format(
+                      remainingEvidence.length,
+                    )} additional matches. The chart uses the complete public
+                    record; filters recalculate this list.
+                  </p>
+                  <ol>
+                    {inlineCommitEvidence.map((commit) => (
+                      <li key={commit.sha}>
+                        <EvidenceItem
+                          commit={commit}
+                          modelLabel={modelIdsForCommit(data, commit)
+                            .map((id) => agents.get(id)?.label ?? id)
+                            .join(" + ")}
+                          scope={filters.scope}
+                          compact
+                        />
+                      </li>
+                    ))}
+                  </ol>
                 </details>
               ) : null}
 
               {rows.length > 0 ? (
                 <details className="attribution-table-disclosure">
-                  <summary>View exact distribution values</summary>
+                  <summary>View exact values</summary>
                   <div
                     className="attribution-table-wrap"
                     role="region"
@@ -763,7 +760,7 @@ export default function AttributionExplorer() {
                     <table className="attribution-table">
                       <caption>
                         Exact model-attribution values for the current
-                        repository, delivery surface, and content scope.
+                        project, work type, and selected measure.
                       </caption>
                       <thead>
                         <tr>
@@ -773,12 +770,12 @@ export default function AttributionExplorer() {
                               ? "Code additions"
                               : "All-text additions"}
                           </th>
-                          <th scope="col">Commits</th>
+                          <th scope="col">Code changes</th>
                           <th scope="col">
                             Share of{" "}
                             {filters.metric === "additions"
                               ? "added lines"
-                              : "commits"}
+                              : "code changes"}
                           </th>
                         </tr>
                       </thead>

@@ -58,6 +58,26 @@ test("keeps the persistent physics world to repository hierarchy nodes", async (
   runtime.dispose();
 });
 
+test("includes the template-aware GitHub workflow in the portable lineage", async () => {
+  const graph = await readGraph("portable-frameworks");
+  const beat = graph.beats.find(
+    (candidate) => candidate.id === "github-template-preflight",
+  );
+  assert.ok(beat);
+  assert.equal(beat.kind, "commit");
+  assert.equal(beat.integrationStatus, "direct-commit");
+  assert.equal(beat.repository, "mh0pe/plugins");
+  assert.equal(beat.changedFileCount, 3);
+  assert.equal(beat.displayedFileCount, 3);
+  assert.ok(
+    graph.nodes.some(
+      (node) =>
+        node.type === "commit" &&
+        node.href.endsWith("4dd70c45672d72aa5b4d4c7e2737a7cf32faa4e2"),
+    ),
+  );
+});
+
 test("settles every public graph into finite artwork-scale bounds", async () => {
   const manifest = JSON.parse(
     await readFile(

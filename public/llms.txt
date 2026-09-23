@@ -1,18 +1,31 @@
 # Madison Hope Steiner | Principal AI Architect
 
-Madison Hope Steiner is a Principal AI Architect whose public engineering identities are mh0pe and awsmadi. This site is Madison Hope Steiner's source-linked open-source systems portfolio.
+Madison Hope Steiner, also known on GitHub as mh0pe and awsmadi, makes difficult AI, security, cloud, and developer systems easier for teams to govern, operate, and evolve.
 
-## Canonical portfolio
+## Start here
 
 - Portfolio: https://mh0pe.github.io/
-- Madison Hope Steiner on GitHub (mh0pe): https://github.com/mh0pe
-- Madison Hope Steiner on GitHub (awsmadi): https://github.com/awsmadi
-- Madison Hope Steiner on LinkedIn: https://www.linkedin.com/in/madisonhsteiner
+- Selected systems: https://mh0pe.github.io/work/
+- How Madison helps: https://mh0pe.github.io/capabilities/
+- Architecture approach: https://mh0pe.github.io/method/
+- Architecture decisions: https://mh0pe.github.io/decisions/
+- Experience: https://mh0pe.github.io/about/
+- Credentials earned: https://mh0pe.github.io/credentials/
+- Public work: https://mh0pe.github.io/proof/
+- Model collaboration: https://mh0pe.github.io/models/
 
-## Public work represented
+## Selected results
 
-The portfolio covers workspace-scale security orchestration, reproducible scanner execution, agent teams, durable decision memory, organizational learning systems, cloud architecture, Nix runtime work on Windows, browser runtimes, and developer tooling. Each project links to public repositories, pull requests, commits, files, reviews, and documentation where available.
+- Coordinate security across many projects, give agents workspace-aware tools, and distribute scanners across AWS execution targets: https://mh0pe.github.io/work/automated-security-helper/
+- Keep infrastructure policy verdicts faithful to their intended meaning: https://mh0pe.github.io/work/cloudformation-guard/
+- Advance reproducible Windows builds with testable layers, lossless filenames, and explicit process boundaries: https://mh0pe.github.io/work/nix-windows/
+- Help agent teams retain reviewed decisions, recover work, and hand delivery across tools: https://mh0pe.github.io/work/agent-systems/
+- Connect agent applications to AWS-authenticated model endpoints through Rig's dedicated integration: https://mh0pe.github.io/capabilities/#capability-rig-bedrock
 
-## Evidence policy
+## Public profiles
 
-The portfolio uses public GitHub activity from mh0pe and awsmadi. It distinguishes upstream merges, active reviews, and capabilities available from public branches. Employment history follows the linked public LinkedIn profile. The site is personal and does not speak for any employer.
+- GitHub, mh0pe: https://github.com/mh0pe
+- GitHub, awsmadi: https://github.com/awsmadi
+- LinkedIn: https://www.linkedin.com/in/madisonhsteiner
+
+This is Madison Hope Steiner's personal portfolio. It does not speak for any employer.

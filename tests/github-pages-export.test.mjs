@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
-import { expectedProjectGraphIds } from "./project-catalog.mjs";
+import { gzipSync } from "node:zlib";
 
 const root = new URL("../", import.meta.url);
 const output = new URL("../pages-dist/", import.meta.url);
@@ -10,132 +10,257 @@ async function artifact(filename) {
   return readFile(new URL(filename, output), "utf8");
 }
 
-test("exports a production-origin GitHub Pages document", async () => {
-  const html = await artifact("index.html");
+const routes = [
+  ["index.html", "https://mh0pe.github.io/"],
+  ["work/index.html", "https://mh0pe.github.io/work/"],
+  ["work/automated-security-helper/index.html", "https://mh0pe.github.io/work/automated-security-helper/"],
+  ["work/cloudformation-guard/index.html", "https://mh0pe.github.io/work/cloudformation-guard/"],
+  ["work/nix-windows/index.html", "https://mh0pe.github.io/work/nix-windows/"],
+  ["work/agent-systems/index.html", "https://mh0pe.github.io/work/agent-systems/"],
+  ["proof/index.html", "https://mh0pe.github.io/proof/"],
+  ["about/index.html", "https://mh0pe.github.io/about/"],
+  ["credentials/index.html", "https://mh0pe.github.io/credentials/"],
+  ["decisions/index.html", "https://mh0pe.github.io/decisions/"],
+  ["method/index.html", "https://mh0pe.github.io/method/"],
+  ["capabilities/index.html", "https://mh0pe.github.io/capabilities/"],
+  ["models/index.html", "https://mh0pe.github.io/models/"],
+  ["evidence/index.html", "https://mh0pe.github.io/proof/"],
+  ["career/index.html", "https://mh0pe.github.io/about/"],
+];
 
-  assert.match(html, /<!doctype html>/i);
-  assert.match(
-    html,
-    /<link[^>]+rel="canonical"[^>]+href="https:\/\/mh0pe\.github\.io\/"/i,
-  );
-  assert.match(
-    html,
-    /<meta[^>]+property="og:image"[^>]+content="https:\/\/mh0pe\.github\.io\/og-v3\.jpg"/i,
-  );
-  assert.match(
-    html,
-    /<meta[^>]+name="twitter:image"[^>]+content="https:\/\/mh0pe\.github\.io\/og-v3\.jpg"/i,
-  );
-  assert.match(html, /http-equiv="Content-Security-Policy"/i);
-  assert.match(html, /name="referrer" content="strict-origin-when-cross-origin"/i);
-  assert.match(html, /Madison Hope Steiner \| Principal AI Architect Portfolio/i);
-  assert.match(html, /type="application\/ld\+json"/i);
-  assert.match(html, /"@type":"Person"/i);
-  assert.match(html, /https:\/\/github\.com\/mh0pe/i);
-  assert.match(html, /https:\/\/github\.com\/awsmadi/i);
-  assert.match(html, /https:\/\/www\.linkedin\.com\/in\/madisonhsteiner/i);
-  assert.match(
-    html,
-    /Bringing Hope to distributed systems[\s\S]*?at enterprise scale/i,
-  );
-  assert.match(
-    html,
-    /Advanced the Windows build chain[\s\S]*?recursive Nix operation[\s\S]*?reports build results under Wine/i,
-  );
-  assert.match(html, /Seven capability layers merged upstream/i);
-  assert.match(html, /data-graph-source="inline"/i);
-  assert.deepEqual(
-    [...html.matchAll(/data-project-constellation="([^"]+)"/g)].map(
-      (match) => match[1],
-    ),
-    expectedProjectGraphIds,
-  );
-  assert.doesNotMatch(html, /Loading the source trail/i);
-  assert.doesNotMatch(html, /localhost|127\.0\.0\.1|\/_vinext\/image/i);
-});
+const staticRuntimePattern =
+  /data-static-runtime="(?:theme-bootstrap|theme|interactions)"/i;
+const criticalFontPreloads = [
+  "/fonts/instrument-sans-variable.woff2",
+  "/fonts/newsreader-variable.woff2",
+];
 
-test("preserves Vinext hydration and all interactive client islands", async () => {
-  const html = await artifact("index.html");
-  const requiredChunks = [
-    /\/assets\/index-[A-Za-z0-9_-]+\.js/,
-    /\/assets\/ActiveNav-[A-Za-z0-9_-]+\.js/,
-    /\/assets\/HeroSignalGraphic-[A-Za-z0-9_-]+\.js/,
-    /\/assets\/AttributionExplorer-[A-Za-z0-9_-]+\.js/,
-    /\/assets\/ContributionCardPlayer-[A-Za-z0-9_-]+\.js/,
-    /\/assets\/ProjectConstellationBackdrop-[A-Za-z0-9_-]+\.js/,
-  ];
+function fontPreloadTags(html) {
+  return [...html.matchAll(/<link\b[^>]*>/gi)]
+    .map((match) => match[0])
+    .filter(
+      (tag) =>
+        /\brel="preload"/i.test(tag) &&
+        /\bas="font"/i.test(tag),
+    );
+}
 
-  assert.match(html, /self\.__VINEXT_RSC_DONE__\s*=\s*true/);
-  for (const pattern of requiredChunks) {
-    const match = html.match(pattern);
-    assert.ok(match, `Expected client chunk matching ${pattern}`);
-    await access(new URL(`.${match[0]}`, output));
+test("exports every redesign route with production canonical metadata", async () => {
+  for (const [filename, canonical] of routes) {
+    const html = await artifact(filename);
+    assert.match(html, /<!doctype html>/i, filename);
+    assert.ok(
+      html.includes('rel="canonical" href="' + canonical + '"') ||
+        html.includes('href="' + canonical + '" rel="canonical"'),
+      filename + " should declare " + canonical,
+    );
+    if (filename === "models/index.html") {
+      assert.match(html, /self\.__VINEXT_RSC_DONE__\s*=\s*true/);
+    } else {
+      assert.doesNotMatch(html, /self\.__VINEXT_RSC_|rel="modulepreload"/i);
+    }
+    assert.doesNotMatch(html, /localhost|127\.0\.0\.1|\/_vinext\/image/i);
   }
 });
 
-test("bundles card constellations without the standalone WebGL rail", async () => {
+test("exports the Hope Line root as a static, outcome-first document", async () => {
   const html = await artifact("index.html");
-  const assets = await readdir(new URL("assets/", output));
-  const backdropMatch = html.match(
-    /\/assets\/(ProjectConstellationBackdrop-[A-Za-z0-9_-]+\.js)/,
+  assert.match(
+    html,
+    /I help teams build and run AI, security, and cloud systems\./i,
   );
+  assert.match(html, /data-visualization="hope-line"/i);
+  assert.match(html, /data-node-type="repository"/i);
+  assert.match(html, /data-node-type="evidence"/i);
+  assert.match(html, /data-node-type="commit"/i);
+  assert.match(html, /data-node-type="file"/i);
+  assert.match(
+    html,
+    /Bringing\s*(?:<em[^>]*>)?Hope(?:<\/em>)?\s*to distributed systems at enterprise scale/i,
+  );
+  assert.doesNotMatch(
+    html,
+    /ContributionCardPlayer|ContributionConstellation|ProjectConstellationBackdrop|AttributionExplorer|data-project-constellation|data-contribution-player/,
+  );
+  for (const match of html.matchAll(/<script\b[^>]*>/gi)) {
+    assert.ok(
+      /type="application\/ld\+json"/i.test(match[0]) ||
+        staticRuntimePattern.test(match[0]),
+      `unexpected homepage script: ${match[0]}`,
+    );
+  }
+  assert.match(html, /data-static-runtime="theme-bootstrap"/i);
+  assert.match(html, /data-static-runtime="theme"[^>]*src="\/theme\.js\?v=/i);
+  assert.match(html, /data-static-runtime="interactions"[^>]*src="\/interactions\.js\?v=/i);
+  assert.doesNotMatch(html, /rel="modulepreload"/i);
+  assert.ok(gzipSync(html).byteLength <= 40 * 1024);
+});
 
-  assert.ok(backdropMatch, "Expected the per-card constellation renderer");
-  const backdropSource = await artifact(`assets/${backdropMatch[1]}`);
-  assert.match(backdropSource, /data-project-constellation/);
-  assert.doesNotMatch(html, /ContributionStoryRail-[A-Za-z0-9_-]+\.js/);
-  assert.ok(
-    !assets.some((asset) =>
-      /^ContributionStoryRail-[A-Za-z0-9_-]+\.js$/.test(asset),
-    ),
-    "The standalone graph rail should leave the production bundle",
+test("loads model-attribution code only from the model-composition surfaces", async () => {
+  const [home, proof, models, evidence] = await Promise.all([
+    artifact("index.html"),
+    artifact("proof/index.html"),
+    artifact("models/index.html"),
+    artifact("evidence/index.html"),
+  ]);
+  assert.doesNotMatch(home, /AttributionExplorer-[A-Za-z0-9_-]+\.js/);
+  assert.doesNotMatch(proof, /AttributionExplorer-[A-Za-z0-9_-]+\.js/);
+  assert.doesNotMatch(evidence, /AttributionExplorer-[A-Za-z0-9_-]+\.js/);
+  assert.match(proof, /href="\/models\/#agent-collaboration"/i);
+  assert.match(evidence, /href="\/models\/#agent-collaboration"/i);
+
+  const match = models.match(
+    /\/assets\/(AttributionExplorer-[A-Za-z0-9_-]+\.js)/,
   );
-  assert.ok(
-    !assets.some((asset) =>
-      /^ContributionGraphCanvas-[A-Za-z0-9_-]+\.js$/.test(asset),
-    ),
-    "The renderer should not wait for a late dynamic chunk",
-  );
+  assert.ok(match, "models route should load its attribution explorer");
+  await access(new URL("assets/" + match[1], output));
+});
+
+test("preloads only the two normal above-the-fold font faces", async () => {
+  const artifacts = [...routes.map(([filename]) => filename), "404.html"];
+
+  for (const filename of artifacts) {
+    const html = await artifact(filename);
+    const tags = fontPreloadTags(html);
+    const hrefs = tags.map((tag) => tag.match(/\bhref="([^"]+)"/i)?.[1]);
+
+    assert.deepEqual(hrefs, criticalFontPreloads, filename);
+    for (const tag of tags) {
+      assert.match(tag, /\btype="font\/woff2"/i, filename);
+      assert.match(tag, /\bcrossorigin(?:="")?/i, filename);
+    }
+    assert.doesNotMatch(
+      html,
+      /<link\b[^>]*rel="preload"[^>]*newsreader-variable-italic\.woff2/i,
+      filename,
+    );
+  }
+
+  for (const font of criticalFontPreloads) {
+    await access(new URL(`.${font}`, output));
+  }
 });
 
 test("exports a static recovery page with full-navigation links", async () => {
   const html = await artifact("404.html");
-
-  assert.match(html, /Page not found|This path does not exist/i);
+  assert.match(html, /<div class="not-found__shell">/i);
+  assert.match(html, /<ol class="not-found__route-list">/i);
   assert.match(
     html,
-    /<a href="\/">[\s\S]*Return to portfolio[\s\S]*<\/a>/i,
+    /<a class="not-found__route" href="\/">[\s\S]*Portfolio[\s\S]*<\/a>/i,
   );
   assert.match(html, /https:\/\/github\.com\/mh0pe/i);
   assert.match(html, /https:\/\/github\.com\/awsmadi/i);
+  assert.match(html, /data-theme-toggle/i);
 });
 
-test("publishes client assets only", async () => {
+test("every exported page preserves only the intended static enhancement runtime", async () => {
+  const artifacts = [...routes.map(([filename]) => filename), "404.html"];
+
+  for (const filename of artifacts) {
+    const html = await artifact(filename);
+    assert.match(html, /data-static-runtime="theme-bootstrap"/i, filename);
+    assert.match(
+      html,
+      /data-static-runtime="theme"[^>]*src="\/theme\.js\?v=/i,
+      filename,
+    );
+    assert.match(
+      html,
+      /data-static-runtime="interactions"[^>]*src="\/interactions\.js\?v=/i,
+      filename,
+    );
+
+    if (filename !== "models/index.html") {
+      for (const match of html.matchAll(/<script\b[^>]*>/gi)) {
+        assert.ok(
+          /type="application\/ld\+json"/i.test(match[0]) ||
+            staticRuntimePattern.test(match[0]),
+          `${filename} contains an unexpected runtime script: ${match[0]}`,
+        );
+      }
+    }
+  }
+});
+
+test("supporting routes continue into a relevant next chapter", async () => {
+  const nextChapterByArtifact = {
+    "work/index.html": "/capabilities/",
+    "capabilities/index.html": "/method/",
+    "method/index.html": "/decisions/",
+    "decisions/index.html": "/work/",
+    "about/index.html": "/credentials/",
+    "credentials/index.html": "/work/",
+    "proof/index.html": "/models/#agent-collaboration",
+    "models/index.html": "/proof/",
+  };
+
+  for (const [filename, href] of Object.entries(nextChapterByArtifact)) {
+    const html = await artifact(filename);
+    assert.match(html, /class="site-footer__journey"/i, filename);
+    assert.ok(
+      html.includes(`class="site-footer__journey-link" href="${href}"`),
+      `${filename} should continue to ${href}`,
+    );
+  }
+
+  assert.doesNotMatch(await artifact("index.html"), /class="site-footer__journey"/i);
+});
+
+test("case studies have one closing journey and retain the shared contact footer", async () => {
+  for (const filename of [
+    "work/automated-security-helper/index.html",
+    "work/cloudformation-guard/index.html",
+    "work/nix-windows/index.html",
+    "work/agent-systems/index.html",
+  ]) {
+    const html = await artifact(filename);
+    assert.match(html, /class="case-close"/, filename);
+    assert.match(html, /aria-label="Adjacent case studies"/, filename);
+    assert.doesNotMatch(html, /class="site-footer__journey"/, filename);
+    assert.match(html, /class="site-footer site-footer--compact"/, filename);
+    assert.match(html, /Let&#x27;s talk about what you&#x27;re building\./, filename);
+  }
+});
+
+test("case-study hero and adjacent links use concise outcome headlines", async () => {
+  const source = await readFile(new URL("app/components/v2/CaseStudyPage.tsx", root), "utf8");
+  assert.match(source, /<h1 className="case-hero__plain">\{caseStudy\.cardHeadline\}<\/h1>/);
+  assert.match(source, /<strong>\{previous\.cardHeadline\}<\/strong>/);
+  assert.match(source, /<strong>\{next\.cardHeadline\}<\/strong>/);
+  assert.match(source, /description=\{caseStudy\.plainResult\}/);
+  assert.match(source, /<p className="case-hero__result">\{caseStudy\.operatingResult\}<\/p>/);
+});
+
+test("publishes a browser-only artifact surface and discovery files", async () => {
   const topLevel = await readdir(output);
   const clientAssets = await readdir(new URL("assets/", output));
 
-  assert.ok(topLevel.includes("index.html"));
-  assert.ok(topLevel.includes("404.html"));
-  assert.ok(topLevel.includes("portfolio.css"));
-  assert.ok(topLevel.includes("favicon.svg"));
-  assert.ok(topLevel.includes("robots.txt"));
-  assert.ok(topLevel.includes("sitemap.xml"));
-  assert.ok(topLevel.includes("llms.txt"));
-  assert.ok(!topLevel.includes("server"));
-  assert.ok(!topLevel.includes(".vite"));
-  assert.ok(!topLevel.includes("_headers"));
-  assert.ok(!topLevel.includes(".assetsignore"));
-  assert.ok(!topLevel.includes("og-v2.png"));
-  assert.ok(
-    clientAssets.every((asset) => !asset.endsWith(".json")),
-    "Full contribution graphs should be compiled inline, not emitted as runtime JSON assets",
-  );
-  for (const graphId of expectedProjectGraphIds) {
-    assert.ok(
-      clientAssets.every((asset) => !asset.includes(graphId)),
-      `Graph ${graphId} should not be emitted as a separately fetched asset`,
-    );
+  for (const required of [
+    "index.html",
+    "404.html",
+    "portfolio-v2.css",
+    "portfolio-v3.css",
+    "interactions.css",
+    "interactions.js",
+    "theme.js",
+    "favicon.svg",
+    "og-v3.jpg",
+    "robots.txt",
+    "sitemap.xml",
+    "llms.txt",
+    "work",
+    "proof",
+    "about",
+    "credentials",
+    "motion",
+  ]) {
+    assert.ok(topLevel.includes(required), required);
   }
+  for (const forbidden of ["server", ".vite", "_headers", ".assetsignore", "og-v2.png"]) {
+    assert.ok(!topLevel.includes(forbidden), forbidden);
+  }
+  assert.ok(clientAssets.every((asset) => !asset.endsWith(".json")));
 
   const [robots, sitemap, llms] = await Promise.all([
     artifact("robots.txt"),
@@ -143,11 +268,14 @@ test("publishes client assets only", async () => {
     artifact("llms.txt"),
   ]);
   assert.match(robots, /Sitemap: https:\/\/mh0pe\.github\.io\/sitemap\.xml/);
-  assert.match(sitemap, /<loc>https:\/\/mh0pe\.github\.io\/<\/loc>/);
+  for (const [, canonical] of routes) {
+    assert.ok(sitemap.includes("<loc>" + canonical + "</loc>"), canonical);
+  }
   assert.match(llms, /Madison Hope Steiner/);
-  assert.match(llms, /https:\/\/github\.com\/mh0pe/);
-  assert.match(llms, /https:\/\/github\.com\/awsmadi/);
-  assert.match(llms, /https:\/\/www\.linkedin\.com\/in\/madisonhsteiner/);
+  assert.match(llms, /Selected systems: https:\/\/mh0pe\.github\.io\/work\//i);
+  assert.match(llms, /Credentials earned: https:\/\/mh0pe\.github\.io\/credentials\//i);
+  assert.match(llms, /GitHub, mh0pe: https:\/\/github\.com\/mh0pe/i);
+  assert.match(llms, /GitHub, awsmadi: https:\/\/github\.com\/awsmadi/i);
 
   await access(new URL("LICENSE", root));
 });

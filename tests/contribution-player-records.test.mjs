@@ -47,7 +47,7 @@ test("compact player catalog reverses to every complete public record", () => {
     },
     { changes: 0, commits: 0, files: 0 },
   );
-  assert.deepEqual(totals, { changes: 48, commits: 803, files: 1749 });
+  assert.deepEqual(totals, { changes: 49, commits: 812, files: 1753 });
 });
 
 test("compact player catalog preserves deleted-file base references", () => {

@@ -1,15 +1,28 @@
 # Bringing Hope to distributed systems at enterprise scale
 
-A public systems portfolio for Principal AI Architect Madison Steiner, grounded in the public GitHub histories of `mh0pe` and `awsmadi` and career context from Madison’s LinkedIn profile.
+A public systems portfolio for Principal AI Architect Madison Hope Steiner, grounded in the public GitHub histories of `mh0pe` and `awsmadi` and professional context from Madison’s LinkedIn profile.
 
-The site leads with work delivered, capability, and impact. Public forks are presented as usable extensions that provide capabilities their upstream projects do not yet have; repository adoption state remains supporting provenance rather than the organizing narrative. Selected work links directly to public GitHub evidence, employment is distinguished from consulting context, and selected consulting clients remain indirect.
+The site uses a six-part path: Pressure → Constraint → Decision → Implementation → State → Source. It leads with what teams can now do, keeps availability separate from upstream adoption, and lets readers open the exact release, pull request, branch, repository, or documentation behind each supportable claim.
 
-## Local development
+Primary routes:
+
+- `/work/` and four deep system cases
+- `/proof/` for the public work, status language, and optional model context
+- `/decisions/` and `/method/` for the architecture grammar
+- `/capabilities/` for the nine-system atlas
+- `/about/` for career and organizational context
+
+The homepage is static-first. Its living-system illustrations are complete in the HTML and use short, one-time motion only when they enter the viewport.
+
+## Browser acceptance
 
 ```bash
-npm install
-npm run dev
+npm ci
+npm run build:pages
+npm run preview:pages
 ```
+
+Use `npm run dev` only while changing source. The static preview above is the acceptance path and avoids development-only module loading.
 
 ## Validation
 
@@ -23,15 +36,15 @@ npm audit
 
 ## Deployment
 
-The site is deployed to [mh0pe.github.io](https://mh0pe.github.io) from the
-`main` branch through GitHub Pages. The deployment workflow builds Vinext,
-renders the Worker output into static HTML, validates every local asset, and
+The published site at [mh0pe.github.io](https://mh0pe.github.io) deploys from
+`main` through GitHub Pages. The workflow builds Vinext, renders every
+canonical route into static HTML, validates local references and metadata, and
 uploads only the browser-facing artifact.
 
 ```bash
 NEXT_PUBLIC_SITE_URL=https://mh0pe.github.io npm run build:pages
 ```
 
-The source code is ISC-licensed. Third-party names and logos remain the
-property of their respective owners and are included only to identify
-professional history.
+The source code is ISC-licensed. Professional context is self-reported and does
+not imply employer endorsement. The site is personal and does not speak for
+any current or former employer.

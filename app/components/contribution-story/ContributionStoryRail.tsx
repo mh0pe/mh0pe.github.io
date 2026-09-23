@@ -404,7 +404,7 @@ function StaticGraph({
 
 function compactDate(value: string | null) {
   if (!value) {
-    return "Public evidence";
+    return "Source";
   }
   return new Intl.DateTimeFormat("en-US", {
     month: "short",

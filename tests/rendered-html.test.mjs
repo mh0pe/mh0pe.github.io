@@ -1,591 +1,388 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { expectedProjectGraphIds } from "./project-catalog.mjs";
+import { gzipSync } from "node:zlib";
 
 const root = new URL("../", import.meta.url);
-const approvedOrganizationContexts = [
-  {
-    label: "Global payments network",
-    text: "Tokenized-asset platform architecture designed for enterprise trust, security, and governance.",
-  },
-  {
-    label: "Major U.S. financial institution",
-    text: "Acquisition-related platform integration, regulatory remediation, and security engineering across a complex banking environment.",
-  },
-  {
-    label: "Global automotive and mobility manufacturer",
-    text: "Data-lake foundations for enterprise mobility and manufacturing analytics.",
-  },
-  {
-    label: "International vehicle manufacturer",
-    text: "Data-lake capabilities for large-scale operational and analytical workloads.",
-  },
-  {
-    label: "Global investment manager",
-    text: "Governed AWS account provisioning streamlined for secure, repeatable cloud adoption at enterprise scale.",
-  },
-];
 
 async function render(pathname = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+  workerUrl.searchParams.set("test", process.pid + "-" + Date.now());
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
-    new Request(`http://localhost${pathname}`, {
+    new Request("http://localhost" + pathname, {
       headers: { accept: "text/html", host: "localhost" },
     }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
   );
 }
 
-async function dataFile(filename) {
-  return JSON.parse(
-    await readFile(new URL(`app/data/${filename}`, root), "utf8"),
-  );
+function visibleMain(html) {
+  const main = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/i)?.[0] ?? "";
+  return main
+    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(
+      /<details(?![^>]*\bopen\b)[^>]*>[\s\S]*?<summary\b[^>]*>([\s\S]*?)<\/summary>[\s\S]*?<\/details>/gi,
+      " $1 ",
+    )
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&(?:#x?[0-9a-f]+|[a-z]+);/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
-test("server-renders an executive open-source portfolio", async () => {
-  const [trust, summary] = await Promise.all([
-    dataFile("project-trust.json"),
-    dataFile("public-history-summary.json"),
-  ]);
-  const response = await render();
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^$()|[\]\\]/g, "\\$&");
+}
+
+test("renders the outcome-led Living Systems Atlas homepage contract", async () => {
+  const response = await render("/");
   assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
   const html = (await response.text()).replaceAll("<!-- -->", "");
-  assert.match(
-    html,
-    /<link rel="stylesheet" href="\/portfolio\.css(?:\?[^"]+)?"/i,
+
+  const sections = [...html.matchAll(/data-home-section="([^"]+)"/g)].map(
+    (match) => match[1],
   );
+  assert.deepEqual(sections, [
+    "opening",
+    "outcomes",
+    "selected-work",
+    "atlas",
+    "practice",
+    "practice-detail",
+    "composition",
+    "context",
+  ]);
+
   assert.match(html, /Madison Hope Steiner/i);
-  assert.ok(
-    (html.match(/Madison Hope Steiner/g) ?? []).length >= 3,
-    "the canonical public identity should be clear without repetitive visible copy",
-  );
   assert.match(html, /Principal AI Architect/i);
-  assert.match(html, /Open-Source Systems Portfolio/i);
-  assert.match(html, /aria-label="Madison Hope Steiner on GitHub as mh0pe"/i);
-  assert.match(html, /aria-label="Madison Hope Steiner on GitHub as awsmadi"/i);
-  assert.match(html, /Madison Hope Steiner on LinkedIn/i);
-  assert.match(html, /type="application\/ld\+json"/i);
-  assert.match(html, /"@type":"Person"/i);
-  assert.match(html, /"@type":"ProfilePage"/i);
-  assert.match(html, /"alternateName":\["Madison Steiner","mh0pe","awsmadi"\]/i);
-  assert.match(html, /"sameAs":\["https:\/\/github\.com\/mh0pe","https:\/\/github\.com\/awsmadi","https:\/\/www\.linkedin\.com\/in\/madisonhsteiner"\]/i);
-  assert.deepEqual(
-    [...html.matchAll(/data-contribution-player="([^"]+)"/g)].map(
-      (match) => match[1],
-    ),
-    expectedProjectGraphIds,
-    "every expected public project should include its own contribution player",
-  );
-  assert.equal(
-    (html.match(/class="contribution-card-disclosure"/g) ?? []).length,
-    expectedProjectGraphIds.length,
-    "every source player should use progressive disclosure",
-  );
-  assert.equal(
-    (html.match(/class="project-model-spectrum"/g) ?? []).length,
-    expectedProjectGraphIds.length,
-    "every project card should expose its model-metadata state",
-  );
-  assert.match(html, /data-model-id=/i);
-  assert.match(html, /Model spectrum/i);
-  assert.deepEqual(
-    [...html.matchAll(/data-project-constellation="([^"]+)"/g)].map(
-      (match) => match[1],
-    ),
-    expectedProjectGraphIds,
-    "every expected public project should carry its own inline constellation",
-  );
-  assert.equal(
-    (html.match(/data-graph-source="inline"/g) ?? []).length,
-    expectedProjectGraphIds.length,
-    "every project constellation should render from inline public graph data",
-  );
-  assert.doesNotMatch(html, /class="project-evolution"/i);
-  assert.match(html, /Public contribution lineage/i);
-  assert.match(html, /Filter source records/i);
-  assert.match(html, /data-lineage-stage="1"/i);
-  assert.match(html, /<main id="main-content" tabindex="-1">/i);
   assert.match(
     html,
-    /Bringing Hope to distributed systems[\s\S]*?at enterprise scale/i,
+    /I help teams build and run AI, security, and cloud systems\./i,
   );
-  assert.match(
-    html,
-    /I(?:&#x27;|&apos;|')m Madison Hope Steiner, a Principal AI Architect[\s\S]*?systems that teams can operate at enterprise scale/i,
-  );
-  assert.doesNotMatch(html, /I build the infrastructure behind production AI agents/i);
-  assert.match(html, /Organizational impact/i);
-  assert.match(html, /Contexted impact/i);
-  assert.match(html, /Amazon Web Services/i);
-  assert.match(html, /Chainalysis/i);
-  assert.match(html, /Cameo/i);
-  assert.match(html, /Trōv/i);
-  assert.match(html, /Rakuten AirMap, Inc\./i);
-  assert.match(html, /F\.T\. Industries/i);
-  assert.match(html, /cielo24/i);
-  assert.match(html, /Quiver Media/i);
-  assert.match(html, /Tinder/i);
-  assert.match(html, /Joint Business Solutions/i);
-  assert.doesNotMatch(html, /Current employer/i);
-  assert.doesNotMatch(html, /Former employers/i);
-  assert.match(html, /Product and platform contexts/i);
-  assert.match(html, /class="career-ledger"/i);
+  const visibleText = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
   assert.equal(
     (
-      html.match(
-        /<img[^>]*src="\/logos\/svg\/[^"]+"[^>]*loading="eager"[^>]*>/gi,
+      visibleText.match(
+        /Bringing Hope to distributed systems at enterprise scale\./gi,
       ) ?? []
     ).length,
-    9,
+    1,
   );
+  assert.match(
+    html,
+    /One[\s\S]{0,80}governed workspace across many projects/i,
+  );
+  assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
+  assert.match(html, /<main id="main-content" tabindex="-1" data-route="home">/i);
+  assert.match(html, /data-visualization="hope-line"/i);
+  assert.match(html, /The Hope Line/i);
+  assert.equal(
+    new Set([...html.matchAll(/data-graph-id="([^"]+)"/g)].map((match) => match[1])).size,
+    8,
+  );
+  for (const nodeType of ["repository", "evidence", "commit", "file"]) {
+    assert.match(html, new RegExp(`data-node-type="${nodeType}"`));
+  }
+  assert.equal(
+    (html.match(/class="hope-line__index-detail"/g) ?? []).length,
+    8,
+  );
+  assert.match(html, /Explore every system in the atlas/i);
+  assert.match(html, /<dt>Implementation details<\/dt>/i);
+});
+
+test("keeps the homepage concise, inspectable, and free of retired visual islands", async () => {
+  // Measure the artifact visitors receive, after the exporter removes the
+  // framework transport stream. The worker response intentionally contains a
+  // duplicate serialized tree that never ships on this static route.
+  const html = await readFile(new URL("../pages-dist/index.html", import.meta.url), "utf8");
+  const words = visibleMain(html).split(/\s+/).filter(Boolean);
+  const openingTags =
+    html.match(/<(?!\/|!|\?)[A-Za-z][A-Za-z0-9:-]*(?:\s|>)/g) ?? [];
+  const links = html.match(/<a\b/gi) ?? [];
+  const proofLinks = html.match(/data-proof-kind=/gi) ?? [];
+  const buttons = html.match(/<button\b/gi) ?? [];
+  const summaries = html.match(/<summary\b/gi) ?? [];
+
+  assert.ok(words.length >= 1_700, "homepage should contain at least 1,700 visible words; found " + words.length);
+  assert.ok(words.length <= 3_000, "homepage should contain at most 3,000 visible words; found " + words.length);
+  assert.ok(
+    links.length <= 188,
+    "homepage should contain at most 188 links, including complete accessible lineage fallbacks; found " +
+      links.length,
+  );
+  assert.ok(proofLinks.length <= 10, "homepage should contain at most 10 direct proof links; found " + proofLinks.length);
+  assert.ok(buttons.length <= 8, "homepage should contain at most 8 buttons; found " + buttons.length);
+  assert.ok(
+    links.length + buttons.length + summaries.length <= 208,
+    "homepage should contain at most 208 interactive elements, including eight complete accessible lineage fallbacks",
+  );
+  assert.ok(
+    openingTags.length <= 1_850,
+    "homepage should contain at most 1,850 deployed elements, including both atlas reductions and accessible mobile lineage links; found " +
+      openingTags.length,
+  );
+  assert.ok(gzipSync(html).byteLength <= 40 * 1024);
+  assert.doesNotMatch(
+    html,
+    /data-contribution-player|data-project-constellation|project-model-spectrum|<canvas\b|Loading the source trail/i,
+  );
+  assert.doesNotMatch(html, /Model not recorded|No model data|No model signal/i);
+});
+
+test("renders contribution scope, model context, independence, and compatibility anchors", async () => {
+  const response = await render("/");
+  const html = (await response.text()).replaceAll("<!-- -->", "");
+
+  for (const anchor of [
+    "top",
+    "work",
+    "range",
+    "frontier",
+    "practice",
+    "record",
+    "trust",
+    "agent-collaboration",
+    "contribution-lineage",
+  ]) {
+    assert.match(html, new RegExp('id="' + anchor + '"'));
+  }
+
+  assert.match(
+    html,
+    /<section class="hope-act hope-work" id="work"[^>]*aria-labelledby="work-title"/i,
+  );
+  assert.doesNotMatch(html, /<span[^>]+id="work"/i);
+
+  assert.match(html, /174 merged pull requests authored as mh0pe or awsmadi/i);
+  assert.match(html, /Where model collaboration appears in the work/i);
+  assert.match(html, /Model associations:/i);
+  assert.match(html, /not statements made on behalf of any current or former employer/i);
+  assert.match(html, /href="\/work\/automated-security-helper\//i);
+  assert.match(html, /href="https:\/\/github\.com\//i);
+  assert.match(html, /GitHub · mh0pe[\s\S]{0,240}Madison Hope Steiner on GitHub as mh0pe/i);
+  assert.doesNotMatch(html, /Live upstream|Model spectrum|trusted by/i);
+});
+
+test("renders every primary redesign route with its promised content", async () => {
+  const cases = [
+    ["/work", /Four systems, built for the next team/i],
+    ["/work/automated-security-helper", /Automated Security Helper/i],
+    ["/work/cloudformation-guard", /CloudFormation Guard/i],
+    ["/work/nix-windows", /Nix on Windows/i],
+    ["/work/agent-systems", /BASE, CARL, PAUL, and SEED/i],
+    ["/proof", /Follow each result back to the work/i],
+    ["/about", /Experience across industries/i],
+    ["/credentials", /Learning is part of the architecture/i],
+    ["/decisions", /The trade-off is part of the architecture/i],
+    ["/method", /How I approach architecture/i],
+    ["/capabilities", /Tools other teams can use/i],
+    ["/models", /The models I work with/i],
+  ];
+
+  for (const [pathname, pattern] of cases) {
+    const response = await render(pathname);
+    assert.equal(response.status, 200, pathname);
+    const html = (await response.text()).replaceAll("<!-- -->", "");
+    assert.match(html, pattern, pathname);
+    if (pathname === "/capabilities") {
+      const systemCount = (html.match(/id="capability-[^"]+"/g) ?? []).length;
+      assert.ok(systemCount > 0);
+      assert.ok(
+        html.includes(`How I help / ${String(systemCount).padStart(2, "0")} systems`),
+        "the introduction count matches the systems actually listed",
+      );
+    }
+  }
+});
+
+test("source keeps the requested outcome hierarchy and public-state fields", async () => {
+  const [casePage, workPage] = await Promise.all([
+    readFile(new URL("app/components/v2/CaseStudyPage.tsx", root), "utf8"),
+    readFile(new URL("app/work/page.tsx", root), "utf8"),
+  ]);
+
+  assert.match(casePage, /<p className="micro-label case-hero__eyebrow">\{caseStudy\.title\}<\/p>/);
+  assert.match(casePage, /<h1 className="case-hero__plain">\{caseStudy\.cardHeadline\}<\/h1>/);
+  assert.match(casePage, /description=\{caseStudy\.plainResult\}/);
+  assert.match(casePage, /<p className="case-hero__result">\{caseStudy\.operatingResult\}<\/p>/);
+  assert.doesNotMatch(casePage, /<h1>\{caseStudy\.title\}<\/h1>/);
+  assert.match(casePage, /<dt>Public activity<\/dt>\s*<dd>\{caseStudy\.period\}<\/dd>/);
+  assert.match(casePage, /caseStudy\.stages\.length[\s\S]*?stages<\/p>/);
+  assert.match(casePage, /Six stages connect the original pressure to the system that now exists\./);
+  assert.doesNotMatch(casePage, /caseStudy\.stages\.length[\s\S]{0,100}?decisions<\/p>/);
+
+  for (const [label, value] of [
+    ["My role", "responsibility"],
+    ["Who it helps", "audience"],
+  ]) {
+    assert.match(
+      workPage,
+      new RegExp("<dt>" + label + "<\\/dt><dd>\\{caseStudy\\." + value + "\\}<\\/dd>"),
+    );
+  }
+
+  assert.match(workPage, /<p>\{caseStudy\.plainResult\}<\/p>/);
+  assert.match(workPage, /<h3>\{caseStudy\.proofState\}<\/h3>/);
+
+  assert.doesNotMatch(casePage + workPage, /—/);
+});
+
+test("renders the work index with outcomes, audience, role, and linked implementation context", async () => {
+  const response = await render("/work");
+  const html = (await response.text()).replaceAll("<!-- -->", "");
+
+  assert.equal((html.match(/<dt>My role<\/dt>/g) ?? []).length, 4);
+  assert.equal((html.match(/<dt>Who it helps<\/dt>/g) ?? []).length, 4);
+  assert.match(html, /Teams can coordinate security across many projects without losing control/i);
+  assert.match(html, /available in the linked public fork and branches/i);
+  assert.match(html, /available as working implementations across the linked public projects/i);
+  for (const headline of [
+    "Security at scale, with ownership intact.",
+    "Policy results that preserve intent.",
+    "Windows support in testable steps.",
+    "Agent teams that carry context forward.",
+  ]) {
+    assert.ok(html.includes(`<h3>${headline}</h3>`), headline);
+  }
+});
+
+test("renders case pages with an outcome H1 and a six-stage operating path", async () => {
+  const cases = [
+    [
+      "/work/automated-security-helper",
+      "Automated Security Helper",
+      "Security at scale, with ownership intact.",
+      "Teams can coordinate security across many projects without losing control of ownership, boundaries, or failures.",
+      "Public contribution activity · 2024 to 2026",
+    ],
+    [
+      "/work/cloudformation-guard",
+      "CloudFormation Guard",
+      "Policy results that preserve intent.",
+      "Teams can trust that a policy verdict keeps the meaning its author intended, from evaluation through the result an operator sees.",
+      "Public contribution activity · 2026",
+    ],
+    [
+      "/work/nix-windows",
+      "Nix on Windows",
+      "Windows support in testable steps.",
+      "A team can advance Windows support in independent, testable steps instead of betting the entire port on one large change.",
+      "Public contribution activity · 2026",
+    ],
+    [
+      "/work/agent-systems",
+      "BASE, CARL, PAUL, and SEED",
+      "Agent teams that carry context forward.",
+      "Agent teams can remember reviewed decisions, recover interrupted work, and hand delivery across tools without losing context.",
+      "Public contribution activity · 2026",
+    ],
+  ];
+
+  for (const [pathname, system, headline, outcome, period] of cases) {
+    const response = await render(pathname);
+    const html = (await response.text()).replaceAll("<!-- -->", "");
+    assert.match(
+      html,
+      new RegExp(
+        '<p class="micro-label case-hero__eyebrow">' + escapeRegExp(system) +
+          '<\\/p>\\s*<h1 class="case-hero__plain">' + escapeRegExp(headline) + '<\\/h1>',
+        "i",
+      ),
+      pathname,
+    );
+    assert.match(html, new RegExp('"description":"' + escapeRegExp(outcome) + '"'), pathname);
+    assert.match(
+      html,
+      new RegExp('<dt>Public activity<\\/dt><dd>' + escapeRegExp(period) + '<\\/dd>', "i"),
+      pathname,
+    );
+    assert.match(html, /href="#story"[^>]*>Result</i);
+    assert.match(html, /href="#architecture"[^>]*>How it works</i);
+    assert.match(html, /href="#source"[^>]*>Public work</i);
+    assert.match(html, /How it works \/ 06 stages/i);
+    assert.match(html, /Six stages connect the original pressure to the system that now exists/i);
+    assert.doesNotMatch(html, /How it works \/ 06 decisions/i);
+    assert.equal((html.match(/class="case-path__marker"/g) ?? []).length, 6);
+    for (const stage of ["pressure", "constraint", "decision", "implementation", "state", "proof"]) {
+      assert.match(html, new RegExp('id="stage-' + stage + '"'));
+    }
+    assert.match(html, /From constraint to a system a team can own/i);
+    assert.match(html, /Inspect the work behind the result/i);
+    assert.doesNotMatch(html, /Scan[\s\S]*Read[\s\S]*Verify/i);
+  }
+});
+
+test("renders contexted impact with normalized decorative employer marks", async () => {
+  const response = await render("/about");
+  const html = await response.text();
+  for (const employer of [
+    "Amazon Web Services",
+    "Chainalysis",
+    "Cameo",
+    "Trōv",
+    "Rakuten AirMap, Inc.",
+    "F.T. Industries",
+    "cielo24",
+    "Quiver Media",
+    "Tinder",
+    "Joint Business Solutions",
+  ]) {
+    assert.match(html, new RegExp(escapeRegExp(employer), "i"));
+  }
   assert.match(html, /Global payments network/i);
   assert.match(html, /Major U\.S\. financial institution/i);
   assert.match(html, /Global automotive and mobility manufacturer/i);
   assert.match(html, /International vehicle manufacturer/i);
   assert.match(html, /Global investment manager/i);
-  assert.match(html, /tokenized-asset platform/i);
-  assert.match(html, /regulatory remediation/i);
-  assert.match(html, /data-lake foundations/i);
-  assert.match(html, /Governed AWS account provisioning/i);
-  assert.match(html, /They do not imply endorsement/i);
-  assert.match(
-    html,
-    /This is a personal portfolio\.[\s\S]*?nothing on this site is a statement made on behalf of any current or former employer\./i,
-  );
-  assert.match(html, /linkedin\.com\/in\/madisonhsteiner/i);
-  assert.match(
-    html,
-    /Each project starts with the operating result\.[\s\S]*?optional source map reveal the repositories, changes, commits, and files behind it\./i,
-  );
-  assert.match(
-    html,
-    /Capabilities available beyond current upstream releases\./i,
-  );
-  assert.match(
-    html,
-    /constellation represents contribution relationships, not literal Git ancestry/i,
-  );
-  assert.match(html, /Agent platforms from one contract[\s\S]*?<dd>15<\/dd>/i);
-  assert.match(html, /SVG capability layers merged[\s\S]*?<dd>7<\/dd>/i);
-  assert.match(
-    html,
-    /Multi-project security orchestration[\s\S]*?<dd>v3\.7<\/dd>/i,
-  );
-  assert.match(
-    html,
-    new RegExp(
-      `Public contributions merged[\\s\\S]*?<dd>${summary.combined.merged_attributed_contribution_pull_requests}</dd>`,
-      "i",
-    ),
-  );
-  assert.match(html, /Automated Security Helper/i);
-  assert.match(
-    html,
-    /Workspace mode shipped in v3\.7\.0[\s\S]*?pinned Nix scanner execution merged/i,
-  );
-  assert.match(html, /CloudFormation Guard correctness/i);
-  assert.match(html, /Shipped in Guard 3\.2\.1/i);
-  assert.match(html, /Nix on Windows/i);
-  assert.match(
-    html,
-    /Derivation builder merged[\s\S]*?broader Windows runtime capabilities available[\s\S]*?content-addressed and fixed-output derivations/i,
-  );
-  assert.match(html, /Integrity-bound Yarn PnP for Bazel/i);
-  assert.match(html, /zero-install importer/i);
-  assert.match(html, /A typed SVG DOM for an agent-native browser/i);
-  assert.match(html, /Seven capability layers merged upstream/i);
-  assert.match(html, /complete dependency-ordered SVG stack/i);
-  assert.match(html, /transactional collections/i);
-  assert.match(html, /analytic path geometry/i);
-  assert.match(html, /deterministic UTF-8 text metrics/i);
-  assert.match(html, /Organizational agent systems/i);
-  assert.match(
-    html,
-    /Subagents, agent teams, decision memory, and recursive improvement/i,
-  );
-  assert.match(html, /AWS Labs MCP/i);
-  assert.match(html, /AWS CDK and jsii/i);
-  assert.match(html, /OpenAI Plugins fork · template-aware GitHub creation/i);
-  assert.match(html, /Nextcloud #62429 · logical-time preservation/i);
-  assert.match(html, /class="resource-kind">PR</i);
-  assert.match(html, /class="resource-kind">Docs</i);
-  assert.match(html, /class="resource-kind">Repository</i);
-  assert.match(html, /class="resource-kind">Capability</i);
-  assert.match(html, /class="resource-kind">Release</i);
-  assert.match(html, /class="resource-kind">Prototype</i);
-  assert.match(html, /automated-security-helper\/pull\/331/i);
-  assert.match(html, /automated-security-helper\/pull\/440/i);
-  assert.match(html, /cloudformation-guard\/pull\/717/i);
-  assert.match(html, /cloudformation-guard\/releases\/tag\/3\.2\.1/i);
-  for (const pullRequest of [16342, 16343, 16345, 16354, 16355, 16347]) {
-    assert.match(html, new RegExp(`NixOS/nix/pull/${pullRequest}`, "i"));
+  const marks = html.match(/<img\b[^>]*src="\/logos\/svg\/[^"]+\.svg"[^>]*>/gi) ?? [];
+  assert.equal(marks.length, 9);
+  for (const mark of marks) {
+    assert.match(mark, /alt=""/i);
+    assert.match(mark, /loading="lazy"/i);
+    assert.doesNotMatch(mark, /\.(?:png|jpe?g)\b/i);
   }
-  assert.match(html, /aspect-build\/rules_js\/pull\/2957/i);
-  assert.match(html, /aws\/jsii\/pull\/5054/i);
-  assert.match(html, /awslabs\/mcp\/pull\/2658/i);
-  for (const pullRequest of [3012, 3034, 3030, 3033, 3031, 3029, 3032]) {
-    assert.match(
-      html,
-      new RegExp(`lightpanda-io/browser/pull/${pullRequest}`, "i"),
-    );
-  }
-  assert.match(html, /mh0pe\/browser\/tree\/codex\/svg-07-text/i);
-  assert.match(html, /mh0pe\/plugins\/commit\/4dd70c45672d72aa5b4d4c7e2737a7cf32faa4e2/i);
-  assert.match(html, /nextcloud\/server\/pull\/62429/i);
-  assert.match(html, /awslabs\.github\.io\/automated-security-helper/i);
-  assert.match(html, /lightpanda\.io\/docs/i);
-  assert.match(html, /opens in a new tab/i);
-  assert.doesNotMatch(html, /Copilot-authored pull requests/i);
-  assert.match(html, new RegExp(String(trust.profile.public_since)));
-  assert.match(
-    html,
-    /Each capability opens to the pull request, commit, release, or branch where the work lives/i,
-  );
-  assert.match(html, /Public GitHub record since/i);
-  assert.match(
-    html,
-    /Explore the systems from initial proposal through review, integration, and continued evolution/i,
-  );
-  assert.doesNotMatch(
-    html,
-    /Co-authored-by|described without client names|Client names stay private|without naming clients/i,
-  );
-  const impactStart = html.indexOf('class="impact-context"');
-  const impactEnd = html.indexOf('id="record"', impactStart);
-  assert.ok(impactStart >= 0 && impactEnd > impactStart);
-  const impactHtml = html.slice(impactStart, impactEnd);
-  assert.equal((impactHtml.match(/<li>/g) ?? []).length, 5);
-  assert.doesNotMatch(impactHtml, /<(?:a|img|svg)\b/i);
-  assert.ok(html.indexOf('id="work"') < html.indexOf('id="trust"'));
-  assert.doesNotMatch(html, /upstream stars|upstream forks/i);
-  assert.match(html, /github\.com\/mh0pe/i);
-  assert.match(html, /github\.com\/awsmadi/i);
-  assert.doesNotMatch(
-    html,
-    /Architecture Ledger|How this was counted|export report|Principal-level systems scope|Two verified GitHub identities/i,
-  );
-  assert.doesNotMatch(html, /[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/);
-  assert.doesNotMatch(
-    html,
-    /codex-preview|react-loading-skeleton|Your site is taking shape/i,
-  );
+  assert.equal(new Set([...html.matchAll(/data-logo="([^"]+)"/g)].map((match) => match[1])).size, 10);
+  assert.match(html, /Experience \/ Organizational range/i);
+  assert.doesNotMatch(html, /trusted by/i);
 });
 
-test("pins the refreshed project catalog and positioning copy in source", async () => {
-  const [page, layout] = await Promise.all([
-    readFile(new URL("app/page.tsx", root), "utf8"),
-    readFile(new URL("app/layout.tsx", root), "utf8"),
+test("ships layered responsive, motion-safe, and forced-color CSS", async () => {
+  const [foundation, brand] = await Promise.all([
+    readFile(new URL("public/portfolio-v2.css", root), "utf8"),
+    readFile(new URL("public/portfolio-v3.css", root), "utf8"),
   ]);
-
-  assert.deepEqual(
-    [...page.matchAll(/\bgraphId:\s*"([^"]+)"/g)].map((match) => match[1]),
-    expectedProjectGraphIds,
-  );
-  assert.match(
-    page,
-    /Bringing Hope to distributed systems[\s\S]*?at enterprise scale/,
-  );
-  assert.match(
-    page,
-    /Multi-project security orchestration[\s\S]*?<dd>v3\.7<\/dd>/,
-  );
-  assert.match(page, /SVG capability layers merged[\s\S]*?<dd>7<\/dd>/);
-  assert.match(
-    page,
-    /Derivation builder merged · broader Windows runtime capabilities available/,
-  );
-  assert.match(page, /Seven capability layers merged upstream/);
-  assert.doesNotMatch(page, /I build the infrastructure/);
-  assert.match(
-    layout,
-    /Madison Hope Steiner \| Principal AI Architect Portfolio/,
-  );
-  assert.match(layout, /Open-Source Systems Portfolio/);
-});
-
-test("uses bounded public data sources consistently", async () => {
-  const [
-    page,
-    layout,
-    packageJson,
-    logoAssets,
-    professionalHistory,
-    summary,
-    trust,
-  ] = await Promise.all([
-    readFile(new URL("app/page.tsx", root), "utf8"),
-    readFile(new URL("app/layout.tsx", root), "utf8"),
-    readFile(new URL("package.json", root), "utf8"),
-    dataFile("logo-assets.json"),
-    dataFile("professional-history.json"),
-    dataFile("public-history-summary.json"),
-    dataFile("project-trust.json"),
-  ]);
-
-  assert.equal(summary.public_only, true);
-  assert.equal(trust.public_only, true);
-  assert.equal(professionalHistory.employers.length, 10);
-  assert.equal(professionalHistory.organization_contexts.length, 5);
-  assert.deepEqual(
-    professionalHistory.organization_contexts,
-    approvedOrganizationContexts,
-  );
-  assert.ok(
-    professionalHistory.employers.every(
-      (employer) =>
-        typeof employer.scope === "string" && employer.scope.length > 20,
-    ),
-    "every organization should carry meaningful context, not only a logo",
-  );
-  assert.match(professionalHistory.profile_url, /^https:\/\/www\.linkedin\.com\//);
-  assert.match(summary.collection_status, /^(complete|verified_baseline)$/);
-  assert.match(summary.cutoff_date, /^\d{4}-\d{2}-\d{2}$/);
-  assert.match(trust.observed_at, /^\d{4}-\d{2}-\d{2}$/);
-  assert.match(page, /public-history-summary\.json/);
-  assert.match(page, /project-trust\.json/);
-  assert.match(page, /professional-history\.json/);
-  assert.match(layout, /favicon\.svg/);
-  assert.doesNotMatch(page, /_sites-preview|SkeletonPreview|codex-preview/);
-  assert.doesNotMatch(layout, /Starter Project|next\/font|favicon\.png/);
-  assert.doesNotMatch(packageJson, /react-loading-skeleton/);
-
-  const imageEmployers = professionalHistory.employers.filter(
-    (employer) => employer.logo,
-  );
-  assert.equal(imageEmployers.length, 9);
-  assert.equal(logoAssets.assets.length, imageEmployers.length);
-  assert.equal(
-    logoAssets.assets.filter((asset) => asset.kind === "source_vector").length,
-    4,
-  );
-  assert.equal(
-    logoAssets.assets.filter(
-      (asset) => asset.kind === "mirrored_source_vector",
-    ).length,
-    1,
-  );
-  assert.equal(
-    logoAssets.assets.filter((asset) => asset.kind === "derived_vector").length,
-    4,
-  );
-
-  const provenanceByFile = new Map(
-    logoAssets.assets.map((asset) => [asset.file, asset]),
-  );
-
-  for (const employer of imageEmployers) {
-    assert.match(employer.logo, /^\/logos\/svg\/[a-z0-9-]+\.svg$/);
-    assert.match(
-      employer.logo_treatment,
-      /^(source_vector|mirrored_source_vector|derived_vector)$/,
-    );
-    assert.ok(employer.width > 0);
-    assert.ok(employer.height > 0);
-
-    const source = await readFile(
-      new URL(`public${employer.logo}`, root),
-      "utf8",
-    );
-    assert.match(source, /^<svg\b/);
-    assert.match(source, /\bviewBox="/);
-    assert.match(source, /<path\b/);
-    assert.doesNotMatch(
-      source,
-      /<script\b|<image\b|<foreignObject\b|\bon[a-z]+\s*=|\b(?:href|src)\s*=|data:|url\(/i,
-    );
-
-    const provenance = provenanceByFile.get(employer.logo);
-    assert.ok(provenance);
-    assert.equal(provenance.employer, employer.name);
-    assert.equal(provenance.kind, employer.logo_treatment);
-    assert.match(provenance.source_url, /^https:\/\//);
-    assert.match(provenance.provenance_url, /^https:\/\//);
+  const css = foundation + "\n" + brand;
+  assert.ok(gzipSync(foundation).byteLength <= 24 * 1024);
+  assert.ok(gzipSync(brand).byteLength <= 18 * 1024);
+  for (const breakpoint of ["70rem", "58rem", "48rem", "25rem"]) {
+    assert.match(brand, new RegExp(`@media \\(max-width: ${breakpoint}\\)`));
   }
-
-  const starTotal = Object.values(trust.ecosystems).reduce(
-    (total, ecosystem) => total + ecosystem.stars,
-    0,
-  );
-  assert.equal(starTotal, trust.selected_ecosystem_stars);
+  assert.match(brand, /@media \(prefers-reduced-motion: reduce\)/i);
+  assert.match(brand, /@media \(forced-colors: active\)/i);
+  assert.match(brand, /@media print/i);
+  assert.doesNotMatch(css, /body\s*\{[\s\S]*?min-width:\s*320px/i);
+  assert.match(brand, /min-height:\s*44px/i);
+  assert.match(foundation, /\.source-link__label\s*\{[\s\S]*?overflow-wrap:\s*anywhere/i);
+  assert.match(brand, /\.career-ledger__mark\s*\{[\s\S]*?place-items:\s*center[\s\S]*?background:/i);
+  assert.match(brand, /\.career-ledger__mark img\s*\{[\s\S]*?width:\s*100%[\s\S]*?height:\s*100%[\s\S]*?object-fit:\s*contain/i);
+  assert.match(brand, /\.hope-line__svg--mobile\s*\{[\s\S]*?display:\s*none/i);
+  assert.match(brand, /@media \(max-width: 48rem\)[\s\S]*?\.hope-line__svg--mobile\s*\{[\s\S]*?display:\s*block[\s\S]*?width:\s*100%[\s\S]*?transform:\s*none/i);
+  assert.doesNotMatch(brand, /width:\s*56rem/i);
+  assert.match(brand, /@media \(max-width: 58rem\)[\s\S]*?\.hope-patterns__intro\s*\{[\s\S]*?position:\s*static/i);
+  assert.doesNotMatch(css, /scroll-behavior:\s*smooth|animation-timeline|mix-blend-mode|backdrop-filter/i);
+  assert.doesNotMatch(css, /animation(?:-iteration-count)?:\s*[^;]*infinite/i);
 });
 
-test("keeps project activity players readable and touchable on phones", async () => {
-  const styles = await readFile(new URL("public/portfolio.css", root), "utf8");
-  const viewEnterStart = styles.indexOf("@keyframes view-enter");
-  const viewEnterEnd = styles.indexOf("@supports", viewEnterStart);
-  const viewEnter = styles.slice(viewEnterStart, viewEnterEnd);
-
-  assert.ok(viewEnterStart >= 0 && viewEnterEnd > viewEnterStart);
-  assert.match(viewEnter, /translate:\s*0 2rem/);
-  assert.doesNotMatch(
-    viewEnter,
-    /opacity:\s*0/,
-    "Core scroll-linked content must remain visible before it enters the viewport",
-  );
-
-  assert.match(
-    styles,
-    /@media \(max-width: 47\.5rem\)[\s\S]*?\.project-story \.project,[\s\S]*?\.support-story \.support-list article\s*\{[\s\S]*?padding-inline:\s*1\.35rem/,
-  );
-  assert.match(
-    styles,
-    /@media \(max-width: 30rem\)[\s\S]*?\.project-story \.project,[\s\S]*?\.support-story \.support-list article\s*\{[\s\S]*?padding-inline:\s*1rem/,
-  );
-  assert.match(
-    styles,
-    /@media \(max-width: 30rem\)[\s\S]*?\.contribution-card-player\s*\{[\s\S]*?width:\s*100%[\s\S]*?margin-inline:\s*0/,
-  );
-  assert.doesNotMatch(styles, /width:\s*calc\(100% \+ 2rem\)/);
-  assert.match(
-    styles,
-    /@media \(max-width: 56\.25rem\)[\s\S]*?\.project > \.project-rail\s*\{[\s\S]*?position:\s*relative;[\s\S]*?top:\s*auto;/,
-  );
-  assert.match(
-    styles,
-    /\.contribution-card-disclosure > summary\s*\{[\s\S]*?min-height:\s*3\.75rem/,
-  );
-  assert.match(
-    styles,
-    /\.contribution-card-disclosure:not\(\[open\]\) > \.contribution-card-player\s*\{[\s\S]*?display:\s*none/,
-  );
-  assert.match(
-    styles,
-    /\.card-player-filters\s*\{[\s\S]*?overflow-x:\s*auto[\s\S]*?overscroll-behavior-inline:\s*contain[\s\S]*?scroll-snap-type:\s*inline proximity/,
-  );
-  assert.match(
-    styles,
-    /\.card-player-filters button\[data-filter="all"\]\s*\{[\s\S]*?min-height:\s*2\.75rem/,
-  );
-  assert.match(
-    styles,
-    /\.card-player-facts > div:last-child:nth-child\(odd\)\s*\{[\s\S]*?grid-column:\s*1 \/ -1/,
-  );
-  assert.match(
-    styles,
-    /\.card-player-transport \.card-player-play\s*\{[\s\S]*?grid-column:\s*2 \/ -1[\s\S]*?grid-row:\s*1/,
-  );
-  assert.match(
-    styles,
-    /\.project-constellation\s*\{[\s\S]*?position:\s*absolute[\s\S]*?pointer-events:\s*none/,
-  );
-  assert.match(
-    styles,
-    /@media \(max-width: 47\.5rem\)[\s\S]*?\.project-constellation\s*\{[\s\S]*?opacity:\s*0\.14/,
-  );
-  assert.match(
-    styles,
-    /@media \(forced-colors: active\)[\s\S]*?\.project-constellation\s*\{[\s\S]*?display:\s*none/,
-  );
-});
-
-test("ships responsive, accessible, print-ready interaction styles", async () => {
-  const styles = await readFile(new URL("public/portfolio.css", root), "utf8");
-  const viewTimelineStart = styles.indexOf(
-    "@supports (animation-timeline: view())",
-  );
-  const reducedMotionStart = styles.indexOf(
-    "@media (prefers-reduced-motion: reduce)",
-    viewTimelineStart,
-  );
-  const viewTimelineStyles = styles.slice(
-    viewTimelineStart,
-    reducedMotionStart,
-  );
-
-  assert.match(styles, /@font-face/);
-  assert.match(styles, /Instrument Sans/);
-  assert.match(styles, /min-height:\s*2\.75rem/);
-  assert.match(styles, /@media \(max-width: 56\.25rem\)/);
-  assert.match(styles, /@media print/);
-  assert.match(styles, /@media \(forced-colors: active\)/);
-  assert.match(styles, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(styles, /@supports \(animation-timeline: view\(\)\)/);
-  assert.doesNotMatch(viewTimelineStyles, /\.career-ledger/);
-  assert.doesNotMatch(viewTimelineStyles, /^\s*\.project,\s*$/m);
-  assert.doesNotMatch(
-    viewTimelineStyles,
-    /^\s*\.frontier-list article,\s*$/m,
-  );
-  assert.doesNotMatch(
-    viewTimelineStyles,
-    /^\s*\.support-list article,\s*$/m,
-  );
-  assert.match(
-    viewTimelineStyles,
-    /\.project > \.project-body[\s\S]*?\.frontier-list[\s\S]*?article[\s\S]*?> :not\(\.contribution-card-disclosure, \.project-constellation\)/,
-  );
-  assert.match(styles, /--signal-coral:/);
-  assert.match(styles, /--signal-lime:/);
-  assert.match(styles, /backdrop-filter:/);
-  assert.match(
-    styles,
-    /@media \(max-width: 47\.5rem\)[\s\S]*?\.primary-nav\s*\{[\s\S]*?flex-wrap:\s*wrap/,
-  );
-  assert.match(styles, /\.career-current-mark img[\s\S]*?filter:\s*none/);
-  assert.match(
-    styles,
-    /\.career-current-mark\s*\{[\s\S]*?background:\s*var\(--paper\)/,
-  );
-  assert.match(styles, /\.career-history-grid/);
-  assert.match(styles, /\.career-logo--chainalysis/);
-  assert.match(styles, /--logo-max-height:\s*2\.15rem/);
-  assert.match(
-    styles,
-    /\.career-logo img\s*\{[\s\S]*?max-width:\s*var\(--logo-max-width/,
-  );
-  assert.match(
-    styles,
-    /\.career-logo img\s*\{[\s\S]*?max-height:\s*var\(--logo-max-height/,
-  );
-  assert.match(styles, /\.career-logo\s*\{[\s\S]*?overflow:\s*hidden/);
-  assert.match(
-    styles,
-    /\.impact-context ul\s*\{[\s\S]*?repeat\(6,\s*minmax\(0,\s*1fr\)\)/,
-  );
-  assert.match(
-    styles,
-    /@media \(max-width: 30rem\)[\s\S]*?\.career-history-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)/,
-  );
-  assert.match(
-    styles,
-    /@media \(max-width: 30rem\)[\s\S]*?\.career-history-grid li\s*\{[\s\S]*?grid-template-columns:\s*6\.5rem\s+minmax\(0,\s*1fr\)/,
-  );
-  assert.match(styles, /\[id\]\s*\{[\s\S]*?scroll-margin-top:\s*7rem/);
-  assert.doesNotMatch(styles, /--logo-scale/);
-  assert.match(styles, /\.resource-links/);
-  assert.doesNotMatch(styles, /\.copilot-evidence/);
-  assert.doesNotMatch(styles, /employer-grid|employer-mark--cielo/);
-  assert.doesNotMatch(styles, /Helvetica Neue|Inter|Times New Roman/);
-  assert.doesNotMatch(styles, /-webkit-text-stroke/);
-  assert.doesNotMatch(
-    styles,
-    /@media \(max-width: 47\.5rem\)[\s\S]*?\.primary-nav\s*\{\s*display:\s*none;/,
-  );
-});
-
-test("provides a branded recovery page", async () => {
-  const response = await render("/not-a-real-page");
+test("renders a branded recovery page", async () => {
+  const response = await render("/missing-route");
   assert.equal(response.status, 404);
   const html = await response.text();
-  assert.match(html, /<title>Page not found \| Madison Hope Steiner<\/title>/i);
-  assert.match(html, /noindex/i);
-  assert.doesNotMatch(html, /index,\s*follow|rel="canonical"/i);
-  assert.match(html, /This path does not exist/i);
-  assert.match(html, /Return to portfolio/i);
-  assert.match(html, /github\.com\/mh0pe|>mh0pe</i);
-  assert.match(html, /github\.com\/awsmadi|>awsmadi</i);
+  assert.match(html, /That path ends here\. The work continues\./i);
+  assert.match(html, /aria-labelledby="not-found-routes-title"/i);
+  assert.match(html, /<a class="not-found__route" href="\/">/i);
 });

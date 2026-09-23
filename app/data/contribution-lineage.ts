@@ -1,3 +1,5 @@
+import publicHistory from "./public-history-summary.json";
+
 export type LineageTone = "coral" | "cyan" | "lime" | "violet" | "gold";
 
 export type LineageAvailability = "upstream" | "public-fork";
@@ -33,9 +35,9 @@ export interface LineageChapter {
 
 export const contributionLineageSnapshot = {
   publicOnly: true,
-  observedAt: "2026-09-03",
-  observedPullRequests: 213,
-  observedRepositoryFamilies: 44,
+  observedAt: publicHistory.cutoff_date,
+  observedPullRequests: publicHistory.combined.attributed_contribution_pull_requests,
+  observedRepositoryFamilies: publicHistory.combined.distinct_pr_target_repositories,
   representedLineageEvents: 39,
   accounts: ["mh0pe", "awsmadi"],
 } as const;
@@ -93,12 +95,12 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
         label: "Distributed security execution",
         repository: "awslabs/automated-security-helper",
         detail:
-          "Adds scanner-axis sharding, result collection, and deployable AWS targets as an active public implementation.",
-        availability: "public-fork",
+          "Splits scanner work across deployable AWS targets and combines results while preserving individual execution outcomes.",
+        availability: "upstream",
         evidenceKind: "PR",
         links: [
           {
-            label: "#494 · public prototype",
+            label: "#494 · merged",
             href: "https://github.com/awslabs/automated-security-helper/pull/494",
           },
         ],
@@ -145,12 +147,12 @@ export const contributionLineageChapters: readonly LineageChapter[] = [
         label: "Truthful scanner failure semantics",
         repository: "awslabs/automated-security-helper",
         detail:
-          "Migrates cdk-nag to its real 3.x validation API and reports an all-target execution failure as an error instead of a clean empty result.",
-        availability: "public-fork",
+          "Uses the cdk-nag 3.x validation API and preserves per-target execution failures in the final scan result.",
+        availability: "upstream",
         evidenceKind: "PR",
         links: [
           {
-            label: "#514 · implementation",
+            label: "#514 · merged",
             href: "https://github.com/awslabs/automated-security-helper/pull/514",
           },
         ],

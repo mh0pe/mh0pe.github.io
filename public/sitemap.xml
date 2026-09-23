@@ -2,6 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://mh0pe.github.io/</loc>
-    <lastmod>2026-09-03</lastmod>
+    <lastmod>2026-09-04</lastmod>
   </url>
+  <url><loc>https://mh0pe.github.io/work/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/work/automated-security-helper/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/work/cloudformation-guard/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/work/nix-windows/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/work/agent-systems/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/proof/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/decisions/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/method/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/capabilities/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/models/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/about/</loc><lastmod>2026-09-04</lastmod></url>
+  <url><loc>https://mh0pe.github.io/credentials/</loc><lastmod>2026-09-05</lastmod></url>
 </urlset>

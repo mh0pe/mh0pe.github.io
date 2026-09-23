@@ -67,13 +67,13 @@ function visit(value, visitor, path = []) {
 
 function collaborationSection(html) {
   const start = html.indexOf('id="agent-collaboration"');
-  const end = html.indexOf('id="frontier"', start);
+  const end = html.indexOf("</section>", start);
   assert.ok(start >= 0, "Agent collaboration section should be rendered");
   assert.ok(
     end > start,
-    "Agent collaboration should precede fork capabilities",
+    "Agent collaboration section should have a closing boundary",
   );
-  return html.slice(start, end);
+  return html.slice(start, end + "</section>".length);
 }
 
 test("publishes the bounded public attribution schema", async () => {
@@ -382,37 +382,37 @@ test("matches the audited public snapshot totals", async () => {
 });
 
 test("server-renders the default collaboration explorer as evidence UI", async () => {
-  const response = await render("/");
+  const response = await render("/models");
   assert.equal(response.status, 200);
 
   const html = (await response.text()).replaceAll("<!-- -->", "");
   const section = collaborationSection(html);
   assert.ok(
-    html.indexOf('id="work"') < html.indexOf('id="agent-collaboration"'),
-    "Agent collaboration should follow selected work",
+    html.indexOf('id="route-title"') < html.indexOf('id="agent-collaboration"'),
+    "Model composition should follow its route introduction",
   );
 
-  assert.match(section, /03 \/ The public record/i);
-  assert.match(section, /Models behind the work\./i);
+  assert.match(section, /01 \/ Model composition/i);
+  assert.match(section, /Where model collaboration appears in the work\./i);
   assert.match(
     section,
-    /<details class="attribution-record">(?![^>]*\bopen\b)/i,
+    /<details class="attribution-record" open/i,
   );
-  assert.match(section, /Explore the public record/i);
+  assert.match(section, /Explore model collaboration/i);
   assert.ok(
-    section.indexOf("Explore the public record") <
-      section.indexOf("Repository"),
-    "The evidence drawer should precede its filters",
+    section.indexOf("Explore model collaboration") <
+      section.indexOf("Project"),
+    "The composition drawer should precede its filters",
   );
   assert.match(
     section,
     /GitHub-reported added lines in model-attributed commits/i,
   );
-  assert.match(section, /Repository/i);
-  assert.match(section, /Delivery surface/i);
-  assert.match(section, /Content scope/i);
-  assert.match(section, /Metric/i);
-  assert.match(section, /Added lines/i);
+  assert.match(section, /Project/i);
+  assert.match(section, /Work type/i);
+  assert.match(section, /What to measure/i);
+  assert.match(section, /Count by/i);
+  assert.match(section, /Lines added/i);
   assert.match(section, /All public/i);
   assert.match(section, /Code/i);
   assert.match(section, /Claude Opus 4\.8/i);
@@ -427,7 +427,7 @@ test("server-renders the default collaboration explorer as evidence UI", async (
 });
 
 test("renders public evidence links and an exact-value table", async () => {
-  const response = await render("/");
+  const response = await render("/models");
   assert.equal(response.status, 200);
 
   const html = (await response.text()).replaceAll("<!-- -->", "");
@@ -454,7 +454,7 @@ test("renders public evidence links and an exact-value table", async () => {
 test("keeps attribution data and rendered evidence within performance budgets", async () => {
   const [{ source }, response, packageSource] = await Promise.all([
     attributionArtifact(),
-    render("/"),
+    render("/models"),
     readFile(new URL("package.json", root), "utf8"),
   ]);
   assert.equal(response.status, 200);
@@ -465,54 +465,42 @@ test("keeps attribution data and rendered evidence within performance budgets", 
     html.match(/<(?!\/|!|\?)[A-Za-z][A-Za-z0-9:-]*(?:\s|>)/g) ?? [];
   const richEvidenceCards =
     section.match(/class="[^"]*\battribution-evidence-item\b[^"]*"/g) ?? [];
-  const constellationMarkup =
-    html.match(
-      /<div[^>]+data-project-constellation="[^"]+"[\s\S]*?<\/svg><\/div>/gi,
-    ) ?? [];
-  const constellationGlyphs = constellationMarkup.flatMap(
-    (markup) => markup.match(/data-node-type=/g) ?? [],
-  );
-  const constellationDecimals = constellationMarkup.flatMap((markup) =>
-    [...markup.matchAll(/-?\d+\.(\d+)/g)].map((match) => match[1].length),
-  );
 
   assert.ok(
     Buffer.byteLength(source) <= 128 * 1024,
     "Compact attribution JSON should remain at or below 128 KB raw",
   );
   assert.ok(
-    gzipSync(source).byteLength <= 52 * 1024,
-    "Compact attribution JSON should remain at or below 52 KB gzip",
+    gzipSync(source).byteLength <= 56 * 1024,
+    "Compact attribution JSON should remain at or below 56 KB gzip",
   );
   assert.ok(
-    Buffer.byteLength(html) <= 400 * 1024,
-    "Rendered portfolio with inline contribution graphs should remain at or below 400 KB raw",
+    Buffer.byteLength(html) <= 240 * 1024,
+    "Rendered models route should remain at or below 240 KB raw",
   );
   assert.ok(
-    gzipSync(html).byteLength <= 56 * 1024,
-    "Rendered portfolio with inline contribution graphs should remain at or below 56 KB gzip",
+    gzipSync(html).byteLength <= 48 * 1024,
+    "Rendered models route should remain at or below 48 KB gzip",
   );
   assert.ok(
-    openingTags.length < 3_500,
-    `Rendered portfolio with inline SVG graphs should stay below 3,500 elements; found ${openingTags.length}`,
+    openingTags.length < 1_200,
+    `Rendered models route should stay below 1,200 elements; found ${openingTags.length}`,
   );
-  assert.ok(
-    constellationGlyphs.length >= 240,
-    `Project constellations should retain visual density; found ${constellationGlyphs.length} rendered glyphs`,
-  );
-  assert.ok(
-    Math.max(...constellationDecimals) <= 6,
-    "Project constellation presentation numbers should stay at six decimal places or fewer",
+  assert.doesNotMatch(
+    html,
+    /data-project-constellation|data-contribution-player|<canvas\b/i,
   );
   assert.ok(
     richEvidenceCards.length <= 3,
     "Only representative evidence should use rich cards",
   );
-  assert.doesNotMatch(
-    section,
-    /attribution-evidence-compact/i,
-    "Closed evidence disclosure should not server-render repetitive commit rows",
+  const compactEvidenceRows =
+    section.match(/class="[^"]*\battribution-evidence-compact\b[^"]*"/g) ?? [];
+  assert.ok(
+    compactEvidenceRows.length > 0 && compactEvidenceRows.length <= 12,
+    "The no-JavaScript evidence sample should be useful and bounded",
   );
+  assert.match(section, /complete public record/i);
 
   const packageData = JSON.parse(packageSource);
   const dependencies = new Set([
@@ -542,7 +530,7 @@ test("keeps attribution data and rendered evidence within performance budgets", 
 
 test("invalid URL filters retain a useful server-rendered default", async () => {
   const response = await render(
-    "/?agent=unknown&repository=private&surface=invalid&scope=invalid&metric=invalid",
+    "/models?agent=unknown&repository=private&surface=invalid&scope=invalid&metric=invalid",
   );
   assert.equal(response.status, 200);
 

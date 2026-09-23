@@ -17,6 +17,36 @@ const projectRoot = resolve(toolsDirectory, "..");
 const serverEntry = resolve(projectRoot, "dist/server/index.js");
 const clientDirectory = resolve(projectRoot, "dist/client");
 const outputDirectory = resolve(projectRoot, "pages-dist");
+const NOT_FOUND_TITLE = "Page not found | Madison Hope Steiner";
+const NOT_FOUND_DESCRIPTION =
+  "The requested path does not exist. Continue through Madison Hope Steiner's open-source systems work or public GitHub profiles.";
+const routeManifest = [
+  { pathname: "/", output: "index.html" },
+  { pathname: "/work", output: "work/index.html" },
+  {
+    pathname: "/work/automated-security-helper",
+    output: "work/automated-security-helper/index.html",
+  },
+  {
+    pathname: "/work/cloudformation-guard",
+    output: "work/cloudformation-guard/index.html",
+  },
+  { pathname: "/work/nix-windows", output: "work/nix-windows/index.html" },
+  { pathname: "/work/agent-systems", output: "work/agent-systems/index.html" },
+  { pathname: "/proof", output: "proof/index.html" },
+  { pathname: "/about", output: "about/index.html" },
+  { pathname: "/credentials", output: "credentials/index.html" },
+  { pathname: "/decisions", output: "decisions/index.html" },
+  { pathname: "/method", output: "method/index.html" },
+  { pathname: "/capabilities", output: "capabilities/index.html" },
+  { pathname: "/models", output: "models/index.html", hydrate: true },
+  {
+    pathname: "/evidence",
+    output: "evidence/index.html",
+    canonicalPath: "/proof/",
+  },
+  { pathname: "/career", output: "career/index.html", canonicalPath: "/about/" },
+];
 
 function invariant(condition, message) {
   if (!condition) {
@@ -85,12 +115,28 @@ function shouldCopyClientAsset(source) {
   const isSupersededLogoSource =
     parts[0] === "logos" &&
     (parts[1] === "normalized" || name?.endsWith(".jpg"));
+  const retiredClientPrefixes = [
+    "ActiveNav-",
+    "ContributionCardPlayer-",
+    "ContributionConstellation-",
+    "HeroSignalGraphic-",
+    "ProjectConstellationBackdrop-",
+    "graph-loaders-",
+    "lineage-focus-",
+    "scroll-activity-",
+    "use-reduced-motion-",
+  ];
+  const isRetiredClientAsset =
+    parts[0] === "assets" &&
+    retiredClientPrefixes.some((prefix) => name?.startsWith(prefix));
 
   return (
     !parts.includes(".vite") &&
     name !== "_headers" &&
     name !== ".assetsignore" &&
     path !== "og-v2.png" &&
+    path !== "portfolio.css" &&
+    !isRetiredClientAsset &&
     !isSupersededLogoSource
   );
 }
@@ -162,6 +208,87 @@ function attribute(tag, name) {
     .replaceAll("&amp;", "&");
 }
 
+function stripVinextRuntime(html) {
+  return html
+    .replace(/<link\b[^>]*>/gi, (tag) =>
+      attribute(tag, "rel")?.toLowerCase() === "modulepreload" ? "" : tag,
+    )
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, (tag) => {
+      const type = attribute(tag, "type")?.toLowerCase();
+      const runtime = attribute(tag, "data-static-runtime");
+      const src = attribute(tag, "src");
+      const isStaticRuntime =
+        (runtime === "theme-bootstrap" && src === null) ||
+        (runtime === "theme" && src?.startsWith("/theme.js?") === true) ||
+        (runtime === "interactions" && src?.startsWith("/interactions.js?") === true);
+      return type === "application/ld+json" || isStaticRuntime ? tag : "";
+    });
+}
+
+function escapeHtmlAttribute(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function metadataIdentity(key) {
+  const separator = key.indexOf(":");
+  return [key.slice(0, separator), key.slice(separator + 1)];
+}
+
+function normalizeNotFoundMetadata(html) {
+  const metadata = new Map([
+    ["name:robots", "noindex, follow"],
+    ["name:description", NOT_FOUND_DESCRIPTION],
+    ["property:og:title", NOT_FOUND_TITLE],
+    ["property:og:description", NOT_FOUND_DESCRIPTION],
+    ["name:twitter:title", NOT_FOUND_TITLE],
+    ["name:twitter:description", NOT_FOUND_DESCRIPTION],
+  ]);
+  const seen = new Set();
+  let normalized = stripVinextRuntime(html)
+    .replace(/<title\b[^>]*>[\s\S]*?<\/title>/gi, "")
+    .replace(/<link\b[^>]*>/gi, (tag) =>
+      attribute(tag, "rel")?.toLowerCase() === "canonical" ? "" : tag,
+    )
+    .replace(/<meta\b[^>]*>/gi, (tag) => {
+      const name = attribute(tag, "name")?.toLowerCase();
+      const property = attribute(tag, "property")?.toLowerCase();
+
+      if (property === "og:url") {
+        return "";
+      }
+
+      const key = name ? `name:${name}` : property ? `property:${property}` : null;
+      const content = key ? metadata.get(key) : null;
+      if (!key || content === undefined) {
+        return tag;
+      }
+      if (seen.has(key)) {
+        return "";
+      }
+
+      seen.add(key);
+      const [attributeName, attributeValue] = metadataIdentity(key);
+      return `<meta ${attributeName}="${attributeValue}" content="${escapeHtmlAttribute(content)}"/>`;
+    });
+
+  const missingMetadata = [...metadata.entries()]
+    .filter(([key]) => !seen.has(key))
+    .map(([key, content]) => {
+      const [attributeName, attributeValue] = metadataIdentity(key);
+      return `<meta ${attributeName}="${attributeValue}" content="${escapeHtmlAttribute(content)}"/>`;
+    })
+    .join("");
+
+  return normalized.replace(
+    /<\/head>/i,
+    `${missingMetadata}<title>${NOT_FOUND_TITLE}</title></head>`,
+  );
+}
+
 function hasTag(html, name, attributes) {
   return htmlTags(html, name).some((tag) =>
     Object.entries(attributes).every(
@@ -230,6 +357,31 @@ function validateIndexHtml(html) {
   );
 }
 
+function validateRouteHtml(html, pathname, declaredCanonicalPath) {
+  const canonicalPath =
+    declaredCanonicalPath ?? (pathname === "/" ? "/" : `${pathname}/`);
+  invariant(
+    /<!doctype html>/i.test(html),
+    `${pathname} is not a complete HTML document.`,
+  );
+  invariant(
+    /self\.__VINEXT_RSC_DONE__\s*=\s*true/.test(html),
+    `${pathname} did not finish its Vinext RSC stream.`,
+  );
+  invariant(
+    hasTag(html, "link", {
+      rel: "canonical",
+      href: new URL(canonicalPath, EXPECTED_ORIGIN).toString(),
+    }),
+    `${pathname} is missing its production canonical URL.`,
+  );
+  invariant(!/localhost|127\.0\.0\.1/i.test(html), `${pathname} contains a local URL.`);
+  invariant(
+    !/\/_vinext\/image\b/.test(html),
+    `${pathname} depends on the Worker image optimizer.`,
+  );
+}
+
 function decodeReference(value) {
   return value.replaceAll("&amp;", "&").trim();
 }
@@ -276,7 +428,7 @@ function localArtifactPath(reference, baseFile = "index.html") {
 
 function htmlReferences(html) {
   const references = [];
-  const attributePattern = /\b(?:href|src)=["']([^"']+)["']/gi;
+  const attributePattern = /\b(?:href|src|data-src)=["']([^"']+)["']/gi;
   const sourceSetPattern = /\b(?:srcset|imagesrcset)=["']([^"']+)["']/gi;
 
   for (const match of html.matchAll(attributePattern)) {
@@ -325,19 +477,25 @@ async function assertArtifactReference(reference, baseFile) {
   }
 }
 
-async function validateArtifactReferences(indexHtml, notFoundHtml) {
-  for (const reference of [
-    ...htmlReferences(indexHtml),
-    ...htmlReferences(notFoundHtml),
-  ]) {
-    await assertArtifactReference(reference, "index.html");
+async function validateArtifactReferences(documents) {
+  for (const document of documents) {
+    for (const reference of htmlReferences(document.html)) {
+      await assertArtifactReference(reference, document.output);
+    }
   }
 
-  const hydrationEntry = indexHtml.match(
-    /import\(["'](\/assets\/index-[A-Za-z0-9_-]+\.js)["']\)/,
-  )?.[1];
-  invariant(hydrationEntry, "Unable to locate the hydration entry.");
-  await assertArtifactReference(hydrationEntry, "index.html");
+  const hydratedDocuments = documents.filter((document) => document.hydrate);
+  invariant(hydratedDocuments.length > 0, "The route manifest has no hydrated document.");
+  for (const document of hydratedDocuments) {
+    const hydrationEntry = document.html.match(
+      /import\(["'](\/assets\/index-[A-Za-z0-9_-]+\.js)["']\)/,
+    )?.[1];
+    invariant(
+      hydrationEntry,
+      `Unable to locate the hydrated route entry for ${document.output}.`,
+    );
+    await assertArtifactReference(hydrationEntry, document.output);
+  }
 
   for (const stylesheet of await collectFiles(outputDirectory, ".css")) {
     const relativeStylesheet = relative(outputDirectory, stylesheet).split(sep).join("/");
@@ -355,6 +513,7 @@ async function validateArtifactSurface() {
     resolve(outputDirectory, "_headers"),
     resolve(outputDirectory, ".assetsignore"),
     resolve(outputDirectory, "og-v2.png"),
+    resolve(outputDirectory, "portfolio.css"),
     resolve(outputDirectory, "logos/normalized"),
   ];
 
@@ -389,28 +548,82 @@ async function main() {
   workerUrl.searchParams.set("github-pages-export", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
 
-  const [indexHtml, notFoundHtml] = await Promise.all([
-    render(worker, "/", 200),
+  const [routeHtml, notFoundHtml] = await Promise.all([
+    Promise.all(
+      routeManifest.map(async (route) => ({
+        ...route,
+        html: await render(worker, route.pathname, 200),
+      })),
+    ),
     render(worker, "/__github-pages_not_found__", 404),
   ]);
 
+  const indexHtml = routeHtml.find((route) => route.pathname === "/")?.html;
+  invariant(indexHtml, "The root route did not render.");
+
   validateIndexHtml(indexHtml);
+  for (const route of routeHtml) {
+    validateRouteHtml(route.html, route.pathname, route.canonicalPath);
+  }
   invariant(
-    /Page not found|This path does not exist/i.test(notFoundHtml),
-    "The 404 export does not contain the recovery page.",
+    hasTag(notFoundHtml, "div", { class: "not-found__shell" }),
+    "The 404 export does not contain the semantic recovery shell.",
   );
   invariant(
-    /<a href="\/">[\s\S]*Return to portfolio[\s\S]*<\/a>/i.test(notFoundHtml),
+    hasTag(notFoundHtml, "a", {
+      class: "not-found__route",
+      href: "/",
+    }),
     "The 404 recovery link must force a full document navigation.",
   );
 
+  const exportedRouteHtml = routeHtml.map((route) => ({
+    ...route,
+    html: route.hydrate ? route.html : stripVinextRuntime(route.html),
+  }));
+  const exportedNotFoundHtml = normalizeNotFoundMetadata(notFoundHtml);
+  invariant(
+    htmlTags(exportedNotFoundHtml, "title").length === 1 &&
+      exportedNotFoundHtml.includes(`<title>${NOT_FOUND_TITLE}</title>`),
+    "The static 404 document must have one exact title.",
+  );
+  invariant(
+    hasTag(exportedNotFoundHtml, "meta", {
+      name: "robots",
+      content: "noindex, follow",
+    }),
+    "The static 404 document must remain excluded from search results.",
+  );
+  invariant(
+    !htmlTags(exportedNotFoundHtml, "link").some(
+      (tag) => attribute(tag, "rel")?.toLowerCase() === "canonical",
+    ),
+    "The static 404 document must not claim another page as canonical.",
+  );
+  const exportedIndexHtml = exportedRouteHtml.find(
+    (route) => route.pathname === "/",
+  )?.html;
+  invariant(exportedIndexHtml, "The static root route did not render.");
+
   await Promise.all([
-    writeFile(resolve(outputDirectory, "index.html"), indexHtml, "utf8"),
-    writeFile(resolve(outputDirectory, "404.html"), notFoundHtml, "utf8"),
+    ...exportedRouteHtml.map(async (route) => {
+      const target = resolve(outputDirectory, route.output);
+      await mkdir(dirname(target), { recursive: true });
+      await writeFile(target, route.html, "utf8");
+    }),
+    writeFile(resolve(outputDirectory, "404.html"), exportedNotFoundHtml, "utf8"),
   ]);
 
   await validateArtifactSurface();
-  await validateArtifactReferences(indexHtml, notFoundHtml);
+  await validateArtifactReferences([
+    ...exportedRouteHtml,
+    {
+      pathname: "/404.html",
+      output: "404.html",
+      html: exportedNotFoundHtml,
+      hydrate: false,
+    },
+  ]);
   await assertRegularTree(outputDirectory, "GitHub Pages artifact");
 
   const files = await collectFiles(outputDirectory);
@@ -419,9 +632,12 @@ async function main() {
       {
         origin: EXPECTED_ORIGIN,
         output: relative(projectRoot, outputDirectory),
+        routes: routeHtml.length,
         files: files.length,
-        indexBytes: Buffer.byteLength(indexHtml),
-        notFoundBytes: Buffer.byteLength(notFoundHtml),
+        staticRoutes: exportedRouteHtml.filter((route) => !route.hydrate).length,
+        hydratedRoutes: exportedRouteHtml.filter((route) => route.hydrate).length,
+        indexBytes: Buffer.byteLength(exportedIndexHtml),
+        notFoundBytes: Buffer.byteLength(exportedNotFoundHtml),
       },
       null,
       2,

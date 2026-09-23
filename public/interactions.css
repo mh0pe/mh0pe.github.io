@@ -1,0 +1,486 @@
+/* Progressive interaction layer. Content and navigation remain complete without it. */
+
+.hope-brand .site-header::after {
+  position: absolute;
+  top: -0.85rem;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--hope-green), var(--hope-blue), var(--hope-copper));
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: scaleX(var(--page-progress, 0));
+  transform-origin: left;
+  transition: opacity 180ms var(--hope-ease), transform 360ms var(--hope-ease);
+}
+
+.hope-brand .site-header[data-page-progress]::after {
+  opacity: 1;
+}
+
+.journey-rail {
+  display: none;
+}
+
+/* Route-to-route continuation turns each supporting page into a chapter. */
+.site-footer__journey {
+  position: relative;
+  border-bottom: 1px solid var(--hope-hairline-dark);
+  background:
+    radial-gradient(circle at 88% 42%, rgb(183 207 97 / 13%), transparent 24rem),
+    linear-gradient(135deg, rgb(255 255 255 / 2%), transparent 58%);
+  overflow: hidden;
+}
+
+.site-footer__journey::after {
+  position: absolute;
+  top: 50%;
+  right: clamp(-11rem, -8vw, -5rem);
+  width: min(42vw, 34rem);
+  aspect-ratio: 1;
+  border: 1px solid rgb(243 239 230 / 9%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 5rem rgb(243 239 230 / 2.5%);
+  content: "";
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.site-footer__journey-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  padding-block: clamp(3.5rem, 7vw, 7rem);
+  grid-template-columns: minmax(7rem, 2fr) minmax(0, 10fr);
+  gap: 2rem;
+}
+
+.site-footer__journey-code {
+  margin: 0;
+  color: var(--hope-green);
+  font-family: var(--hope-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hope-brand .site-footer__journey-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: end;
+  color: var(--hope-porcelain);
+  text-decoration: none;
+}
+
+.site-footer__journey-link > span:first-child {
+  display: grid;
+  max-width: 58rem;
+  gap: 1rem;
+}
+
+.site-footer__journey-link strong {
+  max-width: 16ch;
+  font-family: var(--hope-display);
+  font-size: clamp(2.5rem, 6vw, 6.5rem);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  line-height: 0.94;
+  text-wrap: balance;
+}
+
+.site-footer__journey-link small {
+  max-width: 42rem;
+  color: rgb(243 239 230 / 64%);
+  font-size: clamp(0.86rem, 1.2vw, 1rem);
+  line-height: 1.55;
+}
+
+.site-footer__journey-link em {
+  color: var(--hope-green);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.site-footer__journey-arrow {
+  display: grid;
+  width: clamp(4rem, 7vw, 6.5rem);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgb(243 239 230 / 28%);
+  border-radius: 50%;
+  color: var(--hope-green);
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  transition:
+    border-color 260ms var(--hope-ease),
+    background-color 260ms var(--hope-ease),
+    color 260ms var(--hope-ease),
+    transform 260ms var(--hope-ease);
+}
+
+.hope-brand .site-footer__journey-link:is(:hover, :focus-visible) {
+  color: var(--hope-porcelain);
+}
+
+.hope-brand .site-footer__journey-link:is(:hover, :focus-visible) .site-footer__journey-arrow {
+  border-color: var(--hope-green);
+  background: var(--hope-green);
+  color: var(--hope-on-accent);
+  transform: translate(0.2rem, -0.2rem);
+}
+
+.hope-brand :is(.route-jump, .case-jump) a[aria-current] {
+  border-color: var(--hope-green-dark);
+  background: var(--hope-green);
+  color: var(--hope-on-accent);
+}
+
+.capability-atlas__node {
+  opacity: 0.46;
+  transition: opacity 220ms var(--hope-ease);
+}
+
+.capability-atlas__node[data-active] {
+  opacity: 1;
+}
+
+.capability-atlas__node[data-active] rect {
+  fill: var(--hope-green);
+  stroke: var(--hope-green);
+  transform: scale(1.35) rotate(45deg);
+}
+
+.hope-brand .capability-atlas__ledger > li {
+  border-left: 3px solid transparent;
+  transition: background-color 220ms var(--hope-ease), border-color 220ms var(--hope-ease);
+}
+
+.hope-brand .capability-atlas__ledger > li:is([data-active], :target, :focus-within) {
+  border-left-color: var(--hope-green-dark);
+  background: color-mix(in srgb, var(--hope-green) 10%, transparent);
+}
+
+.hope-brand .case-path__list > li {
+  transition: opacity 220ms var(--hope-ease);
+}
+
+.hope-brand .case-path__marker,
+.case-signal__terminal {
+  transition: opacity 220ms var(--hope-ease), transform 280ms var(--hope-ease), background-color 220ms var(--hope-ease);
+}
+
+.hope-brand .case-path__list > li[data-active] .case-path__marker,
+.hope-brand .case-path__list > li:target .case-path__marker {
+  background: var(--hope-green);
+  color: var(--hope-on-accent);
+  transform: scale(1.08);
+}
+
+.case-signal:has(.case-signal__terminal[data-active]) .case-signal__terminal {
+  opacity: 0.36;
+}
+
+.case-signal .case-signal__terminal[data-active] {
+  opacity: 1;
+  transform: scale(1.18);
+}
+
+.case-signal .case-signal__terminal[data-active] .case-signal__halo {
+  opacity: 0.9;
+}
+
+.motion-film {
+  position: relative;
+  display: grid;
+  margin-block: clamp(2.5rem, 5vw, 5rem);
+  margin-inline: 0;
+  grid-template-columns: minmax(0, 9fr) minmax(15rem, 3fr);
+  border: 1px solid var(--hope-hairline);
+  border-radius: clamp(1.4rem, 3vw, 2.6rem);
+  background: #0b100e;
+  box-shadow: var(--hope-shadow);
+  color: #f3efe6;
+  color-scheme: dark;
+  overflow: hidden;
+}
+
+.motion-film__media {
+  position: relative;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  background: #0b100e;
+  overflow: hidden;
+}
+
+.motion-film__media :is(video, img) {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.motion-film__media video {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 220ms var(--hope-ease);
+}
+
+.motion-film__media:has(video[data-motion-ready]) img {
+  opacity: 0;
+}
+
+.motion-film__media video[data-motion-ready] {
+  opacity: 1;
+}
+
+.motion-film__caption {
+  display: flex;
+  padding: clamp(1.4rem, 3vw, 2.4rem);
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 1px solid rgb(243 239 230 / 16%);
+  background: #0b100e;
+  color: #f3efe6;
+}
+
+.motion-film__caption .micro-label {
+  color: #b7cf61;
+}
+
+.motion-film__caption strong {
+  display: block;
+  max-width: 12ch;
+  font-family: var(--hope-display);
+  font-size: clamp(1.6rem, 3vw, 2.8rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+}
+
+.motion-film__caption p:last-child {
+  margin-bottom: 0;
+  color: rgb(243 239 230 / 78%);
+  font-size: 0.78rem;
+}
+
+.motion-film__caption > p {
+  color: rgb(243 239 230 / 78%);
+  font-size: 0.78rem;
+}
+
+.motion-film__play {
+  align-self: flex-start;
+  min-height: 44px;
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #b7cf61;
+  border-radius: 999px;
+  background: transparent;
+  color: #b7cf61;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.motion-film__play:hover {
+  background: #b7cf61;
+  color: #0b100e;
+}
+
+.motion-film__play:focus-visible {
+  outline: 2px solid #f3efe6;
+  outline-offset: 4px;
+}
+
+.motion-film__play[hidden] {
+  display: none;
+}
+
+.not-found__utility {
+  display: flex;
+  min-height: 54px;
+  margin-bottom: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--hope-hairline);
+}
+
+.not-found__utility > a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--hope-carbon);
+  font-family: var(--hope-display);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (min-width: 80rem) {
+  .journey-rail {
+    position: fixed;
+    top: 50%;
+    left: 0.35rem;
+    z-index: 35;
+    display: grid;
+    transform: translateY(-50%);
+  }
+
+  .journey-rail::before {
+    position: absolute;
+    top: 1.35rem;
+    bottom: 1.35rem;
+    left: 1.33rem;
+    width: 1px;
+    background: var(--hope-hairline);
+    content: "";
+  }
+
+  .journey-rail a {
+    position: relative;
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: var(--hope-ink-muted);
+    text-decoration: none;
+  }
+
+  .journey-rail a::before {
+    z-index: 1;
+    width: 7px;
+    height: 7px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background: var(--hope-porcelain);
+    content: "";
+    transition: background-color 180ms var(--hope-ease), transform 180ms var(--hope-ease);
+  }
+
+  .journey-rail a span {
+    position: absolute;
+    left: 2.4rem;
+    padding: 0.28rem 0.5rem;
+    border: 1px solid var(--hope-hairline);
+    border-radius: 999px;
+    background: var(--hope-porcelain);
+    color: var(--hope-carbon);
+    font-family: var(--hope-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    pointer-events: none;
+    text-transform: uppercase;
+    transform: translateX(-0.3rem);
+    transition: opacity 180ms var(--hope-ease), transform 180ms var(--hope-ease);
+    white-space: nowrap;
+  }
+
+  .journey-rail a:is(:hover, :focus-visible, [aria-current])::before {
+    background: var(--hope-green);
+    color: var(--hope-on-accent);
+    transform: scale(1.5);
+  }
+
+  .journey-rail a:is(:hover, :focus-visible) span {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hope-brand .work-index article:is(:hover, :focus-within),
+  .hope-brand .claim-ledger:is(:hover, :focus-within),
+  .hope-brand .source-principles article:is(:hover, :focus-within) {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hope-green) 48%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 58rem) {
+  .site-footer__journey-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .motion-film {
+    grid-template-columns: 1fr;
+  }
+
+  .motion-film__caption {
+    min-height: 12rem;
+    border-top: 1px solid rgb(243 239 230 / 16%);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 25rem) {
+  .hope-brand .site-footer__journey-link {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer__journey-arrow {
+    width: 3.5rem;
+  }
+
+  .not-found__utility {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hope-brand .site-header::after,
+  .capability-atlas__node,
+  .hope-brand .capability-atlas__ledger > li,
+  .hope-brand .case-path__list > li,
+  .hope-brand .case-path__marker,
+  .case-signal__terminal,
+  .journey-rail a::before,
+  .journey-rail a span {
+    transition: none !important;
+  }
+
+  .motion-film__media video {
+    display: none;
+  }
+
+  .motion-film__media img {
+    opacity: 1 !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-bklit-model-bar] rect {
+    transition: transform 360ms cubic-bezier(0.85, 0, 0.15, 1), opacity 360ms;
+    transform-origin: 0 0;
+  }
+
+  .route-thread[data-motion-entered] > path:first-child {
+    stroke-dasharray: 1;
+    animation: hope-current-pass 900ms var(--hope-ease) both;
+  }
+}
+
+@media (forced-colors: active) {
+  .journey-rail a::before,
+  .hope-brand :is(.route-jump, .case-jump) a[aria-current],
+  .hope-brand .case-path__list > li[data-active] .case-path__marker {
+    border-color: Highlight;
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+
+@media print {
+  .journey-rail,
+  .hope-brand .site-header::after,
+  .motion-film {
+    display: none !important;
+  }
+}

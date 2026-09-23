@@ -1,0 +1,4980 @@
+@font-face {
+  font-family: "Newsreader Hope";
+  src: url("/fonts/newsreader-variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Newsreader Hope";
+  src: url("/fonts/newsreader-variable-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+:root {
+  --hope-porcelain: #f3efe6;
+  --hope-porcelain-deep: #e9e3d8;
+  --hope-carbon: #171c1a;
+  --hope-carbon-soft: #242b27;
+  --hope-ink-muted: #59615d;
+  --hope-green: #a5bc52;
+  --hope-green-dark: #596825;
+  --hope-blue: #3f56a0;
+  --hope-blue-on-dark: #93a6ff;
+  --hope-copper: #985037;
+  --hope-copper-on-dark: #ef9877;
+  --hope-on-accent: #111714;
+  --hope-hairline: rgb(23 28 26 / 16%);
+  --hope-hairline-dark: rgb(243 239 230 / 17%);
+  --hope-shadow: 0 28px 80px rgb(38 31 20 / 10%);
+  --hope-display: "Newsreader Hope", "Iowan Old Style", "Baskerville", Georgia, serif;
+  --hope-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --hope-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --hope-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --hope-micro-size: max(0.68rem, 11px);
+}
+
+html:has(body.hope-brand) {
+  background: var(--hope-porcelain);
+  color-scheme: light;
+}
+
+.hope-brand {
+  background:
+    linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), rgb(23 28 26 / 4%) calc(100% - 1px)),
+    var(--hope-porcelain);
+  background-size: clamp(4.5rem, 8vw, 7.5rem) 100%;
+  color: var(--hope-carbon);
+  font-family: var(--hope-sans);
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.hope-brand::before {
+  display: none;
+}
+
+.hope-brand h1,
+.hope-brand h2,
+.hope-brand h3 {
+  color: inherit;
+  font-family: var(--hope-display);
+  font-weight: 500;
+  hyphens: none;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+  overflow-wrap: normal;
+  text-wrap: balance;
+  word-break: normal;
+}
+
+.hope-brand p {
+  text-wrap: pretty;
+}
+
+.hope-brand a {
+  transition:
+    color 240ms var(--hope-ease),
+    background-color 240ms var(--hope-ease),
+    border-color 240ms var(--hope-ease),
+    opacity 240ms var(--hope-ease),
+    transform 240ms var(--hope-ease);
+}
+
+.hope-brand a:hover {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand :focus-visible {
+  outline: 2px solid var(--hope-blue);
+  outline-offset: 5px;
+}
+
+.hope-brand .shell {
+  width: min(100% - 3rem, 86rem);
+}
+
+.hope-brand .skip-link {
+  border-radius: 999px;
+  background: var(--hope-carbon);
+  color: var(--hope-porcelain);
+}
+
+.hope-brand .site-header {
+  position: sticky;
+  top: 0.85rem;
+  z-index: 50;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+  view-transition-name: site-header;
+}
+
+.hope-brand .site-header__inner {
+  min-height: 64px;
+  padding: 0.45rem;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  border: 1px solid rgb(23 28 26 / 10%);
+  border-radius: 999px;
+  background: rgb(243 239 230 / 96%);
+  box-shadow: 0 14px 44px rgb(38 31 20 / 9%);
+  pointer-events: auto;
+}
+
+.hope-brand .site-identity {
+  display: grid;
+  overflow: hidden;
+  min-width: 0;
+  padding: 0.25rem 1rem 0.25rem 0.35rem;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  column-gap: 0.7rem;
+  align-items: center;
+  justify-content: start;
+  border: 0;
+  color: var(--hope-carbon);
+  view-transition-name: site-identity;
+}
+
+.hope-brand [id] {
+  scroll-margin-top: 6rem;
+}
+
+.hope-brand .site-identity:hover {
+  color: var(--hope-carbon);
+}
+
+.site-identity__mark {
+  display: inline-flex;
+  width: 2.55rem;
+  height: 2.55rem;
+  grid-row: 1 / 3;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #171c1a;
+  color: #f3efe6;
+  font-family: var(--hope-mono);
+  font-size: 0.62rem;
+  letter-spacing: -0.08em;
+}
+
+.site-identity__mark span {
+  color: #a5bc52;
+}
+
+.hope-brand .site-identity__name {
+  align-self: end;
+  font-family: var(--hope-display);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+
+.site-identity__name em {
+  color: var(--hope-green-dark);
+  font-weight: 500;
+}
+
+.hope-brand .site-identity small {
+  align-self: start;
+  color: var(--hope-ink-muted);
+  font-family: var(--hope-sans);
+  font-weight: 560;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.hope-brand .primary-nav {
+  align-items: center;
+  gap: 0.12rem;
+}
+
+.hope-brand .primary-nav a {
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 0.9rem;
+  border: 0;
+  border-radius: 999px;
+  color: var(--hope-ink-muted);
+  font-family: var(--hope-sans);
+  font-size: 0.75rem;
+  font-weight: 590;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.hope-brand .primary-nav a:hover,
+.hope-brand .mobile-nav nav a[aria-current],
+.hope-brand .mobile-nav nav a[data-active-section="true"] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.35em;
+}
+
+.hope-brand .primary-nav a[aria-current],
+.hope-brand .primary-nav a[data-active-section="true"] {
+  box-shadow: none;
+  background: rgb(23 28 26 / 6%);
+  color: var(--hope-carbon);
+}
+
+.hope-brand .primary-nav .primary-nav__source {
+  min-width: 5.4rem;
+  margin-left: 0.25rem;
+  background: var(--hope-carbon);
+  color: var(--hope-porcelain);
+}
+
+.hope-brand .primary-nav .primary-nav__source:hover,
+.hope-brand .primary-nav .primary-nav__source[aria-current] {
+  background: var(--hope-green);
+  color: var(--hope-on-accent);
+}
+
+.mobile-nav {
+  display: none;
+}
+
+.hope-hero {
+  position: relative;
+  padding: clamp(4rem, 7vw, 7.5rem) 0 clamp(5rem, 8vw, 8rem);
+  overflow: clip;
+}
+
+.hope-hero::before {
+  position: absolute;
+  top: 2rem;
+  right: -8rem;
+  width: 34rem;
+  height: 34rem;
+  border: 1px solid rgb(23 28 26 / 8%);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 5rem rgb(23 28 26 / 2.5%),
+    0 0 0 11rem rgb(23 28 26 / 1.8%);
+  content: "";
+  pointer-events: none;
+}
+
+.hope-hero__mast {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: clamp(4rem, 8vw, 8rem);
+  color: var(--hope-ink-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hope-hero__mast p {
+  margin: 0;
+}
+
+.hope-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(16rem, 4fr);
+  gap: clamp(3rem, 8vw, 9rem);
+  align-items: end;
+}
+
+.hope-hero__copy {
+  position: relative;
+  z-index: 1;
+}
+
+.hope-kicker {
+  margin-bottom: 1.1rem;
+  color: var(--hope-green-dark);
+  font-family: var(--hope-sans);
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.hope-brand .hope-hero h1 {
+  max-width: 11ch;
+  margin-bottom: 2rem;
+  font-size: clamp(4.5rem, 9.1vw, 9rem);
+  line-height: 0.86;
+  text-wrap: balance;
+}
+
+.hope-hero h1 em {
+  display: block;
+  color: var(--hope-green-dark);
+  font-weight: 400;
+}
+
+.hope-hero__lead {
+  max-width: 39rem;
+  margin-bottom: 2rem;
+  color: var(--hope-carbon-soft);
+  font-size: clamp(1.15rem, 1.8vw, 1.48rem);
+  line-height: 1.5;
+}
+
+.hope-hero__signature {
+  max-width: 17ch;
+  margin: 0 0 1rem;
+  color: var(--hope-ink-muted);
+  font-family: var(--hope-display);
+  font-size: clamp(1.55rem, 2.4vw, 2.3rem);
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.hope-hero__signature em {
+  color: var(--hope-green-dark);
+  font-weight: 500;
+}
+
+.hope-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.hope-button {
+  display: inline-flex;
+  min-height: 54px;
+  padding: 0.3rem 0.35rem 0.3rem 1.2rem;
+  align-items: center;
+  gap: 0.9rem;
+  border: 1px solid var(--hope-hairline);
+  border-radius: 999px;
+  color: var(--hope-carbon);
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.hope-button > span:last-child {
+  display: inline-grid;
+  width: 2.45rem;
+  height: 2.45rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(23 28 26 / 7%);
+  transition: transform 280ms var(--hope-ease);
+}
+
+.hope-button:hover > span:last-child,
+.hope-button:focus-visible > span:last-child {
+  transform: translate(2px, -2px);
+}
+
+.hope-button:active {
+  transform: scale(0.985);
+}
+
+.hope-button--primary {
+  border-color: var(--hope-carbon);
+  background: var(--hope-carbon);
+  color: var(--hope-porcelain);
+}
+
+.hope-brand .hope-button--primary:hover {
+  background: var(--hope-green);
+  color: var(--hope-on-accent);
+}
+
+.hope-button--primary > span:last-child {
+  background: rgb(243 239 230 / 13%);
+}
+
+.hope-button--quiet:hover {
+  border-color: var(--hope-carbon);
+  color: var(--hope-carbon);
+}
+
+.hope-line-chamber {
+  position: relative;
+  z-index: 2;
+  margin-top: clamp(4rem, 8vw, 8rem);
+  padding: clamp(1rem, 2vw, 1.8rem);
+  border-radius: clamp(1.5rem, 3vw, 2.8rem);
+  background: var(--hope-carbon);
+  box-shadow: var(--hope-shadow);
+  color: var(--hope-porcelain);
+  overflow: hidden;
+}
+
+.hope-line {
+  position: relative;
+  isolation: isolate;
+}
+
+.hope-line::before {
+  position: absolute;
+  inset: -12rem -10rem auto auto;
+  z-index: -1;
+  width: 30rem;
+  aspect-ratio: 1;
+  border: 1px solid rgb(243 239 230 / 7%);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 5rem rgb(243 239 230 / 2.2%),
+    0 0 0 11rem rgb(243 239 230 / 1.4%);
+  content: "";
+  pointer-events: none;
+}
+
+.hope-line__heading {
+  display: grid;
+  padding: clamp(1.2rem, 2.5vw, 2.6rem);
+  grid-template-columns: minmax(9rem, 3fr) minmax(0, 9fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.hope-line__heading .section-code {
+  margin: 0;
+  color: var(--hope-green);
+  font-size: 0.61rem;
+}
+
+.hope-brand .hope-line__heading h2 {
+  margin: 0 0 0.7rem;
+  color: var(--hope-porcelain);
+  font-size: clamp(2.5rem, 5.5vw, 5.8rem);
+}
+
+.hope-line__heading > div > p {
+  max-width: 42rem;
+  margin: 0;
+  color: rgb(243 239 230 / 62%);
+  font-size: 0.86rem;
+}
+
+.hope-line__art {
+  position: relative;
+  min-height: 20rem;
+  border-block: 1px solid var(--hope-hairline-dark);
+  background:
+    radial-gradient(circle at 64% 38%, rgb(71 98 182 / 18%), transparent 30%),
+    radial-gradient(circle at 20% 52%, rgb(165 188 82 / 10%), transparent 26%),
+    rgb(8 13 12 / 30%);
+  overflow: hidden;
+}
+
+.hope-line__art::after {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(243 239 230 / 4%);
+  content: "";
+  pointer-events: none;
+}
+
+.hope-line__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 20rem;
+}
+
+.hope-line__grid path {
+  fill: none;
+  stroke: rgb(243 239 230 / 4.5%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.hope-line__spine-underlay,
+.hope-line__spine,
+.hope-line__project-branch,
+.hope-line__edge,
+.hope-line__model-link {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hope-line__spine-underlay {
+  stroke: rgb(243 239 230 / 8%);
+  stroke-width: 10;
+}
+
+.hope-line__spine {
+  stroke: var(--hope-green);
+  stroke-width: 1.8;
+}
+
+.hope-line__project {
+  --hope-sequence: 320ms;
+  color: var(--hope-green);
+  transition: opacity 260ms var(--hope-ease);
+}
+
+.hope-line__project[data-graph-id="cloudformation-guard"] { --hope-sequence: 380ms; }
+.hope-line__project[data-graph-id="nix-windows"] { --hope-sequence: 440ms; }
+.hope-line__project[data-graph-id="portable-frameworks"] { --hope-sequence: 500ms; }
+.hope-line__project[data-graph-id="rules-js-pnp"] { --hope-sequence: 560ms; }
+.hope-line__project[data-graph-id="lightpanda-svg"] { --hope-sequence: 620ms; }
+.hope-line__project[data-graph-id="aws-labs-mcp"] { --hope-sequence: 680ms; }
+.hope-line__project[data-graph-id="cloud-runtime"] { --hope-sequence: 740ms; }
+
+.hope-line__project-halo {
+  fill: currentColor;
+  opacity: 0.035;
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.hope-line__project-branch {
+  stroke: currentColor;
+  stroke-width: 1.45;
+}
+
+.hope-line__edge {
+  stroke: currentColor;
+  stroke-width: 0.85;
+  opacity: 0.6;
+}
+
+.hope-line__edge[data-edge-kind="commit-touches-file"],
+.hope-line__edge[data-edge-kind="touches-file"] {
+  stroke-dasharray: 2 4;
+  opacity: 0.45;
+}
+
+.hope-line__model-link {
+  stroke: rgb(243 239 230 / 34%);
+  stroke-width: 0.8;
+  stroke-dasharray: 2 4;
+}
+
+.hope-line__node > * {
+  fill: var(--hope-carbon);
+  stroke: currentColor;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.hope-line__node[data-node-type="commit"] > * {
+  fill: currentColor;
+  stroke: var(--hope-carbon);
+  stroke-width: 2.5;
+}
+
+.hope-line__node[data-node-type="file"] > * {
+  fill: var(--hope-porcelain);
+  opacity: 0.9;
+  stroke: none;
+}
+
+.hope-line__model {
+  color: var(--hope-blue-on-dark);
+}
+
+.hope-line__model > circle,
+.hope-line__model > rect,
+.hope-line__model > path {
+  fill: var(--hope-carbon);
+  stroke: currentColor;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.hope-line__model text {
+  fill: currentColor;
+  font-family: var(--hope-mono);
+  font-size: 6px;
+  font-weight: 700;
+}
+
+.hope-line__project-core circle {
+  fill: var(--hope-carbon);
+  stroke: currentColor;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.hope-line__project-core text {
+  fill: var(--hope-porcelain);
+  font-family: var(--hope-mono);
+  font-size: 8px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+}
+
+.hope-line__index {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+}
+
+.hope-line__index-item {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 18.5rem;
+  padding: clamp(1.3rem, 2vw, 2rem);
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: 0.65rem;
+  border-right: 1px solid var(--hope-hairline-dark);
+  border-bottom: 1px solid var(--hope-hairline-dark);
+  transition: background-color 260ms var(--hope-ease);
+}
+
+.hope-line__index-item:nth-child(4n) {
+  border-right: 0;
+}
+
+.hope-line__index-item:nth-child(n + 5) {
+  border-bottom: 0;
+}
+
+.hope-line__index-item:hover,
+.hope-line__index-item:focus-within {
+  background: rgb(243 239 230 / 4.5%);
+}
+
+.hope-line__index-number {
+  color: var(--hope-green);
+  font-family: var(--hope-mono);
+  font-size: 0.62rem;
+}
+
+.hope-line__index-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.hope-line__index-copy .micro-label {
+  margin: 0 0 1.25rem;
+  color: rgb(243 239 230 / 55%);
+  font-size: 0.62rem;
+}
+
+.hope-brand .hope-line__index-copy h3 {
+  margin: 0 0 0.8rem;
+  color: var(--hope-porcelain);
+  font-family: var(--hope-sans);
+  font-size: 1rem;
+  font-weight: 630;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.hope-line__index-copy > p:not(.micro-label, .hope-line__index-meta) {
+  margin: 0;
+  color: rgb(243 239 230 / 63%);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.hope-line__index-meta {
+  display: grid;
+  margin: 1.3rem 0 0;
+  gap: 0.35rem;
+  color: rgb(243 239 230 / 55%);
+  font-family: var(--hope-mono);
+  font-size: 0.62rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.hope-line__index-detail {
+  margin-top: 1rem;
+  border-top: 1px solid var(--hope-hairline-dark);
+}
+
+.hope-line__index-detail summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  color: rgb(243 239 230 / 72%);
+  cursor: pointer;
+  font-size: 0.62rem;
+  list-style: none;
+}
+
+.hope-line__index-detail summary::-webkit-details-marker {
+  display: none;
+}
+
+.hope-line__index-detail summary::after {
+  color: var(--hope-green);
+  content: "+";
+  font-family: var(--hope-mono);
+}
+
+.hope-line__index-detail[open] summary::after {
+  content: "−";
+}
+
+.hope-line__index-detail dl {
+  display: grid;
+  margin: 0;
+  padding: 0.3rem 0 1rem;
+  gap: 0.75rem;
+}
+
+.hope-line__index-detail dt {
+  margin-bottom: 0.18rem;
+  color: var(--hope-green);
+  font-family: var(--hope-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hope-line__index-detail dd {
+  margin: 0;
+  color: rgb(243 239 230 / 68%);
+  font-size: 0.62rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.hope-line__index-actions {
+  display: grid;
+  margin-top: auto;
+  padding-top: 1.4rem;
+  gap: 0.45rem;
+}
+
+.hope-line__index-actions a {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--hope-porcelain);
+  font-size: 0.64rem;
+  text-decoration: none;
+}
+
+.hope-line__index-actions a + a {
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--hope-hairline-dark);
+  color: rgb(243 239 230 / 52%);
+}
+
+.hope-line__source-link .source-link__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hope-act {
+  position: relative;
+  padding-block: clamp(6rem, 10vw, 11rem);
+}
+
+.hope-act__heading {
+  display: grid;
+  margin-bottom: clamp(4rem, 7vw, 7rem);
+  grid-template-columns: minmax(5rem, 2fr) minmax(0, 10fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.hope-index {
+  margin: 0;
+  color: var(--hope-green-dark);
+  font-family: var(--hope-display);
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  font-style: italic;
+  line-height: 0.85;
+}
+
+.hope-brand .hope-act h2 {
+  max-width: 13ch;
+  margin-bottom: 1.3rem;
+  font-size: clamp(3.2rem, 6.5vw, 7rem);
+  line-height: 0.9;
+}
+
+.hope-transformations {
+  background: var(--hope-porcelain);
+}
+
+.hope-transformations__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 1.1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+
+.hope-transformations__grid article {
+  position: relative;
+  min-height: 25rem;
+  padding: 2rem 0 0 1.5rem;
+  border-left: 1px solid var(--hope-hairline);
+}
+
+.hope-transformations__grid article:nth-child(2) {
+  margin-top: 3rem;
+}
+
+.hope-transformations__number {
+  display: block;
+  margin-bottom: 1.5rem;
+  color: var(--hope-green-dark);
+  font-family: var(--hope-mono);
+  font-size: 0.65rem;
+}
+
+.hope-transformations__grid h3 {
+  max-width: 24ch;
+  margin-bottom: 1.2rem;
+  font-size: clamp(2rem, 3.2vw, 3.4rem);
+  line-height: 1;
+}
+
+.hope-transformations__grid p {
+  max-width: 31rem;
+  color: var(--hope-ink-muted);
+}
+
+.hope-transformations__grid a,
+.hope-story__actions a,
+.hope-text-link,
+.hope-decisions a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.45rem;
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-underline-offset: 0.32rem;
+}
+
+.hope-work {
+  border-radius: clamp(2rem, 5vw, 5rem) clamp(2rem, 5vw, 5rem) 0 0;
+  background: var(--hope-carbon);
+  color: var(--hope-porcelain);
+}
+
+.hope-work .hope-kicker,
+.hope-work .hope-index {
+  color: var(--hope-green);
+}
+
+.hope-work__stories {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--hope-hairline-dark);
+}
+
+.hope-story {
+  position: relative;
+  display: grid;
+  min-height: 43rem;
+  padding: clamp(2rem, 4vw, 4rem);
+  grid-column: span 4;
+  grid-template-rows: 1fr auto;
+  background: var(--hope-carbon);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.hope-story--flagship {
+  min-height: 38rem;
+  grid-column: 1 / -1;
+  display: block;
+}
+
+.hope-story--flagship .hope-story__copy {
+  max-width: 42rem;
+}
+
+.hope-story__meta {
+  margin-bottom: clamp(3rem, 6vw, 6rem);
+  color: var(--hope-green);
+  font-family: var(--hope-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hope-brand .hope-story h3 {
+  max-width: 14ch;
+  margin-bottom: 1.5rem;
+  font-size: clamp(2.3rem, 4.2vw, 5rem);
+  line-height: 0.94;
+}
+
+.hope-story:not(.hope-story--flagship) h3 {
+  font-size: clamp(2rem, 3vw, 3.2rem);
+}
+
+.hope-story__summary {
+  max-width: 35rem;
+  color: rgb(243 239 230 / 70%);
+}
+
+.hope-story__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.4rem;
+  margin-top: 2rem;
+}
+
+.hope-story__actions .source-link {
+  color: inherit;
+}
+
+.hope-story .case-signal {
+  position: absolute;
+  right: -4%;
+  bottom: 1rem;
+  z-index: 0;
+  width: 72%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0.54;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 18%, black);
+  mask-image: linear-gradient(90deg, transparent, black 18%, black);
+}
+
+.hope-story--flagship .case-signal {
+  right: -1%;
+  bottom: 2.2rem;
+  width: 62%;
+  opacity: 0.68;
+}
+
+.hope-story .case-signal::before {
+  display: none;
+}
+
+.hope-story .case-signal__grid,
+.hope-story .case-signal__stem {
+  opacity: 0.28;
+}
+
+.hope-story .case-signal__underlay {
+  stroke: rgb(243 239 230 / 10%);
+}
+
+.hope-patterns {
+  background: var(--hope-porcelain);
+}
+
+.hope-patterns__layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 4fr) minmax(0, 8fr);
+  gap: clamp(4rem, 10vw, 10rem);
+  align-items: start;
+}
+
+.hope-patterns__intro {
+  position: sticky;
+  top: 7rem;
+}
+
+.hope-brand .hope-patterns__intro h2 {
+  margin-bottom: 1.5rem;
+  font-size: clamp(3.4rem, 6vw, 5rem);
+}
+
+.hope-patterns__intro > p:not(.hope-index, .hope-kicker) {
+  max-width: 31rem;
+  color: var(--hope-ink-muted);
+}
+
+.hope-patterns__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hope-patterns__list li {
+  display: grid;
+  min-height: 9rem;
+  padding: 1.8rem 0;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: start;
+  border-top: 1px solid var(--hope-hairline);
+}
+
+.hope-patterns__list li:last-child {
+  border-bottom: 1px solid var(--hope-hairline);
+}
+
+.hope-patterns__list > li > span,
+.hope-patterns__list small {
+  color: var(--hope-green-dark);
+  font-family: var(--hope-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+}
+
+.hope-patterns__list h3 {
+  margin-bottom: 0.55rem;
+  font-size: clamp(1.6rem, 2.4vw, 2.5rem);
+}
+
+.hope-patterns__list p {
+  max-width: 44rem;
+  margin: 0;
+  color: var(--hope-ink-muted);
+  font-size: 0.9rem;
+}
+
+.hope-practice {
+  background: var(--hope-porcelain-deep);
+}
+
+.hope-practice__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(4rem, 10vw, 11rem);
+}
+
+.hope-practice__intro > p:not(.hope-index, .hope-kicker) {
+  max-width: 33rem;
+  color: var(--hope-ink-muted);
+}
+
+.hope-decisions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hope-decisions li {
+  padding: 0 0 3rem;
+  border-bottom: 1px solid var(--hope-hairline);
+}
+
+.hope-decisions li + li {
+  padding-top: 3rem;
+}
+
+.hope-decisions li > p {
+  margin-bottom: 1rem;
+  color: var(--hope-green-dark);
+  font-size: 0.66rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hope-brand .hope-decisions h3 {
+  max-width: 22ch;
+  margin-bottom: 1.2rem;
+  font-size: clamp(1.8rem, 3vw, 3.15rem);
+  line-height: 1;
+}
+
+.hope-composition {
+  overflow: hidden;
+  background: var(--hope-blue);
+  color: #f5f0e7;
+}
+
+.hope-composition::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(70vw, 64rem);
+  aspect-ratio: 1;
+  border: 1px solid rgb(245 240 231 / 16%);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 6rem rgb(245 240 231 / 4%),
+    0 0 0 14rem rgb(245 240 231 / 2.5%);
+  content: "";
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hope-composition__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+  gap: clamp(4rem, 10vw, 10rem);
+}
+
+.hope-composition .hope-kicker,
+.hope-composition .hope-index {
+  color: #e5edb7;
+}
+
+.hope-brand .hope-composition h2 {
+  font-size: clamp(3.2rem, 6vw, 6rem);
+}
+
+.hope-composition__copy {
+  max-width: 40rem;
+  padding-top: 5rem;
+}
+
+.hope-composition__copy > p {
+  font-family: var(--hope-display);
+  font-size: clamp(1.5rem, 2.8vw, 2.55rem);
+  letter-spacing: -0.03em;
+  line-height: 1.16;
+}
+
+.hope-composition__copy > p + p {
+  color: rgb(245 240 231 / 94%);
+  font-family: var(--hope-sans);
+  font-size: 1rem;
+  letter-spacing: 0;
+  line-height: 1.55;
+}
+
+.hope-composition .hope-button {
+  border-color: rgb(245 240 231 / 30%);
+  color: #f5f0e7;
+}
+
+.hope-composition .hope-button--primary {
+  border-color: #f5f0e7;
+  background: #f5f0e7;
+  color: #2f448d;
+}
+
+.hope-brand .hope-composition a:hover {
+  color: #f5f0e7;
+}
+
+.hope-brand .hope-composition .hope-button--primary:hover {
+  border-color: #e5edb7;
+  background: #e5edb7;
+  color: #2f448d;
+}
+
+.hope-composition :focus-visible {
+  outline-color: #f5f0e7;
+}
+
+.hope-brand .hope-line-chamber a:hover,
+.hope-brand .hope-work a:hover,
+.hope-brand .attribution-section a:hover,
+.hope-brand .site-footer a:hover {
+  color: var(--hope-green);
+}
+
+.hope-line-chamber :focus-visible,
+.hope-work :focus-visible,
+.attribution-section :focus-visible,
+.site-footer :focus-visible {
+  outline-color: var(--hope-green);
+}
+
+.hope-context {
+  background: var(--hope-porcelain);
+}
+
+.hope-context__heading {
+  display: grid;
+  margin-bottom: clamp(4rem, 8vw, 8rem);
+  grid-template-columns: minmax(5rem, 2fr) minmax(0, 10fr);
+  gap: 2rem;
+}
+
+.hope-context__heading > div > p:last-child {
+  max-width: 45rem;
+  color: var(--hope-ink-muted);
+}
+
+.hope-context__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--hope-hairline);
+}
+
+.hope-context__grid article {
+  padding: 2rem clamp(1.2rem, 3vw, 3rem) 3rem 0;
+  border-bottom: 1px solid var(--hope-hairline);
+}
+
+.hope-context__grid article:nth-child(2),
+.hope-context__grid article:nth-child(5) {
+  padding-left: clamp(1.2rem, 3vw, 3rem);
+  border-left: 1px solid var(--hope-hairline);
+}
+
+.hope-context__grid article:nth-child(3) {
+  padding-left: clamp(1.2rem, 3vw, 3rem);
+  border-left: 1px solid var(--hope-hairline);
+}
+
+.hope-context__grid h3 {
+  margin-bottom: 0.8rem;
+  font-size: clamp(1.6rem, 2.5vw, 2.6rem);
+  line-height: 1;
+}
+
+.hope-context__grid p {
+  max-width: 33rem;
+  margin: 0;
+  color: var(--hope-ink-muted);
+  font-size: 0.9rem;
+}
+
+.hope-context__close {
+  display: flex;
+  margin-top: 4rem;
+  align-items: end;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.hope-context__close p {
+  max-width: 50rem;
+  margin: 0;
+  color: var(--hope-ink-muted);
+  font-size: 0.82rem;
+}
+
+.hope-brand .site-footer {
+  padding: 0;
+  border: 0;
+  background: var(--hope-carbon);
+  color: var(--hope-porcelain);
+}
+
+.site-footer__signature {
+  padding-block: clamp(5rem, 10vw, 10rem);
+  border-bottom: 1px solid var(--hope-hairline-dark);
+}
+
+.site-footer__eyebrow {
+  margin-bottom: 2rem;
+  color: var(--hope-green);
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hope-brand .site-footer p.site-footer__statement {
+  max-width: 17ch;
+  margin: 0;
+  color: var(--hope-porcelain);
+  font-family: var(--hope-display);
+  font-size: clamp(3rem, 7vw, 7rem);
+  letter-spacing: -0.05em;
+  line-height: 0.92;
+}
+
+.hope-brand .site-footer p.site-footer__statement em {
+  color: var(--hope-green);
+}
+
+.hope-brand .site-footer__grid {
+  display: grid;
+  min-height: 12rem;
+  padding-block: 2rem;
+  grid-template-columns: minmax(0, 6fr) minmax(12rem, 3fr) minmax(10rem, 3fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.site-footer__disclosure {
+  max-width: 39rem;
+  color: rgb(243 239 230 / 62%);
+  font-size: 0.76rem;
+}
+
+.hope-brand .site-footer nav {
+  display: grid;
+  gap: 0;
+}
+
+.hope-brand .site-footer nav a {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--hope-hairline-dark);
+  color: var(--hope-porcelain);
+  font-size: 0.72rem;
+}
+
+.hope-brand .site-footer__record {
+  color: rgb(243 239 230 / 50%);
+  font-family: var(--hope-mono);
+  font-size: 0.62rem;
+  line-height: 1.6;
+  text-align: right;
+}
+
+/* Supporting routes inherit the same editorial identity. */
+.hope-brand .route-intro {
+  position: relative;
+  min-height: auto;
+  padding-block: clamp(4.5rem, 7vw, 7rem) clamp(3.25rem, 5vw, 4.5rem);
+  border: 0;
+  background: var(--hope-porcelain);
+  color: var(--hope-carbon);
+  overflow: hidden;
+}
+
+.hope-brand .route-intro + .route-section {
+  padding-top: clamp(3.5rem, 6vw, 5.5rem);
+}
+
+.hope-brand .route-intro::before {
+  display: none;
+}
+
+.hope-brand .route-intro__grid {
+  position: relative;
+  z-index: 1;
+  grid-template-columns: minmax(7rem, 2fr) minmax(0, 10fr);
+  gap: 2rem;
+}
+
+.hope-brand .route-intro__grid--with-visual {
+  grid-template-columns: minmax(7rem, 2fr) minmax(0, 6fr) minmax(15rem, 4fr);
+  align-items: center;
+}
+
+.route-intro__visual {
+  display: grid;
+  min-width: 0;
+  align-self: stretch;
+  place-items: center end;
+}
+
+.about-portrait {
+  position: relative;
+  width: min(100%, 22.5rem);
+  margin: 0 0 0 auto;
+  align-self: center;
+  aspect-ratio: 4 / 5;
+  isolation: isolate;
+}
+
+.about-portrait picture,
+.about-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.about-portrait picture {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--hope-carbon) 24%, transparent);
+  border-radius: 18rem 18rem 1.35rem 1.35rem;
+  background: var(--hope-porcelain-deep);
+  box-shadow: 0 2rem 5rem rgb(23 28 26 / 14%);
+}
+
+.about-portrait img {
+  object-fit: cover;
+  object-position: 50% 28%;
+}
+
+.about-portrait::after {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 16%;
+  border-radius: 0 0 1.35rem 1.35rem;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--hope-carbon) 18%, transparent));
+  content: "";
+  pointer-events: none;
+}
+
+.about-portrait__trace {
+  position: absolute;
+  right: -12%;
+  bottom: -6%;
+  z-index: 2;
+  width: 122%;
+  color: var(--hope-blue);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.about-portrait__trace :is(path, circle) {
+  fill: var(--hope-porcelain);
+  stroke: currentColor;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.about-portrait__trace-guide {
+  fill: none;
+  stroke: color-mix(in srgb, currentColor 26%, transparent);
+  stroke-width: 8;
+}
+
+.about-portrait__trace-current {
+  fill: none;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.hope-brand .route-intro .section-code,
+.hope-brand .route-intro .micro-label {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .route-intro h1 {
+  max-width: 12ch;
+  margin-bottom: 1.5rem;
+  font-size: clamp(4rem, 8vw, 8rem);
+  line-height: 0.9;
+}
+
+.hope-brand .route-intro__summary {
+  max-width: 48rem;
+  color: var(--hope-ink-muted);
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+}
+
+.hope-brand .route-intro__note,
+.hope-brand .section-heading > div > p,
+.hope-brand .method-layout > div > p,
+.hope-brand .method-rules > div > p {
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .route-section {
+  background: var(--hope-porcelain);
+  color: var(--hope-carbon);
+}
+
+.hope-brand .route-section--paper {
+  background: var(--hope-porcelain-deep);
+}
+
+.hope-brand .career-ledger,
+.hope-brand .context-ledger {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .career-ledger > li {
+  min-height: 10rem;
+  padding: 1.7rem 0;
+  grid-template-columns: 3rem minmax(9rem, 2fr) minmax(0, 7fr);
+  gap: clamp(1.2rem, 3vw, 3rem);
+  align-items: center;
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .career-ledger > li > span,
+.hope-brand .context-ledger > li > span {
+  color: var(--hope-green-dark);
+}
+
+.career-ledger__mark {
+  display: grid;
+  width: min(100%, 13rem);
+  height: 5.5rem;
+  place-items: center;
+  padding: 1rem 1.25rem;
+  border-radius: 0.9rem;
+  background: rgb(255 255 255 / 62%);
+}
+
+.career-ledger__mark img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  filter: grayscale(1) contrast(0.9);
+  object-fit: contain;
+  object-position: center;
+  opacity: 0.78;
+}
+
+.career-ledger__mark > span {
+  color: var(--hope-carbon);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.hope-brand .career-ledger h3,
+.hope-brand .context-ledger h3 {
+  color: var(--hope-carbon);
+  font-size: clamp(1.7rem, 3vw, 3rem);
+}
+
+.hope-brand .career-ledger p,
+.hope-brand .context-ledger p,
+.hope-brand .route-section--paper .context-ledger p {
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .section-code,
+.hope-brand .micro-label {
+  color: var(--hope-green-dark);
+  font-size: var(--hope-micro-size);
+  line-height: 1.45;
+}
+
+.hope-brand .hope-line :is(.section-code, .micro-label) {
+  color: var(--hope-green);
+}
+
+.hope-brand .button {
+  border-radius: 999px;
+}
+
+.hope-brand .button--primary {
+  border-color: var(--hope-carbon);
+  background: var(--hope-carbon);
+  color: var(--hope-porcelain);
+}
+
+.hope-brand .button--primary:hover {
+  background: var(--hope-green);
+  color: var(--hope-on-accent);
+}
+
+/* Work is a reading surface first; the source diagram lives inside each card. */
+.hope-brand .work-index {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .work-index > li {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .work-index article {
+  min-height: 0;
+  padding: clamp(2rem, 4vw, 4rem) 0;
+  border-top: 2px solid var(--hope-carbon);
+  border-radius: 0;
+  background: transparent;
+}
+
+.work-index__copy {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+}
+
+.hope-brand .work-index__copy > p:not(.micro-label, .work-index__project) {
+  max-width: 40rem;
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .work-index article::before {
+  display: none;
+}
+
+.hope-brand .work-index__number {
+  color: rgb(23 28 26 / 12%);
+  font-family: var(--hope-display);
+  font-size: clamp(3rem, 6vw, 5.4rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.hope-brand .work-index h3 {
+  max-width: 10ch;
+  margin-bottom: 0.5rem;
+  color: var(--hope-carbon);
+  font-size: clamp(2.6rem, 5vw, 5rem);
+  line-height: 0.92;
+}
+
+.work-index__facts {
+  display: grid;
+  margin: 1.5rem 0;
+  gap: 1rem;
+}
+
+.work-index__facts dt {
+  color: var(--hope-green-dark);
+  font: 0.7rem var(--hope-mono);
+}
+
+.work-index__facts dd {
+  margin: 0.35rem 0 0;
+  color: var(--hope-ink-muted);
+  font-size: 0.95rem;
+}
+
+.hope-brand .work-index__actions {
+  margin-top: auto;
+}
+
+.hope-brand .work-index__actions > a:not(.button) {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .work-index__actions > a:not(.button),
+.hope-brand .claim-ledger__proofs a,
+.hope-brand .case-path__proof a {
+  font-size: max(0.75rem, 12px);
+  line-height: 1.5;
+}
+
+.hope-brand .claim-ledger-grid {
+  border-color: var(--hope-carbon) var(--hope-hairline) var(--hope-hairline);
+}
+
+.hope-brand .claim-ledger {
+  border-color: var(--hope-hairline);
+  background: rgb(255 255 255 / 32%);
+}
+
+.hope-brand .claim-ledger h3,
+.hope-brand .claim-ledger dd {
+  color: var(--hope-carbon);
+}
+
+.hope-brand .claim-ledger dt,
+.hope-brand .claim-ledger .status-stamp {
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .claim-ledger dl > div,
+.hope-brand .claim-ledger__proofs {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .claim-ledger__proofs a {
+  color: var(--hope-green-dark);
+}
+
+/* Legacy route instruments are recolored into the porcelain brand system. */
+.hope-brand .route-section {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .method-stages,
+.hope-brand .method-stages li,
+.hope-brand .method-rules li {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .method-stages li {
+  padding-block: 1.25rem;
+}
+
+.hope-brand .method-stages li > span {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .method-stages h3 {
+  color: var(--hope-carbon);
+  font-size: clamp(1.45rem, 2vw, 2rem);
+}
+
+.hope-brand .method-stages p {
+  max-width: 43rem;
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .method-rules li {
+  color: var(--hope-carbon);
+}
+
+.hope-brand .capability-atlas {
+  border-color: var(--hope-hairline);
+  background: rgb(255 255 255 / 28%);
+  color: var(--hope-carbon);
+}
+
+.hope-brand .capability-atlas__map {
+  border-color: var(--hope-hairline-dark);
+  background: var(--hope-carbon);
+}
+
+.hope-brand .capability-atlas__ledger > li + li,
+.hope-brand .capability-atlas__ledger dl > div,
+.hope-brand .capability-atlas__note {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .capability-atlas__ledger > li > details > summary {
+  grid-template-columns: 3rem minmax(0, 1fr) auto 1.25rem;
+  color: var(--hope-carbon);
+}
+
+.hope-brand .capability-atlas__ledger summary > span,
+.hope-brand .capability-atlas__ledger dt,
+.hope-brand .capability-atlas__ledger > li > details > summary::after {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .capability-atlas__ledger summary > small,
+.hope-brand .capability-atlas__ledger details > div > p,
+.hope-brand .capability-atlas__ledger dd,
+.hope-brand .capability-atlas__note {
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .capability-atlas .atlas-source-list a {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .proof-record > div > p:not(.section-code),
+.hope-brand .proof-record dt {
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .proof-record > dl,
+.hope-brand .proof-record > dl > div {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .proof-record > dl > div:last-child:nth-child(odd),
+.hope-brand .proof-record > dl > .proof-record__note {
+  grid-column: 1 / -1;
+  min-height: 7rem;
+}
+
+.hope-brand .proof-record dd {
+  color: var(--hope-green-dark);
+  font-family: var(--hope-display);
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+}
+
+.hope-brand .proof-record .proof-record__note dd {
+  max-width: 52ch;
+  color: var(--hope-ink-muted);
+  font-family: var(--hope-sans);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.hope-brand .proof-record a {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .vocabulary-grid h3,
+.hope-brand .vocabulary-grid dl > div {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .vocabulary-grid dd span {
+  color: var(--hope-ink-muted);
+}
+
+/* Model composition becomes the dark data gallery inside the editorial site. */
+.hope-brand .proof-models,
+.hope-brand .attribution-section {
+  background: var(--hope-carbon);
+  color: var(--hope-porcelain);
+}
+
+.hope-brand .attribution-section {
+  border-color: var(--hope-hairline-dark);
+  color-scheme: dark;
+}
+
+.hope-brand .attribution-section .section-code,
+.hope-brand .attribution-kicker,
+.hope-brand .attribution-record-summary,
+.hope-brand .attribution-identity-disclosure summary,
+.hope-brand .attribution-table-disclosure summary,
+.hope-brand .attribution-evidence-disclosure summary {
+  color: var(--hope-green) !important;
+}
+
+.hope-brand .attribution-section .section-heading > div > p,
+.hope-brand .attribution-method p,
+.hope-brand .attribution-method li,
+.hope-brand .attribution-current p,
+.hope-brand .attribution-chart-heading p,
+.hope-brand .attribution-evidence-intro p,
+.hope-brand .attribution-evidence-heading time,
+.hope-brand .attribution-evidence-meta,
+.hope-brand .attribution-evidence-compact > span,
+.hope-brand .attribution-evidence-limit,
+.hope-brand .attribution-record-summary span:last-child,
+.hope-brand .attribution-identity-disclosure dd,
+.hope-brand .proof-models__boundary p,
+.hope-brand .attribution-segmented legend,
+.hope-brand .attribution-select label {
+  color: rgb(243 239 230 / 64%);
+}
+
+.hope-brand .attribution-record,
+.hope-brand .attribution-record-body,
+.hope-brand .attribution-method,
+.hope-brand .attribution-current,
+.hope-brand .attribution-filters,
+.hope-brand .attribution-chart,
+.hope-brand .attribution-evidence,
+.hope-brand .attribution-trace,
+.hope-brand .attribution-evidence-featured > li,
+.hope-brand .attribution-evidence-disclosure li,
+.hope-brand .attribution-identity-disclosure dl > div,
+.hope-brand .attribution-table th,
+.hope-brand .attribution-table td {
+  border-color: var(--hope-hairline-dark);
+}
+
+.hope-brand .attribution-method,
+.hope-brand .attribution-current,
+.hope-brand .attribution-filters,
+.hope-brand .attribution-chart,
+.hope-brand .attribution-evidence {
+  background: rgb(255 255 255 / 3%);
+}
+
+.hope-brand .attribution-segmented > div {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.hope-brand .attribution-segmented > div:has(> :nth-child(3)) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.hope-brand .attribution-segmented button,
+.hope-brand .attribution-clear,
+.hope-brand .attribution-select select {
+  border-color: var(--hope-hairline-dark);
+  background: rgb(255 255 255 / 4%);
+  color: var(--hope-porcelain);
+}
+
+.hope-brand .attribution-segmented button[aria-pressed="true"] {
+  background: var(--hope-green);
+  color: var(--hope-on-accent);
+}
+
+.hope-brand .attribution-trace {
+  color: var(--hope-porcelain);
+}
+
+.hope-brand .attribution-trace:hover,
+.hope-brand .attribution-trace.is-selected {
+  background: rgb(183 255 82 / 8%);
+}
+
+.hope-brand .attribution-evidence-links a,
+.hope-brand .attribution-evidence-compact a {
+  color: var(--hope-green);
+}
+
+.hope-brand .proof-models__boundary p {
+  border-color: var(--hope-copper);
+}
+
+.hope-brand .route-jump a {
+  color: var(--hope-carbon);
+}
+
+.hope-brand :is(
+  .method-stage__action,
+  .hope-work__conversation a,
+  .hope-credential-signal__action,
+  .work-state-list > li > a
+) {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+
+.hope-brand .method-stages {
+  position: relative;
+  border-top: 0;
+}
+
+.hope-brand .method-stages::before {
+  position: absolute;
+  top: 1.2rem;
+  bottom: 1.2rem;
+  left: 1.12rem;
+  width: 1px;
+  background: linear-gradient(var(--hope-green), var(--hope-blue), var(--hope-copper));
+  content: "";
+  opacity: 0.5;
+  transform-origin: top;
+}
+
+.hope-brand .method-stages li {
+  position: relative;
+  grid-template-columns: 4rem minmax(0, 1fr);
+}
+
+.hope-brand .method-stages li > span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid var(--hope-hairline);
+  border-radius: 50%;
+  background: var(--hope-porcelain);
+}
+
+.source-principles {
+  display: grid;
+  margin-bottom: 3rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--hope-carbon);
+  border-left: 1px solid var(--hope-hairline);
+}
+
+.source-principles article {
+  min-height: 15rem;
+  padding: 1.4rem;
+  border-right: 1px solid var(--hope-hairline);
+  border-bottom: 1px solid var(--hope-hairline);
+}
+
+.source-principles span {
+  display: block;
+  margin-bottom: 4rem;
+  color: var(--hope-green-dark);
+  font-family: var(--hope-mono);
+  font-size: 0.66rem;
+}
+
+.source-principles h3 {
+  margin-bottom: 0.7rem;
+  font-size: clamp(1.6rem, 2.4vw, 2.4rem);
+}
+
+.source-principles p {
+  margin: 0;
+  color: var(--hope-ink-muted);
+  font-size: 0.86rem;
+}
+
+.vocabulary-disclosure {
+  border-top: 1px solid var(--hope-carbon);
+  border-bottom: 1px solid var(--hope-hairline);
+}
+
+.vocabulary-disclosure > summary {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--hope-carbon);
+  cursor: pointer;
+  font-family: var(--hope-display);
+  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+  list-style: none;
+}
+
+.vocabulary-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.vocabulary-disclosure > summary::after {
+  color: var(--hope-green-dark);
+  content: "+";
+  font-family: var(--hope-mono);
+  font-size: 1rem;
+}
+
+.vocabulary-disclosure[open] > summary::after {
+  content: "−";
+}
+
+.vocabulary-disclosure .vocabulary-grid {
+  padding-block: 1rem 3rem;
+}
+
+/* Case stories use the same light editorial field and Hope Line grammar. */
+.hope-brand .case-hero,
+.hope-brand .case-path,
+.hope-brand .case-close {
+  border-color: var(--hope-hairline);
+  background: var(--hope-porcelain);
+  color: var(--hope-carbon);
+}
+
+.hope-brand .case-hero {
+  position: relative;
+  padding-block: clamp(4.5rem, 8vw, 7.5rem) 2.5rem;
+  overflow: hidden;
+}
+
+.hope-brand .case-hero__rail,
+.hope-brand .case-hero__facts dt {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .case-hero__result,
+.hope-brand .case-hero__facts dd,
+.hope-brand .case-path__copy > p:not(.micro-label),
+.hope-brand .case-path__copy > ul,
+.hope-brand .case-close p {
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .case-hero__facts,
+.hope-brand .case-hero__facts > div,
+.hope-brand .case-jump {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .case-hero__facts > div {
+  background: rgb(255 255 255 / 28%);
+}
+
+.hope-brand .case-hero__facts a,
+.hope-brand .case-path__proof a,
+.hope-brand .case-path__proof details summary,
+.hope-brand .case-close a {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .case-jump {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.hope-brand .case-jump a {
+  min-height: 44px;
+  padding-inline: 0.85rem;
+  border: 1px solid var(--hope-hairline);
+  border-radius: 999px;
+  color: var(--hope-carbon);
+}
+
+.hope-brand .case-path,
+.hope-brand .case-verification,
+.hope-brand .case-close {
+  padding-block: clamp(4.5rem, 7vw, 6.5rem);
+}
+
+.hope-brand .case-path__list > li::before {
+  background: linear-gradient(var(--hope-green), var(--hope-blue), var(--hope-copper));
+  opacity: 0.42;
+}
+
+.hope-brand .case-path__list article {
+  padding-block: 1.25rem 2.75rem;
+}
+
+.hope-brand .case-path__marker {
+  border-color: var(--hope-green-dark);
+  border-radius: 50%;
+  background: var(--hope-porcelain);
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .case-verification {
+  border-color: var(--hope-hairline);
+  background: var(--hope-porcelain-deep);
+  color: var(--hope-carbon);
+}
+
+.hope-brand .case-verification .claim-ledger-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+  align-items: start;
+}
+
+.hope-brand .attribution-overview {
+  align-items: start;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hope-line__spine,
+  .hope-line__project-branch,
+  .hope-line__edge,
+  .hope-line__model-link {
+    stroke-dasharray: 1;
+  }
+
+  .hope-line__project-core > *,
+  .hope-line__node > *,
+  .hope-line__model > * {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (pointer: fine) {
+  .hope-line:has(.hope-line__index-item:hover) .hope-line__project,
+  .hope-line:has(.hope-line__index-item:focus-within) .hope-line__project {
+    opacity: 0.22;
+  }
+
+  .hope-line:has(.hope-line__index-item[data-graph-id="automated-security-helper"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="automated-security-helper"],
+  .hope-line:has(.hope-line__index-item[data-graph-id="cloudformation-guard"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="cloudformation-guard"],
+  .hope-line:has(.hope-line__index-item[data-graph-id="nix-windows"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="nix-windows"],
+  .hope-line:has(.hope-line__index-item[data-graph-id="portable-frameworks"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="portable-frameworks"],
+  .hope-line:has(.hope-line__index-item[data-graph-id="rules-js-pnp"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="rules-js-pnp"],
+  .hope-line:has(.hope-line__index-item[data-graph-id="lightpanda-svg"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="lightpanda-svg"],
+  .hope-line:has(.hope-line__index-item[data-graph-id="aws-labs-mcp"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="aws-labs-mcp"],
+  .hope-line:has(.hope-line__index-item[data-graph-id="cloud-runtime"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="cloud-runtime"] {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 70rem) {
+  .hope-brand .primary-nav a {
+    padding-inline: 0.68rem;
+  }
+
+  .hope-work__stories {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hope-line__index {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hope-line__index-item,
+  .hope-line__index-item:nth-child(4n),
+  .hope-line__index-item:nth-child(n + 5) {
+    border-right: 1px solid var(--hope-hairline-dark);
+    border-bottom: 1px solid var(--hope-hairline-dark);
+  }
+
+  .hope-line__index-item:nth-child(even) {
+    border-right: 0;
+  }
+
+  .hope-line__index-item:nth-child(n + 7) {
+    border-bottom: 0;
+  }
+
+  .hope-story {
+    grid-column: span 1;
+  }
+
+  .hope-story--flagship {
+    grid-column: 1 / -1;
+  }
+
+  .hope-context__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hope-context__grid article,
+  .hope-context__grid article:nth-child(2),
+  .hope-context__grid article:nth-child(3),
+  .hope-context__grid article:nth-child(5) {
+    padding-inline: 0 2rem;
+    border-left: 0;
+  }
+
+  .hope-context__grid article:nth-child(even) {
+    padding-left: 2rem;
+    border-left: 1px solid var(--hope-hairline);
+  }
+}
+
+@media (max-width: 58rem) {
+  .hope-brand .primary-nav {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: block;
+    position: relative;
+    margin-left: auto;
+  }
+
+  .mobile-nav summary {
+    display: flex;
+    min-width: 6.2rem;
+    min-height: 46px;
+    padding: 0 0.45rem 0 0.9rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    border-radius: 999px;
+    background: var(--hope-carbon);
+    color: var(--hope-porcelain);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 650;
+    list-style: none;
+  }
+
+  .mobile-nav summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-nav__glyph {
+    position: relative;
+    display: block;
+    width: 2.15rem;
+    height: 2.15rem;
+    border-radius: 50%;
+    background: rgb(243 239 230 / 11%);
+  }
+
+  .mobile-nav__glyph i {
+    position: absolute;
+    top: calc(50% - 3px);
+    left: 50%;
+    width: 0.8rem;
+    height: 1px;
+    background: currentColor;
+    transform: translateX(-50%);
+    transition: transform 320ms var(--hope-ease);
+  }
+
+  .mobile-nav__glyph i + i {
+    top: calc(50% + 3px);
+  }
+
+  .mobile-nav[open] .mobile-nav__glyph i {
+    top: 50%;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .mobile-nav[open] .mobile-nav__glyph i + i {
+    transform: translateX(-50%) rotate(-45deg);
+  }
+
+  .mobile-nav nav {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    right: 0;
+    display: grid;
+    width: min(84vw, 22rem);
+    max-height: calc(100dvh - 6.5rem);
+    padding: 0.7rem;
+    border: 1px solid var(--hope-hairline);
+    border-radius: 1.5rem;
+    background: var(--hope-porcelain);
+    box-shadow: var(--hope-shadow);
+    overscroll-behavior: contain;
+    overflow-y: auto;
+  }
+
+  .mobile-nav nav a {
+    display: flex;
+    min-height: 52px;
+    padding: 0 1rem;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--hope-hairline);
+    color: var(--hope-carbon);
+    font-family: var(--hope-display);
+    font-size: 1.2rem;
+    text-decoration: none;
+  }
+
+  .mobile-nav nav a:last-child {
+    border: 0;
+  }
+
+  .hope-hero__grid,
+  .hope-practice__grid,
+  .hope-composition__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hope-hero__signature {
+    margin: 2rem 0 0 auto;
+  }
+
+  .hope-transformations__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hope-line__heading {
+    grid-template-columns: 1fr;
+  }
+
+  .hope-transformations__grid article {
+    min-height: 0;
+  }
+
+  .hope-transformations__grid article:nth-child(2) {
+    margin-top: 0;
+  }
+
+  .hope-patterns__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .hope-patterns__intro {
+    position: static;
+  }
+
+  .hope-composition__copy {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 48rem) {
+  .hope-brand {
+    font-size: 16px;
+  }
+
+  .hope-brand .shell {
+    width: min(100% - 2rem, 86rem);
+  }
+
+  .hope-brand .site-header {
+    top: 0.5rem;
+  }
+
+  .hope-brand .site-header__inner {
+    min-height: 58px;
+    padding: 0.35rem;
+    flex-direction: row;
+  }
+
+  .hope-brand .site-identity {
+    min-height: 0;
+  }
+
+  .hope-brand .mobile-nav {
+    flex: 0 0 auto;
+  }
+
+  .hope-brand .mobile-nav summary {
+    width: 46px;
+    min-width: 46px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .hope-brand .mobile-nav summary > span:first-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .site-identity__mark {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .hope-brand .site-identity__name {
+    font-size: 0.8rem;
+  }
+
+  .hope-brand .site-identity small {
+    font-size: 0.48rem;
+  }
+
+  .hope-hero {
+    padding-top: 3.5rem;
+  }
+
+  .hope-hero__mast {
+    margin-bottom: 4rem;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .hope-brand .hope-hero h1 {
+    font-size: clamp(3.6rem, 18vw, 5.3rem);
+  }
+
+  .hope-hero__signature {
+    max-width: 15ch;
+    font-size: 1.65rem;
+  }
+
+  .hope-line-chamber {
+    width: calc(100% - 1rem);
+    margin-top: 4rem;
+    padding: 0.65rem;
+    border-radius: 1.5rem;
+  }
+
+  .hope-line__heading {
+    padding: 1.25rem 1rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .hope-line__heading .section-code {
+    font-size: var(--hope-micro-size);
+  }
+
+  .hope-brand .hope-line__heading h2 {
+    font-size: clamp(2.7rem, 14vw, 4.2rem);
+  }
+
+  .hope-line__svg {
+    position: static;
+    left: auto;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    transform: none;
+  }
+
+  .hope-line__index {
+    grid-template-columns: 1fr;
+  }
+
+  .hope-line__index-item,
+  .hope-line__index-item:nth-child(4n),
+  .hope-line__index-item:nth-child(n + 5),
+  .hope-line__index-item:nth-child(even),
+  .hope-line__index-item:nth-child(n + 7) {
+    min-height: 0;
+    padding: 1.15rem 1rem;
+    grid-template-columns: 2.2rem minmax(0, 1fr);
+    border-right: 0;
+    border-bottom: 1px solid var(--hope-hairline-dark);
+  }
+
+  .hope-line__index-item:last-child {
+    border-bottom: 0;
+  }
+
+  .hope-line__index-copy .micro-label {
+    margin-bottom: 0.45rem;
+  }
+
+  .hope-line__index-actions {
+    padding-top: 0.7rem;
+  }
+
+  .hope-line__index-actions a {
+    min-height: 44px;
+  }
+
+  .hope-act {
+    padding-block: 5.5rem;
+  }
+
+  .hope-act__heading,
+  .hope-context__heading {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+
+  .hope-brand .hope-act h2 {
+    font-size: clamp(3rem, 15vw, 4.8rem);
+  }
+
+  .hope-index {
+    font-size: 2.3rem;
+  }
+
+  .hope-transformations__grid {
+    gap: 0;
+  }
+
+  .hope-transformations__grid article {
+    padding: 2rem 0 3.5rem;
+    border-top: 1px solid var(--hope-hairline);
+    border-left: 0;
+  }
+
+  .hope-transformations__number {
+    margin-bottom: 2.5rem;
+  }
+
+  .hope-work {
+    border-radius: 2rem 2rem 0 0;
+  }
+
+  .hope-work__stories {
+    display: block;
+    background: transparent;
+  }
+
+  .hope-story,
+  .hope-story--flagship {
+    display: grid;
+    min-height: auto;
+    padding: 2.4rem 0;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 1.5rem;
+    border-top: 1px solid var(--hope-hairline-dark);
+  }
+
+  .hope-story__meta {
+    margin-bottom: 3rem;
+  }
+
+  .hope-brand .hope-story h3,
+  .hope-story:not(.hope-story--flagship) h3 {
+    font-size: clamp(2.45rem, 12vw, 3.5rem);
+  }
+
+  .hope-patterns__list li {
+    grid-template-columns: 2.2rem minmax(0, 1fr);
+  }
+
+  .hope-patterns__list small {
+    grid-column: 2;
+  }
+
+  .hope-context__grid article,
+  .hope-context__grid article:nth-child(even) {
+    padding: 2rem 0 2.8rem;
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .hope-context__close {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .hope-brand .site-footer__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hope-brand .site-footer__record {
+    text-align: left;
+  }
+
+  .hope-brand .career-ledger > li {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .hope-brand .career-ledger > li > span {
+    grid-row: 1 / 3;
+  }
+
+  .career-ledger__mark {
+    width: min(100%, 11rem);
+    height: 4.5rem;
+    justify-self: start;
+  }
+
+  .hope-brand .work-index article {
+    min-height: 0;
+    padding: 2rem 0 2.5rem;
+  }
+
+  .hope-brand .work-index__number {
+    top: 1.6rem;
+    right: 0;
+  }
+
+  .hope-brand .work-index__actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .source-principles {
+    grid-template-columns: 1fr;
+  }
+
+  .source-principles article {
+    min-height: 0;
+  }
+
+  .source-principles span {
+    margin-bottom: 2.5rem;
+  }
+
+  .hope-brand .case-hero__rail {
+    display: flex;
+    padding-top: 0;
+    flex-direction: row;
+    gap: 1rem;
+    writing-mode: horizontal-tb;
+  }
+
+}
+
+@media (max-width: 25rem) {
+  .hope-brand .site-identity {
+    padding-right: 0.3rem;
+  }
+
+  .hope-brand .site-identity small {
+    display: none;
+  }
+
+  .mobile-nav summary {
+    min-width: 3rem;
+    padding-left: 0.35rem;
+  }
+
+  .mobile-nav summary > span:first-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .hope-brand .hope-hero h1 {
+    font-size: clamp(3.25rem, 17vw, 4.3rem);
+  }
+}
+
+@media (max-width: 30rem) {
+  .hope-brand .attribution-segmented > div,
+  .hope-brand .attribution-segmented > div:has(> :nth-child(3)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hope-brand .attribution-segmented > div:has(> :nth-child(3):last-child)
+    > :last-child {
+    grid-column: 1 / -1;
+  }
+
+  .hope-brand .capability-atlas__ledger > li > details > summary {
+    grid-template-columns: 2rem minmax(0, 1fr) 1.25rem;
+  }
+
+  .hope-brand .capability-atlas__ledger summary > small {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hope-brand *,
+  .hope-brand *::before,
+  .hope-brand *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .hope-line__spine,
+  .hope-line__project-branch,
+  .hope-line__edge,
+  .hope-line__model-link {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .about-portrait__trace-current {
+    stroke-dashoffset: 0 !important;
+  }
+}
+
+/* Outcome stories become full-width systems portraits on larger screens. */
+@media (min-width: 48.001rem) {
+  .hope-work__stories {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .hope-story,
+  .hope-story--flagship {
+    min-height: 38rem;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 5fr) minmax(22rem, 7fr);
+    grid-template-rows: minmax(0, 1fr);
+    border-top: 1px solid var(--hope-hairline-dark);
+  }
+
+  .hope-story:first-child {
+    border-top: 0;
+  }
+
+  .hope-story:nth-child(even) {
+    grid-template-columns: minmax(22rem, 7fr) minmax(0, 5fr);
+    background: color-mix(in srgb, var(--hope-carbon-soft) 32%, var(--hope-carbon));
+  }
+
+  .hope-story:nth-child(even) .hope-story__copy {
+    order: 2;
+  }
+
+  .hope-story:nth-child(even) .lineage-field {
+    order: 1;
+  }
+
+  .hope-story--flagship .hope-story__copy {
+    max-width: none;
+  }
+
+  .hope-brand .hope-story h3,
+  .hope-story:not(.hope-story--flagship) h3 {
+    max-width: 12ch;
+    font-size: clamp(2.7rem, 4.5vw, 5.2rem);
+  }
+}
+
+/* Stacked cards must grow with the artwork and its expandable source list. */
+@media (width < 48rem) {
+  .hope-brand .work-index article,
+  .work-index__copy {
+    height: auto;
+  }
+}
+
+/* The work index uses the available width as an editorial spread. */
+@media (min-width: 48rem) {
+  .hope-brand .work-index {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hope-brand .work-index article {
+    display: grid;
+    min-height: 31rem;
+    grid-template-columns: minmax(0, 5fr) minmax(20rem, 7fr);
+    gap: clamp(2rem, 4vw, 5rem);
+    align-items: center;
+  }
+
+  .hope-brand .work-index > li:nth-child(even) article {
+    grid-template-columns: minmax(20rem, 7fr) minmax(0, 5fr);
+  }
+
+  .hope-brand .work-index > li:nth-child(even) .work-index__copy {
+    order: 2;
+  }
+
+  .hope-brand .work-index > li:nth-child(even) .lineage-field {
+    order: 1;
+  }
+
+  .hope-brand .work-index h3 {
+    max-width: 14ch;
+    font-size: clamp(2.6rem, 4vw, 4.2rem);
+  }
+
+  .hope-brand .work-index .lineage-field {
+    align-self: center;
+  }
+}
+
+.hope-credential-signal {
+  display: grid;
+  margin-top: clamp(3rem, 7vw, 6rem);
+  padding-block: 1.8rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+  border-block: 1px solid var(--hope-hairline);
+  color: var(--hope-carbon);
+  text-decoration: none;
+}
+
+.hope-brand .hope-credential-signal:hover {
+  color: var(--hope-carbon);
+}
+
+.hope-credential-signal__count {
+  color: var(--hope-green-dark);
+  font-family: var(--hope-display);
+  font-size: clamp(3.2rem, 6vw, 6.4rem);
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+}
+
+.hope-credential-signal strong,
+.hope-credential-signal small {
+  display: block;
+}
+
+.hope-credential-signal strong {
+  font-family: var(--hope-display);
+  font-size: clamp(1.35rem, 2.4vw, 2.4rem);
+  font-weight: 520;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.hope-credential-signal small {
+  max-width: 46rem;
+  margin-top: 0.55rem;
+  color: var(--hope-ink-muted);
+  font-size: 0.76rem;
+}
+
+.hope-credential-signal__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+@media (max-width: 48rem) {
+  .hope-credential-signal {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .hope-credential-signal__action {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 25rem) {
+  .hope-credential-signal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hope-credential-signal__action {
+    grid-column: 1;
+  }
+}
+
+/* Living Systems Atlas: recruiter-first outcomes with technical depth on demand. */
+
+.hope-brand .site-identity__name {
+  font-size: 1rem;
+}
+
+.hope-brand .site-identity small {
+  font-size: 0.6rem;
+  letter-spacing: 0.075em;
+}
+
+.hope-brand .primary-nav__source {
+  border-color: transparent;
+  background: transparent;
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .primary-nav__source[aria-current] {
+  border-color: var(--hope-green-dark);
+  background: var(--hope-green);
+  color: var(--hope-on-accent);
+}
+
+.hope-brand .primary-nav__conversation {
+  border: 1px solid var(--hope-carbon);
+  border-radius: 999px;
+  color: var(--hope-carbon);
+}
+
+.hope-brand .hope-hero {
+  min-height: calc(100svh - 5.8rem);
+  padding-top: clamp(4.5rem, 5.5vw, 5.5rem);
+  padding-bottom: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.hope-brand .hope-hero__mast {
+  margin-bottom: clamp(2.5rem, 4vw, 4rem);
+}
+
+.hope-brand .hope-hero__grid {
+  min-height: min(36rem, calc(100svh - 11rem));
+  grid-template-columns: minmax(0, 7fr) minmax(18rem, 5fr);
+  align-items: center;
+}
+
+.hope-brand .hope-hero__copy h1 {
+  max-width: 12ch;
+  font-size: clamp(3.8rem, 6vw, 5.8rem);
+  line-height: 0.88;
+}
+
+.hope-hero__signature-block {
+  position: relative;
+  display: grid;
+  min-height: 20rem;
+  align-content: center;
+}
+
+.hope-brand .hope-hero__signature {
+  position: relative;
+  z-index: 2;
+  max-width: 8.5ch;
+  margin: 0;
+  font-size: clamp(2.7rem, 4.7vw, 5.6rem);
+  line-height: 0.9;
+}
+
+.hope-hero__current {
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+  color: var(--hope-blue);
+  overflow: visible;
+}
+
+.hope-hero__current :is(path, circle) {
+  fill: var(--hope-porcelain);
+  stroke: currentColor;
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.hope-hero__current .hope-hero__current-guide {
+  fill: none;
+  stroke: var(--hope-hairline);
+  stroke-width: 10;
+}
+
+.hope-hero__current .hope-hero__current-trace {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+}
+
+.home-jump {
+  display: flex;
+  min-height: 3.5rem;
+  align-items: center;
+  gap: 0.5rem;
+  border-top: 1px solid var(--hope-hairline);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.home-jump::-webkit-scrollbar {
+  display: none;
+}
+
+.home-jump :is(span, a) {
+  flex: 0 0 auto;
+  font-family: var(--hope-mono);
+  font-size: var(--hope-micro-size);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.home-jump > span {
+  margin-right: 0.4rem;
+  color: var(--hope-ink-muted);
+}
+
+.home-jump a {
+  display: inline-flex;
+  min-height: 44px;
+  padding-inline: 0.75rem;
+  align-items: center;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.hope-brand .hope-act__summary {
+  max-width: 42rem;
+  margin-top: 1.25rem;
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .hope-work .hope-act__summary {
+  color: rgb(243 239 230 / 78%);
+}
+
+.hope-transformations__grid--four {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.hope-transformations__grid--four article {
+  min-height: 0;
+}
+
+.hope-transformations__value {
+  display: flex;
+  margin: 1.4rem 0 0.5rem;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--hope-green-dark);
+  font-family: var(--hope-display);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.hope-transformations__value span {
+  max-width: 15rem;
+  color: var(--hope-ink-muted);
+  font-family: var(--hope-mono);
+  font-size: var(--hope-micro-size);
+  letter-spacing: 0.07em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.hope-story {
+  display: grid;
+  min-height: 34rem;
+  grid-template-columns: minmax(0, 5fr) minmax(22rem, 7fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: stretch;
+}
+
+.hope-story--flagship {
+  grid-template-columns: minmax(0, 5fr) minmax(24rem, 7fr);
+}
+
+.hope-story__copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hope-brand .hope-story h3 {
+  max-width: 12ch;
+  font-size: clamp(2.4rem, 4.7vw, 5rem);
+}
+
+.hope-story__project {
+  margin-block: 0 1rem;
+  color: var(--hope-green);
+  font-family: var(--hope-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hope-work__conversation {
+  display: flex;
+  padding-block: 2rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--hope-hairline-dark);
+}
+
+.hope-work__conversation p {
+  margin: 0;
+  font-family: var(--hope-display);
+  font-size: clamp(1.4rem, 2.5vw, 2.5rem);
+}
+
+.hope-work__conversation a {
+  flex: 0 0 auto;
+  color: var(--hope-green);
+  font-family: var(--hope-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.lineage-field {
+  --lineage-accent: var(--hope-green);
+  position: relative;
+  display: grid;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  align-self: center;
+  border: 1px solid rgb(243 239 230 / 16%);
+  border-radius: clamp(1.25rem, 2vw, 2.2rem);
+  background:
+    radial-gradient(circle at 84% 20%, color-mix(in srgb, var(--lineage-accent) 13%, transparent), transparent 42%),
+    #091314;
+  box-shadow: inset 0 0 0 1px rgb(243 239 230 / 4%);
+  color: var(--lineage-accent);
+  color-scheme: dark;
+  overflow: hidden;
+}
+
+.lineage-field[data-family="security"] { --lineage-accent: #ef9877; }
+.lineage-field[data-family="durability"] { --lineage-accent: #d6b45d; }
+.lineage-field[data-family="agents"] { --lineage-accent: #9f8de2; }
+.lineage-field[data-family="browser"] { --lineage-accent: #6bcad0; }
+.lineage-field[data-family="cloud"] { --lineage-accent: #b7cf61; }
+
+.lineage-field__heading {
+  display: flex;
+  min-height: 4.5rem;
+  padding: 1rem 1.2rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid rgb(243 239 230 / 12%);
+}
+
+.lineage-field .lineage-field__heading p {
+  margin: 0;
+  color: inherit;
+}
+
+.lineage-field__heading > p:last-child {
+  max-width: 22rem;
+  color: rgb(243 239 230 / 76%);
+  font-size: 0.7rem;
+  text-align: right;
+}
+
+.lineage-field__canvas {
+  position: relative;
+  min-height: 0;
+}
+
+.lineage-field svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lineage-field__guides {
+  fill: none;
+  opacity: 0.07;
+  stroke: var(--hope-porcelain);
+  stroke-width: 1;
+}
+
+.lineage-field__paths path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.4;
+  opacity: 0.35;
+  vector-effect: non-scaling-stroke;
+}
+
+.lineage-field__paths .lineage-field__current {
+  stroke-width: 4;
+  opacity: 0.88;
+}
+
+.lineage-field__source {
+  color: inherit;
+  outline: none;
+}
+
+.lineage-field__source-static :is(rect, circle, path) {
+  fill: #0b1515;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  vector-effect: non-scaling-stroke;
+  transition: fill 180ms var(--hope-ease), transform 180ms var(--hope-ease);
+}
+
+.lineage-field__source-static {
+  display: inline;
+  color: inherit;
+  pointer-events: none;
+}
+
+.lineage-field__source:is(:hover, :focus) + .lineage-field__source-static > :is(rect, circle, path):not(.lineage-field__model-stitch) {
+  fill: currentColor;
+}
+
+.lineage-field__halo {
+  fill: none !important;
+  opacity: 0.18;
+}
+
+.lineage-field__hit-area {
+  fill: transparent !important;
+  stroke: none !important;
+  pointer-events: all;
+}
+
+.lineage-field__source:focus-visible .lineage-field__hit-area {
+  fill: transparent !important;
+  stroke: #f3efe6 !important;
+  stroke-width: 4 !important;
+  filter: drop-shadow(0 0 4px rgb(147 166 255 / 88%));
+}
+
+.lineage-field__model-stitch {
+  fill: none !important;
+  stroke: var(--hope-blue-on-dark) !important;
+}
+
+.lineage-field__outcome circle:first-child {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  opacity: 0.45;
+}
+
+.lineage-field__outcome circle:last-child {
+  fill: currentColor;
+}
+
+.lineage-field__file-label,
+.lineage-field__labels text {
+  fill: rgb(243 239 230 / 72%);
+  font-family: var(--hope-mono);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+}
+
+.lineage-field__labels text {
+  font-size: 7px;
+  letter-spacing: 0.12em;
+}
+
+.lineage-field__tooltip {
+  min-height: 3.2rem;
+  margin: 0;
+  padding: 0.8rem 1.2rem;
+  border-top: 1px solid rgb(243 239 230 / 12%);
+  color: rgb(243 239 230 / 78%);
+  font-family: var(--hope-mono);
+  font-size: 0.62rem;
+  line-height: 1.45;
+}
+
+.lineage-field__fallback {
+  border-top: 1px solid rgb(243 239 230 / 12%);
+}
+
+.lineage-field__fallback > summary {
+  display: flex;
+  min-height: 48px;
+  padding-inline: 1.2rem;
+  align-items: center;
+  color: var(--lineage-accent);
+  cursor: pointer;
+  font-family: var(--hope-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.lineage-field__fallback ol {
+  margin: 0;
+  padding: 0 1.2rem 1.2rem 2.4rem;
+}
+
+.lineage-field__fallback li {
+  margin-top: 0.65rem;
+  color: rgb(243 239 230 / 80%);
+  font-size: max(0.72rem, 12px);
+}
+
+.lineage-field__fallback li a {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+
+.lineage-field--compact .lineage-field__heading > p:last-child,
+.lineage-field--compact .lineage-field__fallback {
+  display: none;
+}
+
+.lineage-field--compact .lineage-field__heading {
+  min-height: 3.5rem;
+}
+
+.lineage-field--compact .lineage-field__tooltip {
+  min-height: 2.8rem;
+}
+
+.hope-atlas {
+  padding-block: clamp(3rem, 7vw, 7rem);
+  background: var(--hope-carbon);
+}
+
+.hope-atlas .hope-line-chamber {
+  margin-block: 0;
+}
+
+.hope-line__index-shell {
+  border-top: 1px solid var(--hope-hairline-dark);
+}
+
+.hope-line__index-shell > summary {
+  display: flex;
+  min-height: 58px;
+  padding-inline: clamp(1rem, 3vw, 2rem);
+  align-items: center;
+  justify-content: space-between;
+  color: var(--hope-green);
+  cursor: pointer;
+  font-family: var(--hope-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  list-style: none;
+  text-transform: uppercase;
+}
+
+.hope-line__index-shell > summary::-webkit-details-marker {
+  display: none;
+}
+
+.hope-line__index-shell > summary::after {
+  content: "+";
+  font-size: 1.1rem;
+}
+
+.hope-line__index-shell[open] > summary::after {
+  content: "−";
+}
+
+.hope-line--compact .hope-line__heading {
+  padding-bottom: 1rem;
+}
+
+.hope-line--compact .hope-line__art {
+  min-height: 0;
+}
+
+.hope-line--compact .hope-line__index {
+  padding-top: 1rem;
+}
+
+.principal-scope {
+  display: grid;
+  margin-top: clamp(3rem, 6vw, 6rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--hope-hairline);
+  border-bottom: 1px solid var(--hope-hairline);
+}
+
+.principal-scope article {
+  min-height: 22rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-right: 1px solid var(--hope-hairline);
+}
+
+.principal-scope article:last-child {
+  border-right: 0;
+}
+
+.principal-scope article > span {
+  color: var(--hope-green-dark);
+  font-family: var(--hope-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.principal-scope h3 {
+  margin-block: 4rem 1rem;
+  font-size: clamp(1.8rem, 3vw, 3.2rem);
+}
+
+.principal-scope p {
+  color: var(--hope-ink-muted);
+}
+
+.work-index__project {
+  color: var(--hope-green-dark);
+  font-family: var(--hope-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.work-index .lineage-field {
+  margin-block: 1.5rem;
+}
+
+.work-state-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.work-state-list > li {
+  display: grid;
+  min-height: 9rem;
+  padding-block: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) auto minmax(11rem, auto);
+  gap: 1.5rem;
+  align-items: center;
+  border-top: 1px solid var(--hope-hairline);
+}
+
+.work-state-list h3 {
+  max-width: 46rem;
+  margin: 0;
+  font-family: var(--hope-sans);
+  font-size: 1rem;
+  font-weight: 540;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.work-state-list > li > a {
+  color: var(--hope-green-dark);
+  font-family: var(--hope-mono);
+  font-size: var(--hope-micro-size);
+  text-transform: uppercase;
+}
+
+.case-breadcrumb a {
+  color: inherit;
+}
+
+.hope-brand .case-hero__plain {
+  max-width: 19ch;
+  margin-block: 1.75rem 1rem;
+  color: var(--hope-carbon);
+  font-family: var(--hope-display);
+  font-size: clamp(2rem, 4vw, 4.5rem);
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+.case-hero .lineage-field {
+  width: min(100%, 58rem);
+  margin-top: clamp(2rem, 5vw, 4rem);
+}
+
+.case-neighbors {
+  display: grid;
+  margin-block: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--hope-hairline);
+  border-bottom: 1px solid var(--hope-hairline);
+}
+
+.case-neighbors a {
+  display: grid;
+  min-height: 8rem;
+  padding: 1.4rem;
+  align-content: center;
+  text-decoration: none;
+}
+
+.case-neighbors a + a {
+  border-left: 1px solid var(--hope-hairline);
+}
+
+.case-neighbors span {
+  color: var(--hope-green-dark);
+  font-family: var(--hope-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.case-neighbors strong {
+  margin-top: 0.65rem;
+  font-family: var(--hope-display);
+  font-size: clamp(1.15rem, 2vw, 1.65rem);
+  font-weight: 500;
+  line-height: 1.08;
+}
+
+.career-ledger__mark {
+  min-height: 6.25rem;
+  overflow: visible;
+}
+
+.career-ledger__image {
+  width: min(88%, 12rem);
+  height: min(72%, 4.8rem);
+  object-fit: contain;
+}
+
+.career-ledger__mark--trov .career-ledger__image {
+  transform: scale(1.12);
+}
+
+.career-ledger__mark--context svg {
+  width: 5.5rem;
+  color: var(--hope-blue);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+
+.career-ledger--unified > li:nth-child(even) .career-ledger__mark--context {
+  color: var(--hope-copper);
+}
+
+.attribution-record-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.attribution-workspace { order: 1; }
+.attribution-overview { order: 2; }
+.attribution-evidence { order: 3; }
+
+.hope-brand .attribution-method > summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--hope-green);
+  cursor: pointer;
+  font-family: var(--hope-mono);
+  font-size: max(0.68rem, 11px);
+  letter-spacing: 0.08em;
+  list-style: none;
+  text-transform: uppercase;
+}
+
+.hope-brand .attribution-method > summary::-webkit-details-marker {
+  display: none;
+}
+
+.hope-brand .attribution-method > summary::after {
+  content: "+";
+  font-size: 1rem;
+}
+
+.hope-brand .attribution-method[open] > summary::after {
+  content: "−";
+}
+
+.attribution-method__body {
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--hope-hairline-dark);
+}
+
+.hope-brand :is(.attribution-segmented button, .attribution-clear, .attribution-select select) {
+  border-color: rgb(243 239 230 / 42%);
+}
+
+@keyframes hope-current-pass {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hope-hero__current-trace,
+  .lineage-field__current,
+  .hope-line__spine-tracer {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  [data-motion-entered] .about-portrait__trace-current {
+    animation: hope-tracer-pass 880ms 120ms var(--hope-ease) both;
+  }
+
+  [data-motion-entered] .hope-hero__current-trace {
+    animation: hope-current-pass 1.15s 120ms var(--hope-ease) both;
+  }
+
+  .lineage-field[data-motion-entered] .lineage-field__current {
+    animation: hope-current-pass 1.25s 100ms var(--hope-ease) both;
+  }
+
+  .hope-line[data-motion-entered] .hope-line__spine-tracer {
+    animation: hope-tracer-pass 920ms 140ms var(--hope-ease) both;
+  }
+}
+
+@media (max-width: 76rem) {
+  .hope-transformations__grid--four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hope-story,
+  .hope-story--flagship {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .lineage-field {
+    width: 100%;
+  }
+}
+
+@media (max-width: 66rem) {
+  .hope-brand .primary-nav > .primary-nav__conversation {
+    display: none;
+  }
+}
+
+@media (max-width: 48rem) {
+  .hope-brand .hope-hero {
+    min-height: auto;
+    padding-top: 3.5rem;
+  }
+
+  .hope-hero__mast {
+    margin-bottom: 2rem;
+  }
+
+  .hope-hero__mast p:first-child {
+    display: none;
+  }
+
+  .hope-brand .hope-hero__grid {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hope-brand .hope-hero__copy h1 {
+    max-width: 12ch;
+    font-size: clamp(3rem, 14vw, 4.8rem);
+  }
+
+  .hope-hero__signature-block {
+    min-height: 15rem;
+    margin-top: 2rem;
+  }
+
+  .hope-brand .hope-hero__signature {
+    max-width: 10ch;
+    font-size: clamp(2.7rem, 13vw, 4.4rem);
+  }
+
+  .home-jump {
+    width: 100%;
+    padding-inline: 1.5rem;
+  }
+
+  .hope-transformations__grid--four,
+  .principal-scope {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hope-story {
+    min-height: 0;
+  }
+
+  .hope-brand .hope-story h3 {
+    max-width: 13ch;
+    font-size: clamp(2.35rem, 11.5vw, 3.5rem);
+  }
+
+  .lineage-field__heading > p:last-child,
+  .lineage-field__labels,
+  .lineage-field__file-label {
+    display: none;
+  }
+
+  .lineage-field__heading {
+    min-height: 3.5rem;
+  }
+
+  .lineage-field__tooltip {
+    min-height: 3.8rem;
+    font-size: max(0.68rem, 11px);
+  }
+
+  .hope-work__conversation {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .principal-scope article {
+    min-height: 17rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--hope-hairline);
+  }
+
+  .principal-scope article:last-child {
+    border-bottom: 0;
+  }
+
+  .principal-scope h3 {
+    margin-top: 2.5rem;
+  }
+
+  .work-state-list > li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .work-state-list > li > a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .case-neighbors {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .case-neighbors a + a {
+    border-top: 1px solid var(--hope-hairline);
+    border-left: 0;
+  }
+
+  .route-motif {
+    top: 9rem;
+    right: -7rem;
+    width: 26rem;
+    opacity: 0.18;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 72%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 72%, transparent);
+  }
+
+  .hope-line__index-number,
+  .hope-line__index-copy .micro-label,
+  .hope-line__index-meta,
+  .hope-line__index-detail summary,
+  .hope-line__index-detail dt,
+  .hope-line__index-detail dd {
+    font-size: max(0.68rem, 11px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hope-hero__current-trace,
+  .lineage-field__current,
+  .lineage-field__paths > g path,
+  .hope-line__spine-tracer {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+}
+
+/* Theme control stays framework-free so every exported route remains static. */
+.theme-toggle {
+  display: none;
+}
+
+.theme-ready .hope-brand .theme-toggle {
+  display: inline-flex;
+  min-width: 4.8rem;
+  min-height: 46px;
+  margin-left: 0.4rem;
+  padding: 0 0.8rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--hope-hairline);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--hope-carbon);
+  cursor: pointer;
+  font-family: var(--hope-sans);
+  font-size: 0.7rem;
+  font-weight: 650;
+  transition:
+    color 240ms var(--hope-ease),
+    background-color 240ms var(--hope-ease),
+    border-color 240ms var(--hope-ease),
+    transform 240ms var(--hope-ease);
+}
+
+.hope-brand .theme-toggle:hover {
+  border-color: currentColor;
+  background: rgb(23 28 26 / 5%);
+}
+
+.hope-brand .theme-toggle:active {
+  transform: scale(0.96);
+}
+
+.theme-toggle svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.theme-toggle__moon {
+  display: none;
+}
+
+html[data-theme="dark"] {
+  --hope-porcelain: #111714;
+  --hope-porcelain-deep: #18201c;
+  --hope-carbon: #edf0e7;
+  --hope-carbon-soft: #d8ddd5;
+  --hope-ink-muted: #aab5ae;
+  --hope-green: #b7cf61;
+  --hope-green-dark: #c5dc79;
+  --hope-blue: #a9b6ff;
+  --hope-blue-on-dark: #a9b6ff;
+  --hope-copper: #f0a084;
+  --hope-copper-on-dark: #f0a084;
+  --hope-hairline: rgb(243 239 230 / 17%);
+  --hope-hairline-dark: rgb(243 239 230 / 18%);
+  --hope-shadow: 0 28px 80px rgb(0 0 0 / 28%);
+  background: var(--hope-porcelain);
+  color-scheme: dark;
+}
+
+html[data-theme="dark"]:has(body.hope-brand) {
+  background: var(--hope-porcelain);
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] .hope-brand {
+  background:
+    linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), rgb(243 239 230 / 4%) calc(100% - 1px)),
+    var(--hope-porcelain);
+  color: var(--hope-carbon);
+}
+
+html[data-theme="dark"] .hope-brand .site-header__inner {
+  border-color: rgb(243 239 230 / 14%);
+  background: rgb(17 23 20 / 95%);
+  box-shadow: 0 14px 44px rgb(0 0 0 / 28%);
+}
+
+html[data-theme="dark"] .hope-brand .primary-nav a:hover,
+html[data-theme="dark"] .hope-brand .primary-nav a[aria-current],
+html[data-theme="dark"] .hope-brand .primary-nav a[data-active-section="true"],
+html[data-theme="dark"] .hope-brand .theme-toggle:hover {
+  background: rgb(243 239 230 / 8%);
+}
+
+html[data-theme="dark"] .hope-brand .primary-nav .primary-nav__source:hover,
+html[data-theme="dark"] .hope-brand .primary-nav .primary-nav__source[aria-current] {
+  background: var(--hope-green);
+  color: var(--hope-on-accent);
+}
+
+html[data-theme="dark"] .theme-toggle__sun {
+  display: none;
+}
+
+html[data-theme="dark"] .theme-toggle__moon {
+  display: block;
+}
+
+/* These are intentionally dark data chambers in both themes. */
+html[data-theme="dark"] :is(
+  .hope-line-chamber,
+  .hope-work,
+  .site-footer,
+  .proof-models,
+  .attribution-section,
+  .capability-atlas__map
+) {
+  --hope-porcelain: #f3efe6;
+  --hope-porcelain-deep: #e9e3d8;
+  --hope-carbon: #0b100e;
+  --hope-carbon-soft: #171e1a;
+  --hope-ink-muted: #aeb8b2;
+  --hope-green: #b7cf61;
+  --hope-green-dark: #a5bc52;
+  --hope-blue: #a9b6ff;
+  --hope-blue-on-dark: #a9b6ff;
+  --hope-copper: #f0a084;
+  --hope-copper-on-dark: #f0a084;
+  --hope-hairline: rgb(243 239 230 / 17%);
+  --hope-hairline-dark: rgb(243 239 230 / 18%);
+}
+
+html[data-theme="dark"] .hope-brand .hope-composition {
+  background: #26345f;
+}
+
+html[data-theme="dark"] .hope-brand :is(
+  .claim-ledger,
+  .capability-atlas,
+  .case-hero__facts > div,
+  .case-hero__signal,
+  .decision-pages__index,
+  .not-found__shell
+) {
+  background: rgb(255 255 255 / 4%);
+}
+
+html[data-theme="dark"] .hope-brand .career-ledger__mark {
+  background: #f3efe6;
+}
+
+html[data-theme="dark"] .hope-brand .career-ledger__mark > span {
+  color: #171c1a;
+}
+
+html[data-theme="dark"] .hope-brand .work-index__number {
+  color: rgb(243 239 230 / 20%);
+}
+
+html[data-theme="dark"] .hope-brand .route-intro::after {
+  border-color: rgb(243 239 230 / 7%);
+  box-shadow:
+    0 0 0 5rem rgb(243 239 230 / 2.7%),
+    0 0 0 11rem rgb(243 239 230 / 1.7%);
+}
+
+html[data-theme="dark"] .about-portrait picture {
+  border-color: rgb(243 239 230 / 18%);
+  background: #0b100e;
+  box-shadow: 0 2rem 5rem rgb(0 0 0 / 38%);
+}
+
+html[data-theme="dark"] .about-portrait::after {
+  background: linear-gradient(transparent, rgb(3 6 5 / 34%));
+}
+
+html[data-theme="dark"] .hope-brand .case-jump {
+  background: rgb(17 23 20 / 96%);
+}
+
+/* Status colors must remain semantic and AA-readable on paper surfaces in
+   both themes; the legacy neon palette was designed for dark instruments. */
+.hope-brand .route-section--paper .status-stamp {
+  color: #59615d;
+}
+
+.hope-brand .route-section--paper .status-stamp[data-state="released"] {
+  color: #4b6100;
+}
+
+.hope-brand .route-section--paper .status-stamp[data-state="merged"] {
+  color: #355d64;
+}
+
+.hope-brand .route-section--paper .status-stamp[data-state="open"] {
+  color: #985037;
+}
+
+html[data-theme="dark"] .hope-brand .route-section--paper .status-stamp {
+  color: #aeb8b2;
+}
+
+html[data-theme="dark"] .hope-brand .route-section--paper .status-stamp[data-state="released"] {
+  color: #c5dc79;
+}
+
+html[data-theme="dark"] .hope-brand .route-section--paper .status-stamp[data-state="merged"] {
+  color: #a9b6ff;
+}
+
+html[data-theme="dark"] .hope-brand .route-section--paper .status-stamp[data-state="open"] {
+  color: #f0a084;
+}
+
+html[data-theme="dark"] .hope-brand .not-found {
+  background:
+    radial-gradient(circle at 92% 10%, rgb(183 207 97 / 11%), transparent 28rem),
+    var(--hope-porcelain);
+}
+
+@media (max-width: 58rem) {
+  .theme-ready .hope-brand .theme-toggle {
+    margin-left: auto;
+  }
+
+  .hope-brand .mobile-nav {
+    margin-left: 0.35rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .theme-ready .hope-brand .theme-toggle {
+    width: 46px;
+    min-width: 46px;
+    padding: 0;
+  }
+
+  .theme-toggle > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+}
+
+@media (forced-colors: active) {
+  html[data-theme="dark"] .hope-brand,
+  html[data-theme="dark"] .hope-brand :is(
+    .site-header__inner,
+    .route-intro,
+    .route-section,
+    .hope-line-chamber,
+    .hope-work,
+    .hope-composition,
+    .site-footer,
+    .attribution-section
+  ) {
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .hope-brand .theme-toggle {
+    border: 1px solid ButtonText;
+    color: ButtonText;
+  }
+
+  .lineage-field__source:focus-visible .lineage-field__hit-area {
+    stroke: Highlight !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .route-motif {
+    display: none !important;
+  }
+
+  .hope-brand .hope-line-chamber,
+  .hope-brand .hope-work,
+  .hope-brand .hope-composition,
+  .hope-brand .site-footer,
+  .hope-brand .site-header__inner {
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .hope-brand .hope-hero::before,
+  .hope-brand .hope-composition::before {
+    display: none;
+  }
+}
+
+@media print {
+  .hope-brand .site-header,
+  .hope-brand .hope-actions,
+  .hope-line__art {
+    display: none !important;
+  }
+
+  .hope-brand,
+  .hope-brand .hope-work,
+  .hope-brand .hope-composition,
+  .hope-brand .site-footer {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(site-identity),
+::view-transition-new(site-identity) {
+  animation-duration: 420ms;
+  animation-timing-function: var(--hope-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(site-identity),
+  ::view-transition-new(site-identity),
+  ::view-transition-old(site-header),
+  ::view-transition-new(site-header) {
+    animation: none !important;
+  }
+}
+
+/* End-to-end refinement: editorial systems cartography. */
+
+.hope-brand main {
+  position: relative;
+  isolation: isolate;
+  background: var(--hope-porcelain);
+  overflow: clip;
+}
+
+.hope-brand .route-intro::after,
+.hope-brand .case-hero::after {
+  display: none;
+}
+
+.hope-brand main[data-motif] .route-intro,
+.hope-brand main[data-motif] .case-hero {
+  background: transparent;
+}
+
+.route-thread {
+  display: block;
+  width: min(10rem, 100%);
+  margin-top: 1.5rem;
+  overflow: visible;
+  stroke: var(--hope-green-dark);
+  stroke-width: 1.3;
+}
+
+.route-thread circle {
+  fill: var(--hope-porcelain);
+}
+
+[data-route="decisions"] .route-thread {
+  stroke: var(--hope-copper);
+}
+
+[data-route="models"] .route-thread {
+  stroke: var(--hope-blue);
+}
+
+.route-motif {
+  position: absolute;
+  top: 5rem;
+  right: max(-7rem, calc((100vw - 86rem) / 2 - 4rem));
+  z-index: 0;
+  width: clamp(31rem, 49vw, 47rem);
+  color: var(--hope-green-dark);
+  opacity: 0.46;
+  pointer-events: none;
+}
+
+.route-motif__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.route-motif__guides,
+.route-motif__branches,
+.route-motif__orbits,
+.route-motif__measures,
+.route-motif__braid,
+.route-motif__case-inputs,
+.route-motif__source-stack,
+.route-motif__proof-output,
+.route-motif__system-core,
+.route-motif__decision-mark,
+.route-motif__path,
+.route-motif__tick,
+.route-motif__halo,
+.route-motif__system {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.route-motif__guides {
+  opacity: 0.08;
+  stroke-width: 1;
+}
+
+.route-motif__art {
+  opacity: 0.68;
+}
+
+.route-motif__branches,
+.route-motif__orbits,
+.route-motif__measures,
+.route-motif__braid,
+.route-motif__case-inputs,
+.route-motif__source-stack,
+.route-motif__proof-output,
+.route-motif__system-core,
+.route-motif__decision-mark,
+.route-motif__tick,
+.route-motif__system {
+  opacity: 0.42;
+  stroke-width: 1.2;
+}
+
+.route-motif__path--primary {
+  stroke: var(--hope-green-dark);
+  stroke-width: 2;
+}
+
+.route-motif__path--accent {
+  stroke: var(--hope-blue);
+  stroke-width: 2.2;
+}
+
+.route-motif__halo {
+  opacity: 0.18;
+}
+
+.route-motif__node {
+  fill: var(--hope-porcelain);
+  stroke: currentColor;
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.route-motif__node--core {
+  fill: var(--hope-carbon);
+  stroke: var(--hope-carbon);
+}
+
+.route-motif__node--accent {
+  fill: var(--hope-green);
+  stroke: var(--hope-green-dark);
+}
+
+.route-motif__node--quiet {
+  fill: var(--hope-porcelain-deep);
+  opacity: 0.76;
+}
+
+.route-motif--capabilities {
+  color: var(--hope-blue);
+  transform: rotate(-2deg);
+}
+
+.route-motif--method {
+  color: var(--hope-green-dark);
+  transform: translateY(1.5rem);
+}
+
+.route-motif--decisions {
+  color: var(--hope-copper);
+  transform: translateY(-1rem);
+}
+
+.route-motif--about {
+  color: var(--hope-blue);
+  transform: rotate(2deg);
+}
+
+.route-motif--proof {
+  color: var(--hope-green-dark);
+}
+
+.route-motif--models {
+  color: var(--hope-blue);
+}
+
+.route-motif--case-study {
+  top: 4.5rem;
+  color: var(--hope-green-dark);
+  opacity: 0.36;
+}
+
+/* Let route-specific hero art carry the composition without a second diagram. */
+.hope-brand main[data-route="about"] > .route-motif,
+.hope-brand main[data-route="method"] > .route-motif,
+.hope-brand main[data-route="credentials"] > .route-motif,
+.hope-brand main[data-route="models"] > .route-motif,
+.hope-brand main[data-route="case-study"] > .route-motif {
+  display: none;
+}
+
+.hope-brand .route-intro__grid,
+.hope-brand .case-hero__grid {
+  position: relative;
+  z-index: 1;
+}
+
+.hope-brand .route-intro h1 {
+  max-width: 10ch;
+}
+
+.hope-brand .route-intro__grid--with-visual h1 {
+  max-width: none;
+  font-size: clamp(3.25rem, 5.5vw, 6.5rem);
+}
+
+.hope-brand .route-intro__summary {
+  max-width: 43rem;
+}
+
+/* Light routes must never inherit the legacy dark-surface text colors. */
+.hope-brand .decision-pages {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .decision-pages > li,
+.hope-brand .decision-pages__index,
+.hope-brand .decision-pages__body dl > div {
+  border-color: var(--hope-hairline);
+}
+
+.hope-brand .decision-pages__index {
+  background: rgb(255 255 255 / 35%);
+}
+
+.hope-brand .decision-pages__index span,
+.hope-brand .decision-pages dt,
+.hope-brand .decision-pages__proofs a {
+  color: var(--hope-green-dark);
+}
+
+.hope-brand .decision-pages__index small,
+.hope-brand .decision-pages dd {
+  color: var(--hope-ink-muted);
+}
+
+.hope-brand .decision-pages__body h2 {
+  color: var(--hope-carbon);
+}
+
+/* The project index uses an in-flow label and number, avoiding mobile collisions. */
+.work-index__heading {
+  display: flex;
+  min-width: 0;
+  min-height: 4.5rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.work-index__heading .micro-label {
+  min-width: 0;
+  max-width: 24rem;
+}
+
+.hope-brand .work-index__number {
+  position: static;
+  flex: 0 0 auto;
+  color: rgb(23 28 26 / 18%);
+}
+
+.hope-brand .work-index h3 {
+  max-width: 13ch;
+}
+
+.hope-brand .work-index article,
+.hope-story,
+.source-principles article,
+.claim-ledger {
+  contain: layout paint;
+}
+
+/* One complete mobile topology replaces the cropped desktop canvas. */
+.hope-line__svg--mobile {
+  display: none;
+}
+
+.hope-line__spine-tracer,
+.hope-line__mobile-orbit {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hope-line__spine-tracer {
+  stroke: rgb(243 239 230 / 88%);
+  stroke-width: 3.2;
+}
+
+.hope-line__mobile-orbit {
+  opacity: 0.08;
+  stroke: var(--hope-porcelain);
+  stroke-dasharray: 3 8;
+}
+
+.hope-line__mobile-core {
+  fill: var(--hope-carbon);
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.hope-line__mobile-number,
+.hope-line__mobile-family,
+.hope-line__mobile-label {
+  font-family: var(--hope-mono);
+}
+
+.hope-line__mobile-number {
+  fill: var(--hope-porcelain);
+  font-size: 7px;
+}
+
+.hope-line__mobile-label {
+  fill: var(--hope-porcelain);
+  font-family: var(--hope-sans);
+  font-size: 9px;
+  font-weight: 620;
+  inline-size: 10.5rem;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.hope-line__mobile-family {
+  fill: currentColor;
+  font-size: 6px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hope-line__index-actions a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+}
+
+.hope-line__index-actions a > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.hope-line__source-link .source-link__label {
+  white-space: normal;
+}
+
+/* Balance the medium grids as intentional compositions rather than orphans. */
+.hope-context__grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.hope-context__grid article {
+  grid-column: span 2;
+}
+
+.hope-context__grid article:nth-child(n + 4) {
+  grid-column: span 3;
+}
+
+.hope-brand .capability-atlas__map svg {
+  width: min(100%, 43rem);
+  padding: 2rem;
+}
+
+/* Case studies keep their data-specific progression visible without a player UI. */
+.case-hero__signal {
+  width: min(100%, 48rem);
+  margin-top: 2rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--hope-hairline);
+  border-radius: 1.4rem;
+  background: rgb(255 255 255 / 28%);
+}
+
+.hope-brand .case-hero h1 {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.case-hero__signal .case-signal {
+  margin: 0;
+  border: 0;
+  color: var(--hope-green-dark);
+}
+
+.case-hero__signal .case-signal__node {
+  fill: var(--hope-porcelain);
+}
+
+.case-hero__signal .case-signal__trace {
+  stroke-width: 2.1;
+}
+
+.hope-brand .case-study [id] {
+  scroll-margin-top: 9rem;
+}
+
+.hope-brand .case-jump {
+  position: sticky;
+  top: 5.9rem;
+  z-index: 20;
+  background: rgb(243 239 230 / 96%);
+}
+
+.claim-ledger__context {
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--hope-hairline);
+}
+
+.claim-ledger__context > summary {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--hope-green-dark);
+  font-family: var(--hope-mono);
+  font-size: 0.7rem;
+  list-style: none;
+  text-transform: uppercase;
+}
+
+.claim-ledger__context > summary::-webkit-details-marker {
+  display: none;
+}
+
+.claim-ledger__context > summary::after {
+  content: "+";
+}
+
+.claim-ledger__context[open] > summary::after {
+  content: "−";
+}
+
+.claim-ledger__context dl {
+  margin-top: 0;
+}
+
+/* Normalize the optical footprint of employer marks, not only their boxes. */
+.career-ledger__mark {
+  overflow: hidden;
+}
+
+.career-ledger__image,
+.career-ledger__wordmark {
+  transform: scale(var(--logo-scale, 1));
+  transform-origin: center;
+}
+
+.career-ledger__image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Supporting routes close compactly; the homepage alone keeps the manifesto. */
+.site-footer--compact .site-footer__signature {
+  display: grid;
+  padding-block: clamp(2.5rem, 5vw, 4rem);
+  grid-template-columns: minmax(8rem, 3fr) minmax(0, 9fr);
+  gap: 2rem;
+  align-items: end;
+}
+
+.site-footer--compact .site-footer__eyebrow {
+  margin: 0;
+}
+
+.hope-brand .site-footer--compact p.site-footer__statement {
+  max-width: 25ch;
+  font-size: clamp(2rem, 4vw, 3.7rem);
+}
+
+.hope-brand .site-footer--compact .site-footer__grid {
+  min-height: 0;
+  padding-block: 1.5rem;
+}
+
+/* A branded 404 is a useful route, not a broken narrow card. */
+.hope-brand .not-found {
+  min-height: 100svh;
+  padding: clamp(1.25rem, 4vw, 4rem);
+  background:
+    radial-gradient(circle at 92% 10%, rgb(165 188 82 / 15%), transparent 28rem),
+    var(--hope-porcelain);
+  color: var(--hope-carbon);
+}
+
+.hope-brand .not-found__shell {
+  width: min(100%, 70rem);
+  padding: clamp(1.25rem, 4vw, 4rem);
+  border: 1px solid var(--hope-hairline);
+  border-radius: clamp(1.5rem, 3vw, 2.8rem);
+  background: rgb(255 255 255 / 30%);
+  box-shadow: var(--hope-shadow);
+}
+
+.not-found__intro {
+  max-width: 54rem;
+  margin-bottom: clamp(3rem, 6vw, 6rem);
+}
+
+.hope-brand .not-found h1 {
+  max-width: 12ch;
+  margin-block: 1rem 1.5rem;
+  color: var(--hope-carbon);
+  font-size: clamp(3rem, 7vw, 7rem);
+  hyphens: none;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.hope-brand .not-found__intro > p:not(.section-code),
+.hope-brand .not-found__route small {
+  color: var(--hope-ink-muted);
+}
+
+.not-found__routes > h2,
+.not-found__profiles h2 {
+  margin-bottom: 1rem;
+  font-family: var(--hope-sans);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.not-found__route-list,
+.not-found__profiles ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.not-found__route {
+  display: grid;
+  min-height: 5.5rem;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  border-top: 1px solid var(--hope-hairline);
+  color: var(--hope-carbon);
+  text-decoration: none;
+}
+
+.not-found__route-number,
+.not-found__route-arrow {
+  color: var(--hope-green-dark);
+  font-family: var(--hope-mono);
+  font-size: 0.66rem;
+}
+
+.not-found__route-copy {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+}
+
+.not-found__route-copy strong {
+  font-family: var(--hope-display);
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
+  font-weight: 500;
+}
+
+.not-found__route-copy small {
+  white-space: normal;
+}
+
+.not-found__profiles {
+  display: grid;
+  margin-top: clamp(3rem, 6vw, 6rem);
+  padding-top: 2rem;
+  grid-template-columns: minmax(10rem, 4fr) minmax(0, 8fr);
+  gap: 2rem;
+  border-top: 1px solid var(--hope-carbon);
+}
+
+.not-found__profiles a {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--hope-hairline);
+  color: var(--hope-carbon);
+  text-decoration: none;
+}
+
+/* Static-first motion: facts are visible immediately; one tracer carries the motion. */
+@keyframes hope-tracer-pass {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hope-brand .home-hero__copy > *,
+  .hope-brand .home-hero__role,
+  .hope-brand .route-intro__grid > *,
+  .hope-brand .route-intro__grid > div > *,
+  .hope-brand .hope-hero__copy > * {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .hope-line__spine,
+  .hope-line__project-branch,
+  .hope-line__edge,
+  .hope-line__model-link,
+  .hope-line__project-core > *,
+  .hope-line__node > *,
+  .hope-line__model > * {
+    animation: none !important;
+    opacity: 1;
+  }
+
+  .hope-line__spine-tracer {
+    stroke-dasharray: 0.12 0.88;
+    stroke-dashoffset: 1;
+  }
+
+  .hope-brand .method-stages::before,
+  .hope-brand .atlas-orbit,
+  .hope-brand .case-signal__trace {
+    animation: none !important;
+  }
+
+  .route-motif__draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: hope-tracer-pass 840ms 90ms var(--hope-ease) both;
+  }
+}
+
+@media (max-width: 70rem) and (min-width: 48.001rem) {
+  .hope-work__stories > .hope-story:last-child {
+    min-height: 30rem;
+    grid-column: 1 / -1;
+  }
+
+  .hope-context__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hope-context__grid article,
+  .hope-context__grid article:nth-child(n + 4) {
+    grid-column: span 1;
+  }
+
+  .hope-context__grid article:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 48.001rem) and (max-width: 76rem) {
+  .hope-work__stories > .hope-story,
+  .hope-work__stories > .hope-story:nth-child(even),
+  .hope-work__stories > .hope-story:last-child {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .hope-work__stories > .hope-story:nth-child(even) .hope-story__copy,
+  .hope-work__stories > .hope-story:nth-child(even) .lineage-field {
+    order: initial;
+  }
+}
+
+@media (min-width: 68.001rem) {
+  .hope-brand .capability-atlas__map {
+    position: sticky;
+    top: 7rem;
+    height: min(42rem, calc(100svh - 8.5rem));
+    min-height: 32rem;
+    align-self: start;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 68rem) {
+  .hope-brand .route-intro__grid--with-visual {
+    grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+    align-items: end;
+  }
+
+  .hope-brand .route-intro__grid--with-visual > .route-folio {
+    grid-column: 1 / -1;
+  }
+
+  .route-folio {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .route-thread {
+    width: 5rem;
+    margin: 0;
+  }
+
+  .hope-brand .capability-atlas__map {
+    min-height: 24rem;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 48rem) {
+  .route-motif {
+    top: 9rem;
+    right: -11rem;
+    width: 32rem;
+    opacity: 0.15;
+  }
+
+  .hope-brand .route-intro {
+    padding-block: 4.5rem 3.25rem;
+  }
+
+  .hope-brand .route-intro h1 {
+    max-width: 11ch;
+    font-size: clamp(3.25rem, 15vw, 5rem);
+  }
+
+  .hope-brand .route-intro__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hope-brand .route-intro__grid--with-visual {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .route-intro__visual {
+    width: 100%;
+    align-self: auto;
+  }
+
+  .about-portrait {
+    width: clamp(8.5rem, 34vw, 10rem);
+    margin-top: -1rem;
+    margin-right: 0.5rem;
+  }
+
+  .hope-brand .route-intro__grid > * {
+    min-width: 0;
+  }
+
+  .hope-line__art {
+    min-height: 31rem;
+  }
+
+  .hope-line__svg--desktop {
+    display: none;
+  }
+
+  .hope-line__svg--mobile {
+    position: static;
+    left: auto;
+    display: block;
+    width: 100%;
+    max-width: 28rem;
+    min-height: 0;
+    margin-inline: auto;
+    transform: none;
+  }
+
+  .hope-line__index-copy > p:not(.micro-label, .hope-line__index-meta) {
+    display: block;
+    color: rgb(243 239 230 / 67%);
+    font-size: 0.76rem;
+  }
+
+  .hope-line__index-meta {
+    display: none;
+  }
+
+  .hope-line__index-actions a {
+    min-width: 0;
+    align-items: start;
+  }
+
+  .hope-line__source-link .source-link__label {
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .hope-story .case-signal,
+  .hope-story--flagship .case-signal {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+    opacity: 0.62;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .hope-context__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hope-context__grid article,
+  .hope-context__grid article:nth-child(n + 4) {
+    grid-column: 1;
+  }
+
+  .hope-brand .work-index article {
+    padding: 1.6rem 0 2.5rem;
+  }
+
+  .work-index__heading {
+    min-height: 3.6rem;
+  }
+
+  .hope-brand .work-index__number {
+    font-size: 3.2rem;
+  }
+
+  .hope-brand .work-index h3 {
+    max-width: 12ch;
+    font-size: clamp(2.25rem, 11.5vw, 3.2rem);
+  }
+
+  .hope-brand .case-jump {
+    top: 4.65rem;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-color: var(--hope-green-dark) transparent;
+    scrollbar-width: thin;
+  }
+
+  .hope-brand .case-jump::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .hope-brand .case-jump::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--hope-green-dark);
+  }
+
+  .hope-brand .case-jump a {
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  .hope-brand .case-study [id] {
+    scroll-margin-top: 8rem;
+  }
+
+  .hope-brand .capability-atlas__map {
+    min-height: 12rem;
+  }
+
+  .hope-brand .capability-atlas__map svg {
+    padding: 1rem;
+  }
+
+  .lineage-field--compact .lineage-field__fallback {
+    display: block;
+  }
+
+  /* SVG hit areas scale below WCAG's 44px target on phones. Retain the visual
+     glyphs, but route interaction through the full-size HTML source links. */
+  .lineage-field__source {
+    display: none;
+  }
+
+  .hope-brand .case-path,
+  .hope-brand .case-verification,
+  .hope-brand .case-close {
+    padding-block: 3.25rem;
+  }
+
+  .hope-brand .case-path__list article {
+    padding-block: 1rem 2.1rem;
+  }
+
+  .case-hero__signal {
+    padding-inline: 0.35rem;
+  }
+
+  .site-footer--compact .site-footer__signature,
+  .not-found__profiles {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .site-footer--compact .site-footer__signature {
+    padding-block: 2.5rem;
+  }
+
+  .hope-brand .site-footer--compact p.site-footer__statement {
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .hope-brand .not-found {
+    padding: 0.75rem;
+  }
+
+  .hope-brand .not-found__shell {
+    padding: 1.25rem;
+    border-radius: 1.35rem;
+  }
+
+  .hope-brand .not-found h1 {
+    font-size: clamp(2.8rem, 14vw, 4.6rem);
+  }
+}
+
+@media (max-width: 25rem) {
+  .hope-brand .route-intro h1 {
+    font-size: clamp(2.7rem, 14vw, 4.2rem);
+  }
+
+  .not-found__route {
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    gap: 0.7rem;
+  }
+
+  .not-found__route-copy strong {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-height: 31rem) and (orientation: landscape) {
+  .hope-brand .site-header,
+  .hope-brand .case-jump,
+  .hope-brand .capability-atlas__map,
+  .hope-brand .hope-patterns__intro {
+    position: static;
+  }
+
+  .mobile-nav nav {
+    max-height: calc(100dvh - 4.75rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-motif__draw {
+    animation: none !important;
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .hope-line__spine-tracer {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}

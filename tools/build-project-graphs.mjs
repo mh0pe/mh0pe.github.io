@@ -78,7 +78,7 @@ const graphSpecs = [
         "Distributed execution and deployable targets",
         "awslabs/automated-security-helper",
         494,
-        "public-fork",
+        "upstream",
       ),
       pr(
         "ash-scan-integrity",
@@ -109,7 +109,23 @@ const graphSpecs = [
         "cdk-nag 3.x and per-target failures",
         "awslabs/automated-security-helper",
         514,
-        "public-fork",
+        "upstream",
+        { maxCommits: 1, maxFiles: 1 },
+      ),
+      pr(
+        "ash-workspace-agent-tools",
+        "Workspace-aware agent tools",
+        "awslabs/automated-security-helper",
+        493,
+        "upstream",
+        { maxCommits: 1, maxFiles: 2 },
+      ),
+      pr(
+        "ash-agent-skills",
+        "Installable agent skills",
+        "awslabs/automated-security-helper",
+        534,
+        "upstream",
         { maxCommits: 1, maxFiles: 1 },
       ),
       pr(
@@ -162,6 +178,22 @@ const graphSpecs = [
         "aws-cloudformation/cloudformation-guard",
         727,
         "public-fork",
+      ),
+      pr(
+        "guard-range-membership",
+        "Range membership in policy lists",
+        "aws-cloudformation/cloudformation-guard",
+        747,
+        "public-fork",
+        { maxCommits: 1, maxFiles: 1 },
+      ),
+      pr(
+        "guard-test-matching",
+        "Precise test-to-policy matching",
+        "aws-cloudformation/cloudformation-guard",
+        750,
+        "public-fork",
+        { maxCommits: 1, maxFiles: 1 },
       ),
       pr(
         "guard-registry-operands",
@@ -256,6 +288,24 @@ const graphSpecs = [
         "public-fork",
         { maxCommits: 1, maxFiles: 2 },
       ),
+      pr(
+        "nix-lossless-paths",
+        "Lossless Windows filenames and network paths",
+        "NixOS/nix",
+        16451,
+        "public-fork",
+        { maxCommits: 1, maxFiles: 1 },
+      ),
+      pr(
+        "nix-handle-inheritance",
+        "Portable process handle inheritance",
+        "NixOS/nix",
+        16449,
+        "public-fork",
+        { maxCommits: 1, maxFiles: 1 },
+      ),
+      commit("nix-recursive-shutdown", "Coordinated recursive-build shutdown", "awsmadi/nix", "05b5212724336d8625adb91c471ea4ac221aca96", "public-fork", { maxCommits: 1, maxFiles: 1 }),
+      commit("nix-socket-inheritance", "Explicit Windows socket inheritance", "awsmadi/nix", "686a596fa8c9b71dfb4938005632bba553608b5a", "public-fork", { maxCommits: 1, maxFiles: 1 }),
       pr(
         "nix-recursive-runtime",
         "Recursive Nix on Windows",
@@ -355,11 +405,12 @@ const graphSpecs = [
       "mh0pe/carl",
       "mh0pe/paul",
       "mh0pe/seed",
+      "mh0pe/plugins",
       "johnhuang316/code-index-mcp",
       "awsmadi/code-index-mcp",
     ],
     impact:
-      "Reviewed experience becomes operating policy for later agent teams through portable decision memory, delegation, planning, and learning loops.",
+      "Reviewed experience becomes operating policy for later agent teams through portable decision memory, delegation, planning, learning loops, and repository-aware contribution workflows.",
     evidences: [
       pr(
         "portable-base",
@@ -367,6 +418,7 @@ const graphSpecs = [
         "mh0pe/base-v1",
         2,
         "public-fork",
+        { maxCommits: 5, maxFiles: 8 },
       ),
       pr(
         "portable-carl-runtime",
@@ -374,6 +426,7 @@ const graphSpecs = [
         "mh0pe/carl",
         2,
         "public-fork",
+        { maxCommits: 5, maxFiles: 8 },
       ),
       pr(
         "portable-paul",
@@ -381,6 +434,7 @@ const graphSpecs = [
         "mh0pe/paul",
         1,
         "public-fork",
+        { maxCommits: 5, maxFiles: 8 },
       ),
       pr(
         "portable-seed",
@@ -388,6 +442,15 @@ const graphSpecs = [
         "mh0pe/seed",
         1,
         "public-fork",
+        { maxCommits: 5, maxFiles: 8 },
+      ),
+      commit(
+        "github-template-preflight",
+        "Template-aware GitHub creation",
+        "mh0pe/plugins",
+        "4dd70c45672d72aa5b4d4c7e2737a7cf32faa4e2",
+        "public-fork",
+        { maxCommits: 1, maxFiles: 3 },
       ),
       pr(
         "code-index-skill",
@@ -439,7 +502,7 @@ const graphSpecs = [
   {
     id: "cloud-runtime",
     chapterId: "cloud",
-    title: "AWS CDK and jsii",
+    title: "Cloud and model runtimes",
     attributionRepositories: [
       "aws/aws-cdk-cli",
       "awsmadi/aws-cdk-cli",
@@ -447,6 +510,8 @@ const graphSpecs = [
       "awsmadi/aws-cdk",
       "aws/jsii",
       "awsmadi/jsii",
+      "0xPlaygrounds/rig",
+      "awsmadi/rig",
     ],
     impact:
       "Cloud changes surface sooner while the cross-language runtime repeats less work and sheds completed state.",
@@ -472,6 +537,8 @@ const graphSpecs = [
         38675,
         "upstream",
       ),
+      pr("cdk-looped-resources", "Looped resources in the construct tree", "aws/aws-cdk", 36801, "public-fork", { maxCommits: 1, maxFiles: 2 }),
+      pr("rig-model-signing", "AWS-authenticated model requests", "0xPlaygrounds/rig", 2387, "public-fork", { maxCommits: 1, maxFiles: 2 }),
       pr("jsii-promises", "Promise cleanup", "aws/jsii", 5054, "upstream"),
       pr("jsii-types", "Cached type lookup", "aws/jsii", 5055, "upstream"),
       pr("jsii-members", "Indexed member lookup", "aws/jsii", 5056, "upstream"),
@@ -502,6 +569,19 @@ function pr(id, label, repository, number, availability, sampling = undefined) {
     availability,
     kind: "pull-request",
     href: `https://github.com/${repository}/pull/${number}`,
+    ...(sampling ? { sampling } : {}),
+  };
+}
+
+function commit(id, label, repository, sha, availability, sampling = undefined) {
+  return {
+    id,
+    label,
+    repository,
+    sha,
+    availability,
+    kind: "commit",
+    href: `https://github.com/${repository}/commit/${sha}`,
     ...(sampling ? { sampling } : {}),
   };
 }

@@ -31,7 +31,12 @@ test("homepage motion remains finite, static-first, and independent of scroll ha
   assert.match(interactions, /IntersectionObserver/);
   assert.match(interactions, /saveData/);
   assert.match(interactions, /prefers-reduced-motion/);
-  assert.match(interactions, /!video\.hasAttribute\("data-motion-visible"\)/);
+  assert.match(interactions, /!motionFilmCanPlay\(video\)/);
+  assert.match(
+    interactions,
+    /function motionFilmCanPlay\(video\)[\s\S]*?hasAttribute\("data-motion-visible"\)[\s\S]*?motionFilmHasIntent\(video\)[\s\S]*?hasAttribute\("data-motion-intersecting"\)/,
+  );
+  assert.match(interactions, /const visible = intersecting && change\.intersectionRatio >= 0\.55/);
   assert.match(interactions, /for \(const observer of motionFilmObservers\) observer\.disconnect\(\)/);
   assert.match(interactions, /if \(motionFilmObservers\.length > 0\) return/);
   assert.match(
@@ -100,7 +105,7 @@ test("homepage motion remains finite, static-first, and independent of scroll ha
     expectedProjectGraphIds,
   );
   assert.match(work, /<ProjectLineageField caseStudy=\{caseStudy\} compact/);
-  assert.match(lineageField, /data-lineage-label/);
+  assert.match(lineageField, /data-source-kind/);
   assert.match(lineageField, /getContributionGraph/);
   assert.doesNotMatch(page + field, /["']use client["']/);
   assert.match(brand, /@media \(prefers-reduced-motion: reduce\)/);

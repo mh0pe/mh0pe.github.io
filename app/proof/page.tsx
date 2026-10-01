@@ -35,7 +35,10 @@ export default function ProofPage() {
             <p className="section-code">01 / Contribution summary</p>
             <h2 id="public-record-title">A connected view of the public work.</h2>
             <p>Follow mh0pe and awsmadi contributions across established projects, independent public versions, and the systems they helped advance.</p>
-            <SourceLink sourceId="publicHistorySnapshot">Open the contribution summary</SourceLink>
+            <details className="vocabulary-disclosure">
+              <summary>View the detailed contribution record</summary>
+              <SourceLink sourceId="publicHistorySnapshot">Open the structured record (JSON)</SourceLink>
+            </details>
           </div>
           <dl>
             <div><dt>Authored changes accepted into main projects</dt><dd>{publicRecordSnapshot.authoredMergedPullRequests}</dd></div>
@@ -47,6 +50,38 @@ export default function ProofPage() {
               <dd>The larger total follows GitHub&apos;s contribution credit, which can include accepted work beyond directly authored changes.</dd>
             </div>
           </dl>
+        </div>
+        <div className="shell">
+          <div className="section-heading">
+            <p className="section-code">Start with the work</p>
+            <div><h2>Four ways to explore the impact.</h2><p>Read the outcome here, then follow the original release or review for the details.</p></div>
+          </div>
+          <div className="source-principles source-principles--work">
+            <article>
+              <span>01</span><h3>Security in the tools teams already use.</h3>
+              <p>One security workflow connects with fifteen AI coding tools through shared integrations.</p>
+              <SourceLink sourceId="ashPr331">Read the integration review</SourceLink>
+              <SourceLink sourceId="ashRelease370">Explore the ASH release</SourceLink>
+            </article>
+            <article>
+              <span>02</span><h3>Richer graphics for browser automation.</h3>
+              <p>Lightpanda contributions add browser-compatible SVG behavior, from object relationships to shape geometry.</p>
+              <SourceLink sourceId="lightpandaPr3012">Read the SVG foundation review</SourceLink>
+              <SourceLink sourceId="lightpandaPr3033">Explore the geometry work</SourceLink>
+            </article>
+            <article>
+              <span>03</span><h3>Clearer results from policy checks.</h3>
+              <p>CloudFormation Guard contributions align reported results with evaluated rules so teams can act on the outcome.</p>
+              <SourceLink sourceId="guardPr717">Read the policy-result review</SourceLink>
+              <SourceLink sourceId="guardRelease321">Explore the Guard release</SourceLink>
+            </article>
+            <article>
+              <span>04</span><h3>A practical path to Nix on Windows.</h3>
+              <p>A Windows validation harness makes platform work easier to exercise and review alongside the implementation.</p>
+              <SourceLink sourceId="nixValidationPr1">Explore the Windows validation work</SourceLink>
+              <SourceLink sourceId="nixFork">Open the implementation</SourceLink>
+            </article>
+          </div>
         </div>
       </section>
 

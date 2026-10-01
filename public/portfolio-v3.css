@@ -103,6 +103,10 @@ html:has(body.hope-brand) {
   color: var(--hope-porcelain);
 }
 
+.hope-brand .skip-link:is(:hover, :focus-visible) {
+  color: var(--hope-porcelain);
+}
+
 .hope-brand .site-header {
   position: sticky;
   top: 0.85rem;
@@ -118,7 +122,7 @@ html:has(body.hope-brand) {
   padding: 0.45rem;
   align-items: center;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   border: 1px solid rgb(23 28 26 / 10%);
   border-radius: 999px;
   background: rgb(243 239 230 / 96%);
@@ -128,7 +132,9 @@ html:has(body.hope-brand) {
 
 .hope-brand .site-identity {
   display: grid;
-  overflow: hidden;
+  overflow: visible;
+  flex-shrink: 0;
+  max-width: 100%;
   min-width: 0;
   padding: 0.25rem 1rem 0.25rem 0.35rem;
   grid-template-columns: auto auto;
@@ -192,6 +198,7 @@ html:has(body.hope-brand) {
 
 .hope-brand .primary-nav {
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.12rem;
 }
 
@@ -554,20 +561,20 @@ html:has(body.hope-brand) {
   stroke-dasharray: 2 4;
 }
 
-.hope-line__node > * {
+.hope-line__node {
   fill: var(--hope-carbon);
   stroke: currentColor;
   stroke-width: 1.5;
   vector-effect: non-scaling-stroke;
 }
 
-.hope-line__node[data-node-type="commit"] > * {
+.hope-line__node[data-node-type="commit"] {
   fill: currentColor;
   stroke: var(--hope-carbon);
   stroke-width: 2.5;
 }
 
-.hope-line__node[data-node-type="file"] > * {
+.hope-line__node[data-node-type="file"] {
   fill: var(--hope-porcelain);
   opacity: 0.9;
   stroke: none;
@@ -1255,6 +1262,13 @@ html:has(body.hope-brand) {
   border-bottom: 1px solid var(--hope-hairline-dark);
 }
 
+.site-footer__signature > .text-action {
+  margin-top: 1.25rem;
+  grid-column: -2 / -1;
+  color: var(--hope-green);
+  justify-self: start;
+}
+
 .site-footer__eyebrow {
   margin-bottom: 2rem;
   color: var(--hope-green);
@@ -1282,7 +1296,7 @@ html:has(body.hope-brand) {
   display: grid;
   min-height: 12rem;
   padding-block: 2rem;
-  grid-template-columns: minmax(0, 6fr) minmax(12rem, 3fr) minmax(10rem, 3fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   gap: 2rem;
   align-items: start;
 }
@@ -1319,6 +1333,7 @@ html:has(body.hope-brand) {
 /* Supporting routes inherit the same editorial identity. */
 .hope-brand .route-intro {
   position: relative;
+  container: route-intro / inline-size;
   min-height: auto;
   padding-block: clamp(4.5rem, 7vw, 7rem) clamp(3.25rem, 5vw, 4.5rem);
   border: 0;
@@ -1725,6 +1740,10 @@ html:has(body.hope-brand) {
   color: var(--hope-green-dark);
 }
 
+.proof-record + .shell {
+  margin-top: clamp(2.5rem, 5vw, 5rem);
+}
+
 .hope-brand .proof-record > div > p:not(.section-code),
 .hope-brand .proof-record dt {
   color: var(--hope-ink-muted);
@@ -1934,12 +1953,22 @@ html:has(body.hope-brand) {
   border-bottom: 1px solid var(--hope-hairline);
 }
 
-.source-principles span {
+.source-principles article > span {
   display: block;
   margin-bottom: 4rem;
   color: var(--hope-green-dark);
   font-family: var(--hope-mono);
   font-size: 0.66rem;
+}
+
+.source-principles--work {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.source-principles .source-link {
+  display: flex;
+  width: fit-content;
+  margin-top: 0.65rem;
 }
 
 .source-principles h3 {
@@ -2027,6 +2056,10 @@ html:has(body.hope-brand) {
   background: rgb(255 255 255 / 28%);
 }
 
+.hope-brand .case-hero__facts {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+
 .hope-brand .case-hero__facts a,
 .hope-brand .case-path__proof a,
 .hope-brand .case-path__proof details summary,
@@ -2093,7 +2126,7 @@ html:has(body.hope-brand) {
   }
 
   .hope-line__project-core > *,
-  .hope-line__node > *,
+  .hope-line__node,
   .hope-line__model > * {
     transform-box: fill-box;
     transform-origin: center;
@@ -2101,19 +2134,19 @@ html:has(body.hope-brand) {
 }
 
 @media (prefers-reduced-motion: no-preference) and (pointer: fine) {
-  .hope-line:has(.hope-line__index-item:hover) .hope-line__project,
-  .hope-line:has(.hope-line__index-item:focus-within) .hope-line__project {
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item:hover) .hope-line__project,
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item:focus-within) .hope-line__project {
     opacity: 0.22;
   }
 
-  .hope-line:has(.hope-line__index-item[data-graph-id="automated-security-helper"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="automated-security-helper"],
-  .hope-line:has(.hope-line__index-item[data-graph-id="cloudformation-guard"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="cloudformation-guard"],
-  .hope-line:has(.hope-line__index-item[data-graph-id="nix-windows"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="nix-windows"],
-  .hope-line:has(.hope-line__index-item[data-graph-id="portable-frameworks"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="portable-frameworks"],
-  .hope-line:has(.hope-line__index-item[data-graph-id="rules-js-pnp"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="rules-js-pnp"],
-  .hope-line:has(.hope-line__index-item[data-graph-id="lightpanda-svg"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="lightpanda-svg"],
-  .hope-line:has(.hope-line__index-item[data-graph-id="aws-labs-mcp"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="aws-labs-mcp"],
-  .hope-line:has(.hope-line__index-item[data-graph-id="cloud-runtime"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="cloud-runtime"] {
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item[data-graph-id="automated-security-helper"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="automated-security-helper"],
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item[data-graph-id="cloudformation-guard"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="cloudformation-guard"],
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item[data-graph-id="nix-windows"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="nix-windows"],
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item[data-graph-id="portable-frameworks"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="portable-frameworks"],
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item[data-graph-id="rules-js-pnp"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="rules-js-pnp"],
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item[data-graph-id="lightpanda-svg"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="lightpanda-svg"],
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item[data-graph-id="aws-labs-mcp"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="aws-labs-mcp"],
+  .hope-line:not([data-contribution-focus]):has(.hope-line__index-item[data-graph-id="cloud-runtime"]:is(:hover, :focus-within)) .hope-line__project[data-graph-id="cloud-runtime"] {
     opacity: 1;
   }
 }
@@ -2572,7 +2605,7 @@ html:has(body.hope-brand) {
     min-height: 0;
   }
 
-  .source-principles span {
+  .source-principles article > span {
     margin-bottom: 2.5rem;
   }
 
@@ -3070,187 +3103,34 @@ html:has(body.hope-brand) {
 .lineage-field[data-family="browser"] { --lineage-accent: #6bcad0; }
 .lineage-field[data-family="cloud"] { --lineage-accent: #b7cf61; }
 
-.lineage-field__heading {
-  display: flex;
-  min-height: 4.5rem;
-  padding: 1rem 1.2rem;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  border-bottom: 1px solid rgb(243 239 230 / 12%);
-}
-
-.lineage-field .lineage-field__heading p {
-  margin: 0;
-  color: inherit;
-}
-
-.lineage-field__heading > p:last-child {
-  max-width: 22rem;
-  color: rgb(243 239 230 / 76%);
-  font-size: 0.7rem;
-  text-align: right;
-}
-
-.lineage-field__canvas {
-  position: relative;
-  min-height: 0;
+/* Source records are destinations, not an architectural flow diagram. */
+.hope-brand .source-records { min-width: 0; height: auto; text-align: left; }
+.source-records__heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; padding: 1.15rem 1.35rem; border-bottom: 1px solid rgb(243 239 230 / 16%); }
+.hope-brand .source-records__heading p { margin: 0; font: 500 1rem/1.4 var(--hope-sans); color: #f3efe6; }
+.source-records__heading > span { color: #c6d1c5; font: .7rem/1.5 var(--hope-mono); }
+.source-records__list { list-style: none; padding: 0 1.35rem; margin: 0; }
+.source-records__list > li { min-width: 0; padding: 1.1rem 0; }
+.source-records__list > li + li { border-top: 1px solid rgb(243 239 230 / 16%); }
+.hope-brand .source-records__project { margin: 0 0 .35rem; font: .75rem/1.5 var(--hope-sans); color: #c6d1c5; overflow-wrap: anywhere; }
+.hope-brand .source-records__link { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 44px; padding-block: .45rem; color: #f3efe6; font: .85rem/1.5 var(--hope-sans); text-decoration: underline; text-decoration-color: #8eaa95; text-underline-offset: .25em; overflow-wrap: anywhere; }
+.hope-brand .source-records__link > span:first-child { min-width: 0; }
+.source-records__link strong { display: block; font-size: 1rem; line-height: 1.5; font-weight: 550; }
+.source-records__link small { display: block; margin-block: .3rem; color: #c6d1c5; font-size: .75rem; }
+.source-records__arrow { flex: 0 0 1.75rem; width: 1.75rem; height: 1.75rem; display: grid; place-items: center; border-radius: 50%; background: #294637; text-decoration: none; }
+.source-records__details { margin-top: .5rem; }
+.source-records__details summary { width: fit-content; min-height: 44px; padding-block: .7rem; color: #c6d1c5; font: .8rem/1.5 var(--hope-sans); cursor: pointer; }
+.hope-brand .source-records__link:is(:hover, :focus-visible) { color: #e3f49b; text-decoration-color: currentColor; }
+.hope-brand .source-records :focus-visible { outline: 2px solid #f3efe6; outline-offset: 4px; border-radius: .15rem; }
+@media (max-width: 48rem) {
+  .source-records__heading { padding-inline: 1rem; }
+  .source-records__list { padding-inline: 1rem; }
+  .source-records__link strong { font-size: .95rem; }
 }
 
 .lineage-field svg {
   display: block;
   width: 100%;
   height: auto;
-}
-
-.lineage-field__guides {
-  fill: none;
-  opacity: 0.07;
-  stroke: var(--hope-porcelain);
-  stroke-width: 1;
-}
-
-.lineage-field__paths path {
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-width: 1.4;
-  opacity: 0.35;
-  vector-effect: non-scaling-stroke;
-}
-
-.lineage-field__paths .lineage-field__current {
-  stroke-width: 4;
-  opacity: 0.88;
-}
-
-.lineage-field__source {
-  color: inherit;
-  outline: none;
-}
-
-.lineage-field__source-static :is(rect, circle, path) {
-  fill: #0b1515;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  vector-effect: non-scaling-stroke;
-  transition: fill 180ms var(--hope-ease), transform 180ms var(--hope-ease);
-}
-
-.lineage-field__source-static {
-  display: inline;
-  color: inherit;
-  pointer-events: none;
-}
-
-.lineage-field__source:is(:hover, :focus) + .lineage-field__source-static > :is(rect, circle, path):not(.lineage-field__model-stitch) {
-  fill: currentColor;
-}
-
-.lineage-field__halo {
-  fill: none !important;
-  opacity: 0.18;
-}
-
-.lineage-field__hit-area {
-  fill: transparent !important;
-  stroke: none !important;
-  pointer-events: all;
-}
-
-.lineage-field__source:focus-visible .lineage-field__hit-area {
-  fill: transparent !important;
-  stroke: #f3efe6 !important;
-  stroke-width: 4 !important;
-  filter: drop-shadow(0 0 4px rgb(147 166 255 / 88%));
-}
-
-.lineage-field__model-stitch {
-  fill: none !important;
-  stroke: var(--hope-blue-on-dark) !important;
-}
-
-.lineage-field__outcome circle:first-child {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  opacity: 0.45;
-}
-
-.lineage-field__outcome circle:last-child {
-  fill: currentColor;
-}
-
-.lineage-field__file-label,
-.lineage-field__labels text {
-  fill: rgb(243 239 230 / 72%);
-  font-family: var(--hope-mono);
-  font-size: 8px;
-  letter-spacing: 0.05em;
-}
-
-.lineage-field__labels text {
-  font-size: 7px;
-  letter-spacing: 0.12em;
-}
-
-.lineage-field__tooltip {
-  min-height: 3.2rem;
-  margin: 0;
-  padding: 0.8rem 1.2rem;
-  border-top: 1px solid rgb(243 239 230 / 12%);
-  color: rgb(243 239 230 / 78%);
-  font-family: var(--hope-mono);
-  font-size: 0.62rem;
-  line-height: 1.45;
-}
-
-.lineage-field__fallback {
-  border-top: 1px solid rgb(243 239 230 / 12%);
-}
-
-.lineage-field__fallback > summary {
-  display: flex;
-  min-height: 48px;
-  padding-inline: 1.2rem;
-  align-items: center;
-  color: var(--lineage-accent);
-  cursor: pointer;
-  font-family: var(--hope-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.lineage-field__fallback ol {
-  margin: 0;
-  padding: 0 1.2rem 1.2rem 2.4rem;
-}
-
-.lineage-field__fallback li {
-  margin-top: 0.65rem;
-  color: rgb(243 239 230 / 80%);
-  font-size: max(0.72rem, 12px);
-}
-
-.lineage-field__fallback li a {
-  display: flex;
-  min-height: 44px;
-  align-items: center;
-  overflow-wrap: anywhere;
-}
-
-.lineage-field--compact .lineage-field__heading > p:last-child,
-.lineage-field--compact .lineage-field__fallback {
-  display: none;
-}
-
-.lineage-field--compact .lineage-field__heading {
-  min-height: 3.5rem;
-}
-
-.lineage-field--compact .lineage-field__tooltip {
-  min-height: 2.8rem;
 }
 
 .hope-atlas {
@@ -3473,10 +3353,6 @@ html:has(body.hope-brand) {
   flex-direction: column;
 }
 
-.attribution-workspace { order: 1; }
-.attribution-overview { order: 2; }
-.attribution-evidence { order: 3; }
-
 .hope-brand .attribution-method > summary {
   display: flex;
   min-height: 44px;
@@ -3520,7 +3396,6 @@ html:has(body.hope-brand) {
 
 @media (prefers-reduced-motion: no-preference) {
   .hope-hero__current-trace,
-  .lineage-field__current,
   .hope-line__spine-tracer {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
@@ -3532,10 +3407,6 @@ html:has(body.hope-brand) {
 
   [data-motion-entered] .hope-hero__current-trace {
     animation: hope-current-pass 1.15s 120ms var(--hope-ease) both;
-  }
-
-  .lineage-field[data-motion-entered] .lineage-field__current {
-    animation: hope-current-pass 1.25s 100ms var(--hope-ease) both;
   }
 
   .hope-line[data-motion-entered] .hope-line__spine-tracer {
@@ -3619,21 +3490,6 @@ html:has(body.hope-brand) {
     font-size: clamp(2.35rem, 11.5vw, 3.5rem);
   }
 
-  .lineage-field__heading > p:last-child,
-  .lineage-field__labels,
-  .lineage-field__file-label {
-    display: none;
-  }
-
-  .lineage-field__heading {
-    min-height: 3.5rem;
-  }
-
-  .lineage-field__tooltip {
-    min-height: 3.8rem;
-    font-size: max(0.68rem, 11px);
-  }
-
   .hope-work__conversation {
     align-items: flex-start;
     flex-direction: column;
@@ -3694,8 +3550,6 @@ html:has(body.hope-brand) {
 
 @media (prefers-reduced-motion: reduce) {
   .hope-hero__current-trace,
-  .lineage-field__current,
-  .lineage-field__paths > g path,
   .hope-line__spine-tracer {
     stroke-dasharray: none !important;
     stroke-dashoffset: 0 !important;
@@ -3972,9 +3826,6 @@ html[data-theme="dark"] .hope-brand .not-found {
     color: ButtonText;
   }
 
-  .lineage-field__source:focus-visible .lineage-field__hit-area {
-    stroke: Highlight !important;
-  }
 }
 
 @media (forced-colors: active) {
@@ -4224,6 +4075,7 @@ html[data-theme="dark"] .hope-brand .not-found {
 
 .hope-brand .route-intro h1 {
   max-width: 10ch;
+  overflow-wrap: anywhere;
 }
 
 .hope-brand .route-intro__grid--with-visual h1 {
@@ -4635,7 +4487,7 @@ html[data-theme="dark"] .hope-brand .not-found {
   .hope-line__edge,
   .hope-line__model-link,
   .hope-line__project-core > *,
-  .hope-line__node > *,
+  .hope-line__node,
   .hope-line__model > * {
     animation: none !important;
     opacity: 1;
@@ -4886,16 +4738,6 @@ html[data-theme="dark"] .hope-brand .not-found {
     padding: 1rem;
   }
 
-  .lineage-field--compact .lineage-field__fallback {
-    display: block;
-  }
-
-  /* SVG hit areas scale below WCAG's 44px target on phones. Retain the visual
-     glyphs, but route interaction through the full-size HTML source links. */
-  .lineage-field__source {
-    display: none;
-  }
-
   .hope-brand .case-path,
   .hope-brand .case-verification,
   .hope-brand .case-close {
@@ -4950,6 +4792,13 @@ html[data-theme="dark"] .hope-brand .not-found {
 
   .not-found__route-copy strong {
     font-size: 1.2rem;
+  }
+}
+
+@container route-intro (max-width: 48rem) {
+  .hope-brand .route-intro__grid,
+  .hope-brand .route-intro__grid--with-visual {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

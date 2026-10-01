@@ -38,7 +38,7 @@ function escapeRegExp(value) {
   return value.replace(/[.*+?^$()|[\]\\]/g, "\\$&");
 }
 
-test("renders the outcome-led Living Systems Atlas homepage contract", async () => {
+test("renders the contribution-led workbench homepage contract", async () => {
   const response = await render("/");
   assert.equal(response.status, 200);
   const html = (await response.text()).replaceAll("<!-- -->", "");
@@ -50,7 +50,6 @@ test("renders the outcome-led Living Systems Atlas homepage contract", async () 
     "opening",
     "outcomes",
     "selected-work",
-    "atlas",
     "practice",
     "practice-detail",
     "composition",
@@ -61,38 +60,48 @@ test("renders the outcome-led Living Systems Atlas homepage contract", async () 
   assert.match(html, /Principal AI Architect/i);
   assert.match(
     html,
-    /I help teams build and run AI, security, and cloud systems\./i,
+    /I help teams build, run, and improve AI, security, and cloud platforms at enterprise scale\./i,
   );
   const visibleText = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
   assert.equal(
     (
       visibleText.match(
-        /Bringing Hope to distributed systems at enterprise scale\./gi,
+        /Bringing Hope to distributed systems\./gi,
       ) ?? []
     ).length,
     1,
   );
   assert.match(
     html,
-    /One[\s\S]{0,80}governed workspace across many projects/i,
+    /One governed workflow helps teams plan, run, and trace security checks across many projects/i,
   );
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
   assert.match(html, /<main id="main-content" tabindex="-1" data-route="home">/i);
-  assert.match(html, /data-visualization="hope-line"/i);
-  assert.match(html, /The Hope Line/i);
+  assert.doesNotMatch(html, /data-visualization="hope-line"/i);
+  assert.match(html, /What I added\.<br\s*\/?><em>What it enables\.<\/em>/i);
   assert.equal(
-    new Set([...html.matchAll(/data-graph-id="([^"]+)"/g)].map((match) => match[1])).size,
-    8,
+    new Set([...html.matchAll(/data-cap-project="([^"]+)"/g)].map((match) => match[1])).size,
+    3,
   );
-  for (const nodeType of ["repository", "evidence", "commit", "file"]) {
-    assert.match(html, new RegExp(`data-node-type="${nodeType}"`));
+  for (const kind of ["project", "change", "commit", "file"]) {
+    assert.ok(html.includes(`data-source-kind="${kind}"`), kind);
   }
+  assert.equal((html.match(/type="radio"/g) ?? []).length, 12);
+  assert.equal((html.match(/checked=""/g) ?? []).length, 4);
   assert.equal(
-    (html.match(/class="hope-line__index-detail"/g) ?? []).length,
-    8,
+    (html.match(/class="cap-change"/g) ?? []).length,
+    9,
   );
-  assert.match(html, /Explore every system in the atlas/i);
-  assert.match(html, /<dt>Implementation details<\/dt>/i);
+  const contributions = [...html.matchAll(/<section class="cap-change"[\s\S]*?<\/section>/g)];
+  for (const [contribution] of contributions) {
+    assert.ok(contribution.indexOf("<h3") < contribution.indexOf('class="cap-scene"'));
+    for (const role of ["Starting point", "My contribution", "Enables"]) {
+      assert.ok(contribution.includes(`<span class="cap-scene__role">${role}</span>`), role);
+    }
+    assert.match(contribution, /Read this contribution on GitHub/i);
+  }
+  assert.match(html, /the contributions are not steps that must be used in sequence/i);
+  assert.doesNotMatch(html, /Neutral bricks provide context|cap-tower|data-lineage-field/);
 });
 
 test("keeps the homepage concise, inspectable, and free of retired visual islands", async () => {
@@ -158,9 +167,10 @@ test("renders contribution scope, model context, independence, and compatibility
   );
   assert.doesNotMatch(html, /<span[^>]+id="work"/i);
 
-  assert.match(html, /174 merged pull requests authored as mh0pe or awsmadi/i);
+  assert.match(html, /Selected changes/i);
   assert.match(html, /Where model collaboration appears in the work/i);
-  assert.match(html, /Model associations:/i);
+  assert.match(html, /Use models to extend judgment without losing accountability\./i);
+  assert.match(html, /href="\/models\/#agent-collaboration"[^>]*><span>Explore model collaboration<\/span>/i);
   assert.match(html, /not statements made on behalf of any current or former employer/i);
   assert.match(html, /href="\/work\/automated-security-helper\//i);
   assert.match(html, /href="https:\/\/github\.com\//i);

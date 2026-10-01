@@ -856,6 +856,7 @@ export interface OutcomeSummary {
   readonly sourceIds: readonly PublicSourceId[];
   readonly proofKind: ProofKind;
   readonly proofHref?: `/${string}`;
+  readonly proofLabel?: string;
   readonly evidenceNote?: string;
 }
 
@@ -889,8 +890,8 @@ export const outcomeSummaries = [
   {
     id: "agent-integration-contract",
     value: "15",
-    label: "Agent platforms from one contract",
-    title: "Ship fifteen agent integrations from one contract.",
+    label: "AI coding tools, one shared workflow",
+    title: "Bring one security workflow to fifteen AI coding tools.",
     summary:
       "One tested source keeps packaging, installation, and behavior aligned without maintaining fifteen separate copies.",
     sourceIds: ["ashPr331"],
@@ -899,8 +900,8 @@ export const outcomeSummaries = [
   {
     id: "reviewable-svg-stack",
     value: "7",
-    label: "SVG capability layers merged upstream",
-    title: "Ship a broad browser capability in seven reviewable layers.",
+    label: "Graphics capabilities integrated into Lightpanda",
+    title: "Bring richer graphics support to browser automation.",
     summary:
       "Lightpanda merged all seven ordered layers, so each capability could be tested and reviewed independently.",
     sourceIds: [
@@ -918,12 +919,14 @@ export const outcomeSummaries = [
   {
     id: "public-contribution-record",
     value: String(publicRecordSnapshot.authoredMergedPullRequests),
-    label: "Authored public pull requests merged",
+    label: "Authored contributions accepted",
     title: "Contribute across systems other teams depend on.",
     summary:
       `The public record connects ${publicRecordSnapshot.authoredMergedPullRequests} merged pull requests authored as mh0pe or awsmadi to the systems, reviews, and code behind them.`,
     sourceIds: ["publicHistorySnapshot"],
     proofKind: "snapshot",
+    proofHref: "/proof/#public-record",
+    proofLabel: "Explore the contributions",
     evidenceNote:
       "Account-directed contributions are retained separately and are not presented as GitHub-authored work.",
   },
@@ -994,6 +997,7 @@ export interface CaseStudy {
   readonly proofState: string;
   readonly operatingResult: string;
   readonly responsibility: string;
+  readonly contributionSummary: string;
   readonly summary: string;
   readonly claims: readonly EvidenceClaim[];
   readonly stages: AuditableLoadPathStages;
@@ -1018,6 +1022,7 @@ export const automatedSecurityHelperFlagship = {
     "Teams can plan, scan, and report on a multi-project workspace as one governed system without losing project identity, target boundaries, failure state, or source traceability.",
   responsibility:
     "I led the architecture and implementation of workspace orchestration and agent integrations, then strengthened execution boundaries, repeatability, result integrity, and distributed operation.",
+  contributionSummary: "Architecture and implementation of workspace orchestration and AI coding-tool integrations.",
   summary:
     "One governed workflow helps teams plan, run, and trace security checks across many projects.",
   claims: [
@@ -1246,6 +1251,7 @@ export const cloudFormationGuardCaseStudy = {
     "Policy verdicts keep their intended meaning from evaluation through reporting, testing, and published rule packs.",
   responsibility:
     "I traced policy errors across evaluation and reporting, corrected the semantics, and added regression coverage for the full verdict path.",
+  contributionSummary: "Policy evaluation and reporting corrections, with regression tests across the full result path.",
   summary:
     "A correctness program for the full path between a policy author’s intent and the verdict an operator receives.",
   claims: [
@@ -1362,6 +1368,7 @@ export const nixWindowsCaseStudy = {
     "The upstream foundation can execute a minimal Windows builder and cross-build the complete project. Public implementations extend that path through recursive builds, lossless filenames, network paths, and explicit process boundaries.",
   responsibility:
     "I built and validated the Windows execution path in independently testable stages, from the first builder through project-wide cross-builds and recursive operation.",
+  contributionSummary: "A Windows execution path, built and validated in independently testable stages.",
   summary:
     "A staged path for bringing reproducible Nix builds to Windows while keeping each layer independently testable.",
   claims: [
@@ -1492,6 +1499,7 @@ export const agentSystemsCaseStudy = {
     "Agent teams can retain reviewed decisions, recover delivery state, coordinate plans, and hand work across coding tools without losing context.",
   responsibility:
     "I have helped pioneer practical patterns for subagents, coordinated agent teams, and organizations that improve their own operating playbooks. In BASE, CARL, PAUL, and SEED, those ideas become recoverable state, reviewed decisions, portable configuration, and reliable cross-tool handoff.",
+  contributionSummary: "Recoverable context, reviewed decisions, and portable handoffs for coordinated agent teams.",
   summary:
     "A portable operating layer that helps agent teams remember decisions, coordinate work, and improve their own methods.",
   claims: [

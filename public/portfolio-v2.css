@@ -468,7 +468,6 @@ summary {
 .instrument-proof-glow,
 .instrument-proof-line {
   fill: none;
-  stroke: url(#proof-line);
   stroke-linecap: square;
 }
 

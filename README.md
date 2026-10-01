@@ -28,11 +28,15 @@ Use `npm run dev` only while changing source. The static preview above is the ac
 
 ```bash
 npm run lint
-npx tsc --noEmit
+./node_modules/.bin/tsc --noEmit --incremental false
 npm run build:pages
-npm test
+node --test --test-concurrency=1 tests/*.test.mjs
 npm audit
 ```
+
+`npm test` is an alternative combined build-and-test command. Do not run it after
+`build:pages` unless you intend to build again. Keep `TMPDIR` on a volume with
+adequate free space for both the build and the test suite.
 
 ## Deployment
 
@@ -45,6 +49,7 @@ uploads only the browser-facing artifact.
 NEXT_PUBLIC_SITE_URL=https://mh0pe.github.io npm run build:pages
 ```
 
-The source code is ISC-licensed. Professional context is self-reported and does
+Original site code is ISC-licensed; third-party adaptations retain the terms in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Professional context is self-reported and does
 not imply employer endorsement. The site is personal and does not speak for
 any current or former employer.

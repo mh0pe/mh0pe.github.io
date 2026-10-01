@@ -9,12 +9,13 @@ const socialImage = {
 
 export function routeMetadata(pathname: string, title: string, description: string): Metadata {
   const canonical = new URL(pathname, "https://mh0pe.github.io/").toString();
+  const pageTitle = `${title} | Madison Hope Steiner`;
   return {
-    title: `${title} | Madison Hope Steiner`,
+    title: pageTitle,
     description,
     alternates: { canonical },
     openGraph: {
-      title,
+      title: pageTitle,
       description,
       type: "website",
       url: canonical,
@@ -23,7 +24,7 @@ export function routeMetadata(pathname: string, title: string, description: stri
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: pageTitle,
       description,
       images: [socialImage.url],
     },

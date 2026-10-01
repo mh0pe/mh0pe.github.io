@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
+import { operatingArcTiming } from "../remotion/operating-arc-timing.mjs";
 
 const root = new URL("../", import.meta.url);
 
@@ -25,11 +26,14 @@ test("the operating arc is an optimized poster-first motion artifact", async () 
 
   assert.match(composition, /useCurrentFrame/);
   assert.match(composition, /interpolate/);
-  assert.match(composition, /const signalProgress = signalProgressAtFrame\(frame\)/);
+  assert.match(composition, /const signalProgress = signalProgressAtFrame\(frame, fps\)/);
   assert.match(composition, /const curves = \[/);
   assert.match(composition, /function cubicPoint/);
-  assert.match(composition, /const signalStartFrame = 10/);
-  assert.match(composition, /const signalSegmentFrames = 20/);
+  assert.match(composition, /operatingArcTiming\(fps\)/);
+  assert.match(composition, /config: filmTheme.spring/);
+  assert.match(composition, /easing: filmTheme.easing/);
+  assert.match(composition, /extrapolateLeft: "clamp"/);
+  assert.match(composition, /extrapolateRight: "clamp"/);
   assert.match(composition, /const arrival = signalStartFrame \+ index \* signalSegmentFrames/);
   assert.match(
     composition,
@@ -40,12 +44,8 @@ test("the operating arc is an optimized poster-first motion artifact", async () 
   assert.match(composition, /\{ x: 180, y: 300 \}/);
   assert.match(composition, /\{ x: 1020, y: 475 \}/);
   assert.match(composition, /fontSize="42"/);
-  assert.match(composition, /\[0\.02, 0\.62, 0\.62\]/);
   assert.doesNotMatch(composition, /\.map\(\(point, index\) => `\$\{index === 0 \? "M" : "L"\}/);
-  assert.doesNotMatch(
-    composition,
-    /strokeDashoffset|const entrance|opacity:\s*entrance|scale:\s*entrance/,
-  );
+  assert.match(composition, /\[timing.exitStart, timing.exitEnd\], \[1, 0\]/);
   assert.doesNotMatch(composition, /Math\.random|Date\.now|setTimeout|setInterval/);
   assert.doesNotMatch(composition, /transition:|animation:/);
 
@@ -61,8 +61,9 @@ test("the Remotion composition is fixed, finite, and reproducible", async () => 
     readFile(new URL("package.json", root), "utf8"),
   ]);
 
-  assert.match(rootSource, /durationInFrames=\{150\}/);
-  assert.match(rootSource, /fps=\{30\}/);
+  assert.match(rootSource, /const FPS = 30/);
+  assert.match(rootSource, /durationInFrames=\{Math.round\(5 \* FPS\)\}/);
+  assert.match(rootSource, /fps=\{FPS\}/);
   assert.match(rootSource, /width=\{1280\}/);
   assert.match(rootSource, /height=\{720\}/);
   assert.match(packageJson, /"@remotion\/cli": "4\.0\.520"/);
@@ -70,32 +71,19 @@ test("the Remotion composition is fixed, finite, and reproducible", async () => 
   assert.match(packageJson, /--muted/);
 });
 
-test("stage emphasis shares the signal's segment clock", async () => {
-  const composition = await readFile(
-    new URL("remotion/compositions/OperatingArc.tsx", root),
-    "utf8",
-  );
-  const start = Number(
-    composition.match(/const signalStartFrame = (\d+)/)?.[1],
-  );
-  const segmentFrames = Number(
-    composition.match(/const signalSegmentFrames = (\d+)/)?.[1],
-  );
+test("the choreography keeps the same timing at 24, 30, and 60 fps", () => {
   const stageCount = 6;
   const curveCount = stageCount - 1;
-
-  assert.ok(Number.isFinite(start));
-  assert.ok(Number.isFinite(segmentFrames));
-  for (let index = 0; index < stageCount; index += 1) {
-    const arrival = start + index * segmentFrames;
-    const completedSegments = Math.min(
-      curveCount,
-      Math.max(0, Math.floor((arrival - start) / segmentFrames)),
-    );
-    assert.equal(
-      completedSegments / curveCount,
-      index / curveCount,
-      `stage ${index + 1} should emphasize when the signal reaches its node`,
-    );
+  for (const fps of [24, 30, 60]) {
+    const timing = operatingArcTiming(fps);
+    for (let index = 0; index < stageCount; index += 1) {
+      const arrival = timing.signalStart + index * timing.signalSegment;
+      assert.ok(Math.abs(arrival / fps - (1 / 3 + index * 2 / 3)) < 1e-9);
+    }
+    const arrival = timing.signalStart + curveCount * timing.signalSegment;
+    assert.ok(timing.exitStart > arrival, "traveler reaches the final stage before exiting");
+    assert.ok(timing.exitEnd - timing.exitStart <= fps * 0.3, "exit remains brief");
+    assert.ok(5 * fps - timing.exitEnd >= fps * 0.5, "complete diagram holds for at least half a second");
+    assert.ok((stageCount - 1) * timing.entranceStagger + timing.entranceDuration < arrival);
   }
 });

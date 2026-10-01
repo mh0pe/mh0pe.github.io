@@ -190,10 +190,10 @@ export default function RootLayout({
           }}
         />
         <link rel="stylesheet" href="/portfolio-v2.css?v=20260906-outcomes-v1" />
-        <link rel="stylesheet" href="/portfolio-v3.css?v=20260920-hope-thread-v1" />
-        <link rel="stylesheet" href="/interactions.css?v=20260920-motion-v1" />
-        <script data-static-runtime="theme" src="/theme.js?v=20260906-theme-v1" defer />
-        <script data-static-runtime="interactions" src="/interactions.js?v=20260920-motion-v1" defer />
+        <link rel="stylesheet" href="/portfolio-v3.css?v=20260930-clarity" />
+        <link rel="stylesheet" href="/interactions.css?v=20260927-motion-v2" />
+        <script data-static-runtime="theme" src="/theme.js?v=20260927-readiness-v1" defer />
+        <script data-static-runtime="interactions" src="/interactions.js?v=20260930-clarity" defer />
       </head>
       <body className="hope-brand">{children}</body>
     </html>

@@ -175,16 +175,10 @@ test("tall employer marks can shrink within their grid tile", async () => {
   assert.match(css, /\.career-ledger__mark img\s*\{[^}]*min-height: 0;[^}]*object-fit: contain;/);
 });
 
-test("compact lineage fields expose their HTML fallback on mobile", async () => {
+test("contribution source records remain readable on mobile", async () => {
   const css = await readFile(new URL("public/portfolio-v3.css", root), "utf8");
-  const mobileRule = css.lastIndexOf("@media (max-width: 48rem)");
-
-  assert.ok(mobileRule >= 0, "the mobile refinement block should exist");
-  const mobileCss = css.slice(mobileRule, css.indexOf("@media", mobileRule + 1));
-  assert.match(
-    mobileCss,
-    /\.lineage-field--compact \.lineage-field__fallback\s*\{[\s\S]*?display:\s*block;/,
-  );
+  assert.match(css, /\.source-records__list \{ padding-inline: 1rem;/);
+  assert.doesNotMatch(css, /\.source-records[^{}]*\{[^}]*display:\s*none/);
 });
 
 test("fixed dark chambers keep readable foregrounds and mobile-safe lineage links", async () => {
@@ -204,15 +198,15 @@ test("fixed dark chambers keep readable foregrounds and mobile-safe lineage link
   );
   assert.match(
     brandCss,
-    /\.lineage-field__source:focus-visible \.lineage-field__hit-area\s*\{[\s\S]*?stroke:\s*#f3efe6 !important;[\s\S]*?stroke-width:\s*4 !important;/,
+    /\.hope-brand \.source-records :focus-visible\s*\{[^}]*outline:\s*2px solid #f3efe6;/,
   );
   assert.match(
     brandCss,
-    /@media \(max-width: 48rem\)[\s\S]*?\.lineage-field__source\s*\{[\s\S]*?display:\s*none;/,
+    /\.hope-brand \.source-records__link\s*\{[^}]*min-height:\s*44px;/,
   );
   assert.match(
     brandCss,
-    /\.lineage-field__source-static\s*\{[^}]*display:\s*inline;[^}]*pointer-events:\s*none;/,
+    /\.source-records__details summary\s*\{[^}]*min-height:\s*44px;/,
   );
   assert.match(
     interactionCss,
@@ -333,7 +327,7 @@ test("light and dark themes are static, persistent, and accessible", async () =>
   assert.match(header, /suppressHydrationWarning/);
   assert.doesNotMatch(header, /aria-pressed/);
   assert.match(themeScript, /localStorage\.setItem\(storageKey, nextTheme\)/);
-  assert.match(themeScript, /Switch to \$\{action\} mode/);
+  assert.match(themeScript, /Theme: switch to \$\{action\} mode/);
   assert.match(themeScript, /systemPreference\.addEventListener\("change"/);
   assert.doesNotMatch(themeScript, /observe\(document\.body/);
   assert.match(css, /html\[data-theme="dark"\]/);

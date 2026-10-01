@@ -63,24 +63,30 @@ test("exports every redesign route with production canonical metadata", async ()
   }
 });
 
-test("exports the Hope Line root as a static, outcome-first document", async () => {
+test("exports the contribution workbenches as a static, outcome-first document", async () => {
   const html = await artifact("index.html");
   assert.match(
     html,
-    /I help teams build and run AI, security, and cloud systems\./i,
+    /I help teams build, run, and improve AI, security, and cloud platforms at enterprise scale\./i,
   );
-  assert.match(html, /data-visualization="hope-line"/i);
-  assert.match(html, /data-node-type="repository"/i);
-  assert.match(html, /data-node-type="evidence"/i);
-  assert.match(html, /data-node-type="commit"/i);
-  assert.match(html, /data-node-type="file"/i);
+  assert.match(html, /data-home-section="outcomes"/i);
+  assert.equal((html.match(/class="cap-change"/g) ?? []).length, 9);
+  assert.equal((html.match(/type="radio"/g) ?? []).length, 12);
+  assert.equal((html.match(/checked=""/g) ?? []).length, 4);
+  for (const role of ["Starting point", "My contribution", "Enables"]) {
+    assert.ok(html.includes(`<span class="cap-scene__role">${role}</span>`), role);
+  }
+  for (const kind of ["project", "change", "commit", "file"]) {
+    assert.ok(html.includes(`data-source-kind="${kind}"`), kind);
+  }
+  assert.match(html, /Read this contribution on GitHub/i);
   assert.match(
     html,
-    /Bringing\s*(?:<em[^>]*>)?Hope(?:<\/em>)?\s*to distributed systems at enterprise scale/i,
+    /Bringing\s*(?:<em[^>]*>)?Hope(?:<\/em>)?\s*to distributed systems\./i,
   );
   assert.doesNotMatch(
     html,
-    /ContributionCardPlayer|ContributionConstellation|ProjectConstellationBackdrop|AttributionExplorer|data-project-constellation|data-contribution-player/,
+    /ContributionCardPlayer|ContributionConstellation|ProjectConstellationBackdrop|AttributionExplorer|data-project-constellation|data-contribution-player|data-visualization="hope-line"|cap-tower/,
   );
   for (const match of html.matchAll(/<script\b[^>]*>/gi)) {
     assert.ok(
@@ -192,7 +198,7 @@ test("supporting routes continue into a relevant next chapter", async () => {
     "about/index.html": "/credentials/",
     "credentials/index.html": "/work/",
     "proof/index.html": "/models/#agent-collaboration",
-    "models/index.html": "/proof/",
+    "models/index.html": "/work/agent-systems/",
   };
 
   for (const [filename, href] of Object.entries(nextChapterByArtifact)) {

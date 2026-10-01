@@ -2,25 +2,20 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { gzipSync } from "node:zlib";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { tsImport } from "tsx/esm/api";
 import { expectedProjectGraphIds } from "./project-catalog.mjs";
 
-async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", process.pid + "-" + Date.now());
-  const { default: worker } = await import(workerUrl.href);
-  return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html", host: "localhost" },
-    }),
-    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
-    { waitUntil() {}, passThroughOnException() {} },
-  );
-}
+const { default: HopeLineField } = await tsImport(
+  new URL("../app/components/v3/HopeLineField.tsx", import.meta.url).href,
+  import.meta.url,
+);
 
-test("server-renders one deterministic, graph-derived Hope Line", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  const html = await response.text();
+test("retained Hope Line renders deterministic graph-derived artwork in isolation", () => {
+  // This legacy illustration remains recoverable, but is not the homepage.
+  const html = renderToStaticMarkup(createElement(HopeLineField));
+  assert.equal(html, renderToStaticMarkup(createElement(HopeLineField)));
   const field = html.match(
     /<section[^>]*data-visualization="hope-line"[^>]*>[\s\S]*?<\/section>/i,
   )?.[0];
@@ -74,6 +69,7 @@ test("keeps the Hope Line server-only, deterministic, and free of runtime loader
   for (const source of [page, field]) {
     assert.doesNotMatch(source, /["']use client["']|import\(|motion\/react|@react-three\/fiber|d3-force|requestAnimationFrame|setInterval/);
   }
+  assert.doesNotMatch(page, /import[^\n]*HopeLineField|<HopeLineField\b/);
   assert.match(field, /getContributionGraph/);
   assert.match(field, /pathLength="1"/);
   assert.doesNotMatch(field, /Math\.random|Date\.now|new Date|animateMotion|<animate\b/);

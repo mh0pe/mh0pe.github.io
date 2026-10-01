@@ -23,7 +23,7 @@
   function synchronizeControls(theme) {
     const action = theme === "dark" ? "light" : "dark";
     document.querySelectorAll("[data-theme-toggle]").forEach((control) => {
-      control.setAttribute("aria-label", `Switch to ${action} mode`);
+      control.setAttribute("aria-label", `Theme: switch to ${action} mode`);
       control.setAttribute("title", `Switch to ${action} mode`);
     });
   }
@@ -52,6 +52,7 @@
         }
         applyTheme(nextTheme);
       });
+      control.disabled = false;
     });
   }
 

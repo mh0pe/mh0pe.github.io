@@ -52,11 +52,13 @@ export default function ProvenanceInstrument({
         />
         <path
           className="instrument-proof-glow"
+          stroke="url(#proof-line)"
           d="M40 286L92 108L238 184L392 120L536 252L698 178L836 92L884 48"
           pathLength="1"
         />
         <path
           className="instrument-proof-line"
+          stroke="url(#proof-line)"
           d="M40 286L92 108L238 184L392 120L536 252L698 178L836 92L884 48"
           pathLength="1"
         />

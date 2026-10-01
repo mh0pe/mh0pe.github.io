@@ -1,11 +1,15 @@
 import {
   AbsoluteFill,
-  Easing,
   interpolate,
+  spring,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { filmTheme } from "@/remotion/theme";
+import { operatingArcTiming } from "@/remotion/operating-arc-timing.mjs";
+
+const { colors, fonts } = filmTheme;
 
 const stages = [
   "Pressure",
@@ -73,9 +77,6 @@ const labelPositions = [
   { x: 180, y: 560 },
 ] as const;
 
-const signalStartFrame = 10;
-const signalSegmentFrames = 20;
-
 function cubicPoint(
   curve: (typeof curves)[number],
   progress: number,
@@ -97,13 +98,14 @@ function cubicPoint(
 
 function ease(frame: number, input: readonly number[], output: readonly number[]) {
   return interpolate(frame, input, output, {
-    easing: Easing.bezier(0.16, 1, 0.3, 1),
+    easing: filmTheme.easing,
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 }
 
-function signalProgressAtFrame(frame: number) {
+function signalProgressAtFrame(frame: number, fps: number) {
+  const { signalStart: signalStartFrame, signalSegment: signalSegmentFrames } = operatingArcTiming(fps);
   const segment = Math.max(
     0,
     Math.min(
@@ -122,15 +124,18 @@ function signalProgressAtFrame(frame: number) {
 
 export function OperatingArc() {
   const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
-  const signalProgress = signalProgressAtFrame(frame);
+  const { durationInFrames, fps } = useVideoConfig();
+  const timing = operatingArcTiming(fps);
+  const { signalStart: signalStartFrame, signalSegment: signalSegmentFrames } = timing;
+  const signalProgress = signalProgressAtFrame(frame, fps);
+  const signalOpacity = ease(frame, [timing.exitStart, timing.exitEnd], [1, 0]);
   const finalSegmentFrame =
     signalStartFrame + (curves.length - 1) * signalSegmentFrames;
   const signalEndFrame = signalStartFrame + curves.length * signalSegmentFrames;
   const finalGlow = ease(
     frame,
     [finalSegmentFrame, signalEndFrame, durationInFrames - 1],
-    [0.02, 0.62, 0.62],
+    [0.02, 0.24, 0.24],
   );
   const segment = Math.min(
     curves.length - 1,
@@ -142,36 +147,40 @@ export function OperatingArc() {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0b100e",
-        color: "#f3efe6",
-        fontFamily: '"Instrument Motion", Arial, sans-serif',
+        backgroundColor: colors.background,
+        color: colors.foreground,
+        fontFamily: fonts.display,
         overflow: "hidden",
       }}
     >
       <style>{`@font-face { font-family: "Instrument Motion"; src: url("${staticFile("fonts/instrument-sans-variable.woff2")}") format("woff2"); font-weight: 400 700; }`}</style>
+      <AbsoluteFill style={{
+        background: `radial-gradient(ellipse at 12% 24%, ${colors.lime}12, transparent 55%), radial-gradient(ellipse at 90% 72%, ${colors.blue}14, transparent 58%)`,
+        transform: `translateY(${ease(frame, [0, fps * 4], [5, 0])}px)`,
+      }} />
       <svg
         viewBox="0 0 1200 675"
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
       >
         <defs>
           <linearGradient id="arc" x1="0" x2="1">
-            <stop offset="0" stopColor="#b7cf61" />
-            <stop offset="0.58" stopColor="#93a6ff" />
-            <stop offset="1" stopColor="#ef9877" />
+            <stop offset="0" stopColor={colors.lime} />
+            <stop offset="0.58" stopColor={colors.blue} />
+            <stop offset="1" stopColor={colors.copper} />
           </linearGradient>
           <radialGradient id="glow">
-            <stop offset="0" stopColor="#ef9877" stopOpacity={finalGlow} />
-            <stop offset="1" stopColor="#ef9877" stopOpacity="0" />
+            <stop offset="0" stopColor={colors.copper} stopOpacity={finalGlow} />
+            <stop offset="1" stopColor={colors.copper} stopOpacity="0" />
           </radialGradient>
         </defs>
 
-        <g opacity="0.1" stroke="#f3efe6" strokeWidth="1">
+        <g opacity="0.1" stroke={colors.foreground} strokeWidth="1">
           <path d="M68 210H1132" />
           <path d="M68 600H1132" />
         </g>
 
         <circle cx="180" cy="475" r="150" fill="url(#glow)" />
-        <path d={path} fill="none" stroke="#f3efe6" strokeOpacity="0.12" strokeWidth="12" />
+        <path d={path} fill="none" stroke={colors.foreground} strokeOpacity="0.12" strokeWidth="12" />
         <path
           d={path}
           fill="none"
@@ -183,8 +192,14 @@ export function OperatingArc() {
         {points.map((point, index) => {
           const arrival = signalStartFrame + index * signalSegmentFrames;
           const emphasis = index === points.length - 1
-            ? ease(frame, [arrival - 8, arrival + 8], [0, 1])
-            : ease(frame, [arrival - 8, arrival + 4, arrival + 18], [0, 1, 0.42]);
+            ? ease(frame, [arrival - timing.emphasisLead, arrival + timing.emphasisLead], [0, 1])
+            : ease(frame, [arrival - timing.emphasisLead, arrival + timing.emphasisPeak, arrival + timing.emphasisSettle], [0, 1, 0.42]);
+          const entrance = Math.min(1, Math.max(0, spring({
+            frame: frame - index * timing.entranceStagger,
+            fps,
+            durationInFrames: Math.round(timing.entranceDuration),
+            config: filmTheme.spring,
+          })));
           const label = labelPositions[index];
 
           return (
@@ -193,23 +208,23 @@ export function OperatingArc() {
                 cx={point.x}
                 cy={point.y}
                 r={22 + emphasis * 4}
-                fill="#0b100e"
-                stroke="#f3efe6"
+                fill={colors.background}
+                stroke={colors.foreground}
                 strokeOpacity={0.28 + emphasis * 0.5}
                 strokeWidth={1 + emphasis * 1.2}
               />
-              <circle
-                cx={point.x}
-                cy={point.y}
+              <g opacity={entrance} transform={`translate(${point.x} ${point.y + (1 - entrance) * 12}) scale(${0.65 + entrance * 0.35})`}>
+                <circle
                 r={8 + emphasis * 2}
-                fill={index < 2 ? "#b7cf61" : index < 4 ? "#93a6ff" : "#ef9877"}
-              />
+                fill={index < 2 ? colors.lime : index < 4 ? colors.blue : colors.copper}
+                />
+              </g>
               <text
                 x={label.x}
                 y={label.y}
-                fill="#f3efe6"
+                fill={colors.foreground}
                 fillOpacity={0.68 + emphasis * 0.32}
-                fontFamily='"Instrument Motion", Arial, sans-serif'
+                fontFamily={fonts.display}
                 fontSize="42"
                 fontWeight="600"
                 textAnchor="middle"
@@ -219,9 +234,9 @@ export function OperatingArc() {
               <text
                 x={point.x}
                 y={point.y - 46}
-                fill="#f3efe6"
+                fill={colors.foreground}
                 fillOpacity={0.5 + emphasis * 0.3}
-                fontFamily="monospace"
+                fontFamily={fonts.label}
                 fontSize="22"
                 textAnchor="middle"
               >
@@ -231,8 +246,10 @@ export function OperatingArc() {
           );
         })}
 
-        <circle cx={signal.x} cy={signal.y} r="18" fill="#f3efe6" fillOpacity="0.16" />
-        <circle cx={signal.x} cy={signal.y} r="7" fill="#f3efe6" />
+        <g opacity={signalOpacity}>
+          <circle cx={signal.x} cy={signal.y} r="18" fill={colors.foreground} fillOpacity="0.16" />
+          <circle cx={signal.x} cy={signal.y} r="7" fill={colors.foreground} />
+        </g>
       </svg>
 
       <div
@@ -246,10 +263,10 @@ export function OperatingArc() {
           opacity: 1,
         }}
       >
-        <div style={{ color: "#b7cf61", fontFamily: "monospace", fontSize: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+        <div style={{ color: colors.lime, fontFamily: fonts.label, fontSize: 20, letterSpacing: "0.12em", textTransform: "uppercase" }}>
           Living architecture
         </div>
-        <div style={{ width: 900, fontFamily: '"Instrument Motion", Arial, sans-serif', fontSize: 64, fontWeight: 540, letterSpacing: "-0.055em", lineHeight: 0.94 }}>
+        <div style={{ width: 900, fontFamily: fonts.display, fontSize: 64, fontWeight: 540, letterSpacing: "-0.055em", lineHeight: 0.94 }}>
           From pressure to a system<br />teams can own.
         </div>
       </div>
@@ -259,8 +276,8 @@ export function OperatingArc() {
           position: "absolute",
           right: 82,
           bottom: 25,
-          color: "#f3efe6",
-          fontFamily: "monospace",
+          color: colors.foreground,
+          fontFamily: fonts.label,
           fontSize: 19,
           letterSpacing: "0.08em",
           opacity: 0.62,
@@ -269,6 +286,12 @@ export function OperatingArc() {
       >
         clear · operable · portable
       </div>
+      <AbsoluteFill style={{ background: `linear-gradient(125deg, ${colors.lime}05, transparent 50%, ${colors.copper}06)`, pointerEvents: "none" }} />
+      <svg width="100%" height="100%" style={{ position: "absolute", inset: 0, opacity: 0.018, pointerEvents: "none" }}>
+        <filter id="film-grain"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" seed="8" stitchTiles="stitch" /></filter>
+        <rect width="100%" height="100%" filter="url(#film-grain)" />
+      </svg>
+      <AbsoluteFill style={{ background: `radial-gradient(ellipse at center, transparent 45%, ${colors.vignette} 100%)`, pointerEvents: "none" }} />
     </AbsoluteFill>
   );
 }

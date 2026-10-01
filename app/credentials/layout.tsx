@@ -6,7 +6,7 @@ export default function CredentialsLayout({
 }) {
   return (
     <>
-      <link rel="stylesheet" href="/credentials.css?v=20260905-learning-v1" />
+      <link rel="stylesheet" href="/credentials.css?v=20260930-contrast-v1" />
       {children}
     </>
   );

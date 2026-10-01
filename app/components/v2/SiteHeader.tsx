@@ -39,6 +39,7 @@ export function ThemeToggle() {
       className="theme-toggle"
       type="button"
       data-theme-toggle
+      disabled
       aria-label="Toggle color theme"
       suppressHydrationWarning
     >

@@ -114,15 +114,17 @@ function SegmentedControl<T extends string>({
   options,
   onChange,
   controls,
+  disabled,
 }: {
   readonly legend: string;
   readonly value: T;
   readonly options: readonly { value: T; label: string }[];
   readonly onChange: (value: T) => void;
   readonly controls: string;
+  readonly disabled: boolean;
 }) {
   return (
-    <fieldset className="attribution-segmented">
+    <fieldset className="attribution-segmented" disabled={disabled}>
       <legend>{legend}</legend>
       <div>
         {options.map((option) => (
@@ -292,6 +294,7 @@ export default function AttributionExplorer({
     DEFAULT_ATTRIBUTION_FILTERS,
   );
   const urlReady = useRef(false);
+  const [interactive, setInteractive] = useState(false);
   const recordRef = useRef<HTMLDetailsElement | null>(null);
   const chartId = useId();
   const evidenceId = useId();
@@ -367,6 +370,7 @@ export default function AttributionExplorer({
       }
       urlReady.current = true;
       readLocation();
+      setInteractive(true);
     });
     window.addEventListener("popstate", readLocation);
     return () => {
@@ -444,6 +448,194 @@ export default function AttributionExplorer({
             <span aria-hidden="true">Filters · code changes · public work</span>
           </summary>
           <div className="attribution-record-body">
+            <div className="attribution-workspace">
+              <p className="attribution-readiness">
+                {interactive
+                  ? "Choose a project or model to explore its part in the work."
+                  : "The full view is shown below. Filters require interactive controls to load."}
+              </p>
+              <form
+                className="attribution-filters"
+                aria-label="Filter model collaboration"
+                onSubmit={(event) => event.preventDefault()}
+              >
+                <div className="attribution-select">
+                  <label htmlFor={repositoryId}>Project</label>
+                  <select
+                    id={repositoryId}
+                    disabled={!interactive}
+                    value={filters.repository}
+                    onChange={handleRepositoryChange}
+                    aria-controls={`${chartId} ${evidenceId}`}
+                  >
+                    <option value="all">All projects</option>
+                    {repositories.map((repository) => (
+                      <option value={repository} key={repository}>
+                        {repository}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <SegmentedControl<AttributionSurface>
+                  disabled={!interactive}
+                  legend="Work type"
+                  value={filters.surface}
+                  onChange={(surface) => updateFilter("surface", surface)}
+                  controls={`${chartId} ${evidenceId}`}
+                  options={[
+                    { value: "all", label: "All public" },
+                    { value: "pr", label: "Changes sent for review" },
+                    { value: "fork-only", label: "Independent public versions" },
+                  ]}
+                />
+
+                <SegmentedControl<AttributionScope>
+                  disabled={!interactive}
+                  legend="What to measure"
+                  value={filters.scope}
+                  onChange={(scope) => updateFilter("scope", scope)}
+                  controls={`${chartId} ${evidenceId}`}
+                  options={[
+                    { value: "code", label: "Code" },
+                    { value: "all-text", label: "Code and documentation" },
+                  ]}
+                />
+
+                <SegmentedControl<AttributionMetric>
+                  disabled={!interactive}
+                  legend="Count by"
+                  value={filters.metric}
+                  onChange={(metric) => updateFilter("metric", metric)}
+                  controls={chartId}
+                  options={[
+                    { value: "additions", label: "Lines added" },
+                    { value: "commits", label: "Code changes" },
+                  ]}
+                />
+
+                <div className="attribution-select">
+                  <label htmlFor={agentId}>Model</label>
+                  <select
+                    id={agentId}
+                    disabled={!interactive}
+                    value={filters.agent}
+                    onChange={handleAgentChange}
+                    aria-controls={evidenceId}
+                  >
+                    <option value="all">All models</option>
+                    {selectableAgents.map((agent) => (
+                      <option value={agent.id} key={agent.id}>
+                        {agent.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  className="attribution-clear"
+                  type="button"
+                  onClick={() => setFilters(DEFAULT_ATTRIBUTION_FILTERS)}
+                  disabled={!interactive || !hasActiveFilters}
+                >
+                  Clear filters
+                </button>
+              </form>
+
+              <div
+                className="attribution-chart"
+                id={chartId}
+              >
+                <div className="attribution-chart-heading">
+                  <div>
+                    <p className="attribution-kicker">Model mix</p>
+                    <h3>
+                      {filters.metric === "additions"
+                        ? "Lines added with model associations"
+                        : "Code changes with model associations"}
+                    </h3>
+                  </div>
+                  <p>
+                    Select a model to focus the linked evidence. The
+                    distribution remains visible for comparison.
+                  </p>
+                </div>
+
+                {rows.length > 0 ? (
+                  <ol className="attribution-traces">
+                    {rows.map((row) => {
+                      const isSelected = filters.agent === row.agent.id;
+                      const traceStyle = {
+                        "--agent-accent": row.agent.tone,
+                      } as CSSProperties;
+
+                      return (
+                        <li
+                          key={row.agent.id}
+                          data-marker={row.agent.marker}
+                          data-model-id={row.agent.id}
+                        >
+                          <button
+                            type="button"
+                            className={`attribution-trace${
+                              isSelected ? " is-selected" : ""
+                            }`}
+                            disabled={!interactive}
+                            style={traceStyle}
+                            aria-pressed={isSelected}
+                            aria-controls={evidenceId}
+                            onClick={() => focusAgent(row.agent.id)}
+                            aria-label={`${
+                              isSelected
+                                ? `Clear ${row.agent.label} evidence focus`
+                                : `Focus evidence on ${row.agent.label}`
+                            }: ${metricValue(
+                              row,
+                              filters.metric,
+                            )}, ${percentageFormatter.format(
+                              row.percentage,
+                            )} percent of the current result`}
+                          >
+                            <span className="attribution-trace-label">
+                              <AgentMarker marker={row.agent.marker} />
+                              <strong>{row.agent.label}</strong>
+                              {isSelected ? (
+                                <span className="attribution-trace-selection">
+                                  Selected
+                                </span>
+                              ) : null}
+                            </span>
+                            <span
+                              className="attribution-trace-track"
+                              aria-hidden="true"
+                            >
+                              <BklitModelBar
+                                percentage={row.percentage}
+                                selected={isSelected}
+                              />
+                            </span>
+                            <span className="attribution-trace-value">
+                              <strong>
+                                {integerFormatter.format(row.value)}
+                              </strong>
+                              <span>
+                                {percentageFormatter.format(row.percentage)}%
+                              </span>
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                ) : (
+                  <p className="attribution-empty">
+                    No code changes match these filters. Clear or adjust a filter
+                    to continue exploring.
+                  </p>
+                )}
+              </div>
+            </div>
+
             <div className="attribution-overview">
               <details className="attribution-method">
                 <summary>How this view works</summary>
@@ -501,183 +693,6 @@ export default function AttributionExplorer({
                 >
                   {summary}
                 </p>
-              </div>
-            </div>
-
-            <div className="attribution-workspace">
-              <form
-                className="attribution-filters"
-                aria-label="Filter model collaboration"
-                onSubmit={(event) => event.preventDefault()}
-              >
-                <div className="attribution-select">
-                  <label htmlFor={repositoryId}>Project</label>
-                  <select
-                    id={repositoryId}
-                    value={filters.repository}
-                    onChange={handleRepositoryChange}
-                    aria-controls={`${chartId} ${evidenceId}`}
-                  >
-                    <option value="all">All projects</option>
-                    {repositories.map((repository) => (
-                      <option value={repository} key={repository}>
-                        {repository}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <SegmentedControl<AttributionSurface>
-                  legend="Work type"
-                  value={filters.surface}
-                  onChange={(surface) => updateFilter("surface", surface)}
-                  controls={`${chartId} ${evidenceId}`}
-                  options={[
-                    { value: "all", label: "All public" },
-                    { value: "pr", label: "Changes sent for review" },
-                    { value: "fork-only", label: "Independent public versions" },
-                  ]}
-                />
-
-                <SegmentedControl<AttributionScope>
-                  legend="What to measure"
-                  value={filters.scope}
-                  onChange={(scope) => updateFilter("scope", scope)}
-                  controls={`${chartId} ${evidenceId}`}
-                  options={[
-                    { value: "code", label: "Code" },
-                    { value: "all-text", label: "Code and documentation" },
-                  ]}
-                />
-
-                <SegmentedControl<AttributionMetric>
-                  legend="Count by"
-                  value={filters.metric}
-                  onChange={(metric) => updateFilter("metric", metric)}
-                  controls={chartId}
-                  options={[
-                    { value: "additions", label: "Lines added" },
-                    { value: "commits", label: "Code changes" },
-                  ]}
-                />
-
-                <div className="attribution-select">
-                  <label htmlFor={agentId}>Model</label>
-                  <select
-                    id={agentId}
-                    value={filters.agent}
-                    onChange={handleAgentChange}
-                    aria-controls={evidenceId}
-                  >
-                    <option value="all">All models</option>
-                    {selectableAgents.map((agent) => (
-                      <option value={agent.id} key={agent.id}>
-                        {agent.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <button
-                  className="attribution-clear"
-                  type="button"
-                  onClick={() => setFilters(DEFAULT_ATTRIBUTION_FILTERS)}
-                  disabled={!hasActiveFilters}
-                >
-                  Clear filters
-                </button>
-              </form>
-
-              <div
-                className="attribution-chart"
-                id={chartId}
-              >
-                <div className="attribution-chart-heading">
-                  <div>
-                    <p className="attribution-kicker">Model mix</p>
-                    <h3>
-                      {filters.metric === "additions"
-                        ? "Lines added with model associations"
-                        : "Code changes with model associations"}
-                    </h3>
-                  </div>
-                  <p>
-                    Select a model to focus the linked evidence. The
-                    distribution remains visible for comparison.
-                  </p>
-                </div>
-
-                {rows.length > 0 ? (
-                  <ol className="attribution-traces">
-                    {rows.map((row) => {
-                      const isSelected = filters.agent === row.agent.id;
-                      const traceStyle = {
-                        "--agent-accent": row.agent.tone,
-                      } as CSSProperties;
-
-                      return (
-                        <li
-                          key={row.agent.id}
-                          data-marker={row.agent.marker}
-                          data-model-id={row.agent.id}
-                        >
-                          <button
-                            type="button"
-                            className={`attribution-trace${
-                              isSelected ? " is-selected" : ""
-                            }`}
-                            style={traceStyle}
-                            aria-pressed={isSelected}
-                            aria-controls={evidenceId}
-                            onClick={() => focusAgent(row.agent.id)}
-                            aria-label={`${
-                              isSelected
-                                ? `Clear ${row.agent.label} evidence focus`
-                                : `Focus evidence on ${row.agent.label}`
-                            }: ${metricValue(
-                              row,
-                              filters.metric,
-                            )}, ${percentageFormatter.format(
-                              row.percentage,
-                            )} percent of the current result`}
-                          >
-                            <span className="attribution-trace-label">
-                              <AgentMarker marker={row.agent.marker} />
-                              <strong>{row.agent.label}</strong>
-                              {isSelected ? (
-                                <span className="attribution-trace-selection">
-                                  Selected
-                                </span>
-                              ) : null}
-                            </span>
-                            <span
-                              className="attribution-trace-track"
-                              aria-hidden="true"
-                            >
-                              <BklitModelBar
-                                percentage={row.percentage}
-                                selected={isSelected}
-                              />
-                            </span>
-                            <span className="attribution-trace-value">
-                              <strong>
-                                {integerFormatter.format(row.value)}
-                              </strong>
-                              <span>
-                                {percentageFormatter.format(row.percentage)}%
-                              </span>
-                            </span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ol>
-                ) : (
-                  <p className="attribution-empty">
-                    No code changes match these filters. Clear or adjust a filter
-                    to continue exploring.
-                  </p>
-                )}
               </div>
             </div>
 

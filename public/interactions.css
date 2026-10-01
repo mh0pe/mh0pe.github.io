@@ -271,7 +271,8 @@
 
 .motion-film__caption > p {
   color: rgb(243 239 230 / 78%);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
 }
 
 .motion-film__play {
@@ -321,11 +322,11 @@
   text-decoration: none;
 }
 
-@media (min-width: 80rem) {
+@media (min-width: 96rem) {
   .journey-rail {
     position: fixed;
     top: 50%;
-    left: 0.35rem;
+    left: max(0.35rem, calc((100vw - 86rem) / 2 - 4rem));
     z-index: 35;
     display: grid;
     transform: translateY(-50%);
@@ -484,3 +485,83 @@
     display: none !important;
   }
 }
+/* OriginKit treatments adapted for a static, source-linked portfolio. */
+.hope-brand .hope-hero__signature-block { gap: 1.1rem; }
+.hope-brand .hope-hero__signature {
+  max-width: 19ch;
+  font-size: clamp(2rem, 3vw, 3.6rem);
+  line-height: 1.04;
+}
+.contribution-sculpture { margin: 0; color: var(--hope-green-dark); }
+.contribution-sculpture svg { display: block; width: 100%; height: auto; overflow: visible; }
+.contribution-sculpture__orbits { fill: none; stroke: currentColor; stroke-width: 0.6; opacity: 0.2; }
+.contribution-sculpture__cluster { transform-box: fill-box; transform-origin: center; transition: opacity 240ms cubic-bezier(.16,1,.3,1); }
+.contribution-sculpture__cluster[data-family="security"] { color: #8d473b; }
+.contribution-sculpture__cluster[data-family="agents"] { color: #625784; }
+.contribution-sculpture__cluster[data-family="browser"] { color: #356b70; }
+.contribution-sculpture__cluster[data-family="durability"] { color: #806222; }
+.contribution-sculpture__edges { fill: none; stroke: currentColor; stroke-width: 1.2; opacity: 0.8; }
+.contribution-sculpture__nodes { fill: currentColor; }
+.contribution-sculpture__cluster text { fill: currentColor; font: 500 13px var(--font-sans); letter-spacing: .02em; }
+.contribution-sculpture__center circle { fill: var(--hope-porcelain); stroke: currentColor; stroke-width: .7; }
+.contribution-sculpture__center text { fill: currentColor; font: italic 18px var(--hope-display); }
+.contribution-sculpture figcaption { margin-top: .15rem; text-align: center; font-size: .72rem; letter-spacing: .05em; color: var(--hope-ink-muted); }
+[data-theme="dark"] .contribution-sculpture { color: #becd85; }
+[data-theme="dark"] .contribution-sculpture__cluster[data-family="security"] { color: #e99c8e; }
+[data-theme="dark"] .contribution-sculpture__cluster[data-family="agents"] { color: #b5a5df; }
+[data-theme="dark"] .contribution-sculpture__cluster[data-family="browser"] { color: #91c9cb; }
+[data-theme="dark"] .contribution-sculpture__cluster[data-family="durability"] { color: #d9bc78; }
+[data-contribution-focus] .contribution-sculpture__cluster:not([data-active-project]),
+[data-contribution-focus] .hope-line__project:not([data-active-project]),
+[data-contribution-focus] .hope-line__mobile-project:not([data-active-project]) { opacity: .22; }
+.hope-line__project, .hope-line__mobile-project { transition: opacity 240ms cubic-bezier(.16,1,.3,1); }
+.lineage-field__source-static { transition: opacity 200ms cubic-bezier(.16,1,.3,1); }
+.lineage-field__source:is(:hover, :focus-visible) + .lineage-field__source-static { opacity: .72; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .contribution-sculpture[data-motion-entered] .contribution-sculpture__cluster {
+    animation: contribution-arrive 1200ms cubic-bezier(.16,1,.3,1) backwards;
+    animation-delay: calc(var(--cluster-order) * 55ms);
+  }
+  .hope-hero[data-motion-entered] .hope-signature-accent { animation: hope-colour-pass 1400ms cubic-bezier(.16,1,.3,1) both; }
+  .hope-button > span:first-child { transition: transform 350ms cubic-bezier(.16,1,.3,1); }
+  .hope-button:is(:hover, :focus-visible) > span:first-child { transform: translateY(-2px); }
+  .hope-button > span:last-child { transition: transform 350ms cubic-bezier(.16,1,.3,1); }
+  .hope-button:is(:hover, :focus-visible) > span:last-child { transform: translate(2px, -2px); }
+  .hope-story__actions > a:first-child,
+  .work-index__actions > a:first-child,
+  .site-footer__signature > .text-action { transition: transform 350ms cubic-bezier(.16,1,.3,1); }
+  :is(.hope-story__actions, .work-index__actions) > a:first-child:is(:hover, :focus-visible),
+  .site-footer__signature > .text-action:is(:hover, :focus-visible) { transform: translateX(3px); }
+  .lineage-field__source:is(:hover, :focus-visible) + .lineage-field__source-static .lineage-field__halo { animation: contribution-signal 650ms cubic-bezier(.16,1,.3,1); }
+}
+
+@keyframes contribution-arrive {
+  from { opacity: .6; transform: translateY(7px) scale(.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes contribution-signal { 50% { opacity: .8; } }
+@keyframes hope-colour-pass {
+  0%, 100% { color: var(--hope-green-dark); }
+  42% { color: var(--hope-blue); }
+}
+[data-theme="dark"] .hope-signature-accent { --hope-green-dark: #becd85; }
+[data-art-suspended] *, [data-page-hidden] .contribution-sculpture *,
+[data-page-hidden] .lineage-field *, [data-page-hidden] .hope-line * { animation-play-state: paused !important; }
+[data-art-static] .contribution-sculpture *, [data-art-static] .hope-signature-accent { animation: none !important; }
+
+@media (max-width: 48rem) {
+  .hope-brand .hope-hero__signature-block { min-height: 0; gap: .75rem; }
+  .hope-brand .hope-hero__signature { max-width: 23ch; font-size: clamp(1.9rem, 7vw, 2.7rem); }
+  .contribution-sculpture { width: min(100%, 28rem); margin-inline: auto; }
+  .contribution-sculpture__cluster text { font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contribution-sculpture *, .hope-signature-accent { animation: none !important; transition: none !important; }
+  .hope-line__project, .hope-line__mobile-project, .lineage-field__source-static { transition: none; }
+}
+/* Keep contribution scope readable before a visitor opens a case study. */
+.hope-story__contribution { max-width: 52ch; font-size: 1rem; line-height: 1.6; color: var(--hope-porcelain); }
+.hope-story__contribution strong { display: block; color: inherit; font-weight: 600; }
+.attribution-readiness { grid-column: 1 / -1; font-size: .9rem; line-height: 1.5; }
+.theme-toggle:disabled, .attribution-filters :disabled, .attribution-trace:disabled { cursor: default; }

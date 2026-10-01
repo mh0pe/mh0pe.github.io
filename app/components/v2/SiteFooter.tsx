@@ -1,4 +1,4 @@
-import { portfolioIdentity, profileLinks } from "../../data/portfolio-v2";
+import { portfolioIdentity, profileLinks, publicSources } from "../../data/portfolio-v2";
 import type { RouteMotifKey } from "../v3/RouteMotif";
 import { Arrow } from "./Evidence";
 
@@ -53,11 +53,11 @@ const journeySteps = {
     action: "Explore model composition",
   },
   models: {
-    code: "Next / Evidence",
-    title: "Follow the collaboration back to the evidence.",
-    description: "Move from model associations to the projects, decisions, and public sources behind them.",
-    href: "/proof/",
-    action: "Review the evidence",
+    code: "Next / Agent systems",
+    title: "See how agent teams carry the work forward.",
+    description: "Explore the decisions, shared context, and handoffs behind BASE, CARL, PAUL, and SEED.",
+    href: "/work/agent-systems/",
+    action: "Explore the agent systems",
   },
   "case-study": {
     code: "Next / Systems",
@@ -108,11 +108,14 @@ export default function SiteFooter({
         <p className="site-footer__statement">
           Let&apos;s talk about what you&apos;re building.
         </p>
+        <a className="text-action" href={publicSources.linkedinMadison.href} target="_blank" rel="noreferrer">
+          Connect on LinkedIn<span className="visually-hidden">, opens in a new tab</span> <Arrow />
+        </a>
       </div>
       <div className="shell site-footer__grid">
         <p className="site-footer__disclosure">{portfolioIdentity.independenceNote}</p>
         <nav aria-label="Profiles and source">
-          {profileLinks.map((profile) => (
+          {profileLinks.filter((profile) => profile.id !== "linkedin").map((profile) => (
             <a
               href={profile.href}
               target="_blank"

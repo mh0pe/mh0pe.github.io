@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { getContributionGraph } from "../contribution-story/graph-loaders";
 import type {
   ContributionGraph,
@@ -373,24 +374,18 @@ function DataGlyph({
   readonly point: Point;
   readonly agent: ContributionGraphAgent | undefined;
 }) {
-  return (
-    <g
-      className="hope-line__node"
-      data-node-type={node.type}
-      data-agent-id={node.agentId ?? undefined}
-      transform={`translate(${point.x} ${point.y})`}
-    >
-      <title>{nodeTitle(node, agent)}</title>
-      {node.type === "repository" ? (
-        <rect x="-7" y="-5" width="14" height="10" rx="2" />
-      ) : null}
-      {node.type === "evidence" ? <path d="M0-7 7 0 0 7-7 0Z" /> : null}
-      {node.type === "commit" ? <circle r="4.5" /> : null}
-      {node.type === "file" ? (
-        <rect x="-3.5" y="-3.5" width="7" height="7" rx="1" />
-      ) : null}
-    </g>
-  );
+  const props = {
+    className: "hope-line__node",
+    "data-node-type": node.type,
+    "data-agent-id": node.agentId ?? undefined,
+    transform: `translate(${point.x} ${point.y})`,
+    children: <title>{nodeTitle(node, agent)}</title>,
+  };
+  if (node.type === "repository") return <rect {...props} x="-7" y="-5" width="14" height="10" rx="2" />;
+  if (node.type === "evidence") return <path {...props} d="M0-7 7 0 0 7-7 0Z" />;
+  if (node.type === "commit") return <circle {...props} r="4.5" />;
+  if (node.type === "file") return <rect {...props} x="-3.5" y="-3.5" width="7" height="7" rx="1" />;
+  return null;
 }
 
 function ModelGlyph({
@@ -436,7 +431,7 @@ function ModelGlyph({
   );
 }
 
-const projectFields: readonly ProjectField[] = graphIds.map((graphId, index) => {
+export const projectFields: readonly ProjectField[] = graphIds.map((graphId, index) => {
   const graph = getContributionGraph(graphId);
   const anchor = projectAnchors[index];
   const selection = selectProjectNodes(graph);
@@ -499,12 +494,7 @@ export default function HopeLineField({ compact = false }: { readonly compact?: 
           </desc>
 
           <g className="hope-line__grid" aria-hidden="true">
-            {[90, 180, 270, 360, 450].map((y) => (
-              <path d={`M28 ${y}H1172`} key={`horizontal-${y}`} />
-            ))}
-            {[160, 360, 560, 760, 960].map((x) => (
-              <path d={`M${x} 28V542`} key={`vertical-${x}`} />
-            ))}
+            <path d="M28 90H1172M28 180H1172M28 270H1172M28 360H1172M28 450H1172M160 28V542M360 28V542M560 28V542M760 28V542M960 28V542" />
           </g>
 
           <path className="hope-line__spine-underlay" d={spine} />
@@ -599,7 +589,7 @@ export default function HopeLineField({ compact = false }: { readonly compact?: 
                   };
 
                   return (
-                    <g key={`${project.graph.id}:${agent.id}`}>
+                    <Fragment key={`${project.graph.id}:${agent.id}`}>
                       {commitPoint ? (
                         <path
                           className="hope-line__model-link"
@@ -612,7 +602,7 @@ export default function HopeLineField({ compact = false }: { readonly compact?: 
                         />
                       ) : null}
                       <ModelGlyph agent={agent} point={modelPoint} />
-                    </g>
+                    </Fragment>
                   );
                 })}
 

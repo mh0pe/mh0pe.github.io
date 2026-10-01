@@ -16,7 +16,7 @@ import { routeMetadata } from "../data/route-metadata";
 export const metadata = routeMetadata(
   "/credentials/",
   "Credentials earned",
-  "Explore 25 credentials earned by Madison Hope Steiner across security, cloud architecture, AI, data, networking, infrastructure, and financial services.",
+  `Explore ${publicCredentials.length} credentials earned by Madison Hope Steiner across security, cloud architecture, AI, data, networking, infrastructure, and financial services.`,
 );
 
 const centers: Record<CredentialCategoryId, readonly [number, number]> = {

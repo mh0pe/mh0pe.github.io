@@ -167,6 +167,7 @@ export default function CaseStudyPage({ caseStudy }: { readonly caseStudy: CaseS
               </nav>
               <div className="button-row">
                 <a className="text-action" href="/work/">Explore all work <span aria-hidden="true">→</span></a>
+                <a className="text-action" href="/method/">Read my philosophy <span aria-hidden="true">→</span></a>
                 <a className="text-action" href="/proof/">Follow the public work <span aria-hidden="true">→</span></a>
               </div>
             </div>

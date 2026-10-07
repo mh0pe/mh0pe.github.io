@@ -1,6 +1,8 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Native anchors preserve static Pages navigation without RSC requests. */
 import { portfolioIdentity, profileLinks, publicSources } from "../../data/portfolio-v2";
 import type { RouteMotifKey } from "../v3/RouteMotif";
 import { Arrow } from "./Evidence";
+import { landingNavigation } from "./SiteHeader";
 
 const journeySteps = {
   work: {
@@ -11,11 +13,11 @@ const journeySteps = {
     action: "Explore how I help",
   },
   capabilities: {
-    code: "Next / Approach",
-    title: "See how the work moves from pressure to result.",
-    description: "Follow the choices that turn a difficult condition into a system a team can own.",
+    code: "Next / Philosophy",
+    title: "How I think about development and AI.",
+    description: "The principles behind the engineering, the collaboration, and what I leave for the next team.",
     href: "/method/",
-    action: "See how I build",
+    action: "Read my philosophy",
   },
   method: {
     code: "Next / Decisions",
@@ -113,7 +115,15 @@ export default function SiteFooter({
         </a>
       </div>
       <div className="shell site-footer__grid">
-        <p className="site-footer__disclosure">{portfolioIdentity.independenceNote}</p>
+        <div>
+          <p className="site-footer__disclosure">{portfolioIdentity.independenceNote}</p>
+          <p className="site-footer__record">Open-source systems · Personal portfolio</p>
+        </div>
+        <nav aria-label="Explore the portfolio">
+          {landingNavigation.map((item) => (
+            <a href={item.href} key={item.key}>{item.label} <Arrow /></a>
+          ))}
+        </nav>
         <nav aria-label="Profiles and source">
           {profileLinks.filter((profile) => profile.id !== "linkedin").map((profile) => (
             <a
@@ -127,12 +137,15 @@ export default function SiteFooter({
               <Arrow />
             </a>
           ))}
-          <a href="/credentials/">Credentials <Arrow /></a>
-          <a href="/proof/">Evidence <Arrow /></a>
+          <details className="site-footer__details">
+            <summary>Go deeper</summary>
+            <a href="/#credentials">Credentials <Arrow /></a>
+            <a href="/work/">All project stories <Arrow /></a>
+            <a href="/decisions/">Architecture decisions <Arrow /></a>
+            <a href="/models/">AI collaboration <Arrow /></a>
+            <a href="/proof/">Source links <Arrow /></a>
+          </details>
         </nav>
-        <p className="site-footer__record">
-          Open-source systems · Personal portfolio
-        </p>
       </div>
     </footer>
   );

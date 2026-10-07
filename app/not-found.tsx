@@ -50,6 +50,14 @@ const githubProfiles = [
 export default function NotFound() {
   return (
     <main className="not-found" id="main-content">
+      {/* The framework serializes this recovery UI into every route's fallback.
+          Literal, trusted local links avoid preloading its CSS on healthy pages.
+          They become ordinary blocking stylesheets only if recovery is rendered. */}
+      <div hidden data-recovery-styles dangerouslySetInnerHTML={{ __html:
+        '<link rel="stylesheet" href="/portfolio-v2.css?v=20261003-palette">' +
+        '<link rel="stylesheet" href="/portfolio-v3.css?v=20261003-palette-contrast">' +
+        '<link rel="stylesheet" href="/interactions.css?v=20261003-palette">',
+      }} />
       <div className="not-found__shell">
         <div className="not-found__utility">
           <a href="/">Madison Hope Steiner</a>

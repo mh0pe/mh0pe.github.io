@@ -7,7 +7,7 @@ Madison Hope Steiner, also known on GitHub as mh0pe and awsmadi, makes difficult
 - Portfolio: https://mh0pe.github.io/
 - Selected systems: https://mh0pe.github.io/work/
 - How Madison helps: https://mh0pe.github.io/capabilities/
-- Architecture approach: https://mh0pe.github.io/method/
+- Development & AI philosophy: https://mh0pe.github.io/method/
 - Architecture decisions: https://mh0pe.github.io/decisions/
 - Experience: https://mh0pe.github.io/about/
 - Credentials earned: https://mh0pe.github.io/credentials/

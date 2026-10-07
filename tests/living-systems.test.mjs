@@ -11,15 +11,14 @@ const load = (path) => tsImport(new URL(path, root).href, import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 const { default: Art, livingClusters, livingProjects } = await load("app/components/v3/LivingConstellation.tsx");
 const { satinBands } = await load("app/components/v3/SatinRibbon.tsx");
-const { default: Home } = await load("app/page.tsx");
-const { default: Layout } = await load("app/layout.tsx");
 const { default: Feature } = await load("app/components/v3/FeaturedProjectStory.tsx");
-const html = renderToStaticMarkup(createElement(Home));
+// Homepage images are resolved by the framework during export. Inspect that
+// delivered document rather than importing next/image outside its build shim.
+const html = (await read("pages-dist/index.html")).replaceAll("<!-- -->", "");
 
 test("route-only art direction follows the existing theme in delivered CSS order", () => {
-  const document = renderToStaticMarkup(createElement(Layout, null, createElement(Home)));
-  const styles = [...document.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)].map((match) => match[1].split("?")[0]);
-  assert.deepEqual(styles, ["/portfolio-v2.css", "/portfolio-v3.css", "/interactions.css", "/living-systems.css"]);
+  const styles = [...html.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)].map((match) => match[1].split("?")[0]);
+  assert.deepEqual(styles, ["/route-styles/home.css", "/living-systems.css", "/living-architecture.css", "/landing-story.css"]);
 });
 
 test("large contribution art preserves all eight selections and their exact edges", () => {
@@ -66,10 +65,10 @@ test("Satin Flow derivative is bounded, smooth, deterministic and server-only", 
 
 test("candidate retains immediate content, source trails and original page budgets", () => {
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
-  assert.match(html, /Bringing <em>Hope<\/em> to distributed systems/);
+  assert.match(html, /Bringing (?:<em>)?Hope(?:<\/em>)? to distributed systems/);
   assert.equal((html.match(/<strong>My contribution<\/strong>/g) ?? []).length, 4);
-  assert.equal((html.match(/class="living-feature"/g) ?? []).length, 1);
-  assert.match(html, /<summary>View code and reviewed changes<\/summary>/);
+  assert.equal((html.match(/class="landing-project"/g) ?? []).length, 4);
+  assert.equal((html.match(/<summary>Explore the contribution<\/summary>/g) ?? []).length, 4);
   assert.match(html, /href="\/work\/automated-security-helper\/"/);
   assert.match(html, /LinkedIn/);
   assert.doesNotMatch(html, /<canvas|Loading the source trail|<iframe|data-contribution-player/);
@@ -77,12 +76,19 @@ test("candidate retains immediate content, source trails and original page budge
   assert.ok((html.match(/<a\b/g) ?? []).length <= 188);
   assert.ok((html.match(/<(?:a|button|summary|input)\b/g) ?? []).length <= 208);
   assert.ok(gzipSync(html).byteLength <= 40 * 1024);
-  const visible = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/i)[0]
-    .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, " ")
-    .replace(/<details(?![^>]*\bopen\b)[^>]*>[\s\S]*?<summary\b[^>]*>([\s\S]*?)<\/summary>[\s\S]*?<\/details>/gi, " $1 ")
+  let visibleMain = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/i)[0]
+    .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, " ");
+  let previous;
+  do {
+    previous = visibleMain;
+    visibleMain = visibleMain.replace(/<details\b([^>]*)>((?:(?!<details\b)[\s\S])*?)<\/details>/gi, (_, attributes, body) => (
+      /\bopen(?:\s|=|$)/i.test(attributes) ? body : body.match(/<summary\b[^>]*>([\s\S]*?)<\/summary>/i)?.[1] ?? ""
+    ));
+  } while (visibleMain !== previous);
+  const visible = visibleMain
     .replace(/<[^>]+>/g, " ").replace(/&(?:#x?[0-9a-f]+|[a-z]+);/gi, " ")
     .trim().split(/\s+/);
-  assert.ok(visible.length >= 1700 && visible.length <= 3000, `Visible words: ${visible.length}`);
+  assert.ok(visible.length >= 600 && visible.length <= 2200, `Visible words: ${visible.length}`);
   const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(ids).size, ids.length, "SVG and accessible IDs must be unique");
 });
@@ -93,8 +99,14 @@ test("review fixes preserve one-step source access and a bounded decorative laye
   assert.equal((feature.match(/class="source-records__details" open=""/g) ?? []).length, 2);
   assert.equal((feature.match(/class="source-records__link"/g) ?? []).length, 7);
   assert.ok(/data-contribution-sculpture="true"/.test(feature));
-  assert.match(html, /class="cap-hero"/);
-  assert.match(html, /class="cap-feature-art"/);
+  const stories = [...html.matchAll(/<article class="landing-project"[\s\S]*?<\/article>/g)].map(([story]) => story);
+  assert.equal(stories.length, 4);
+  for (const story of stories) {
+    assert.ok(story.indexOf("<h3") < story.indexOf("<figure"));
+    assert.match(story, /class="source-records__details" open=""/);
+    assert.match(story, /Read the reviewed change/);
+    assert.match(story, /See the working code/);
+  }
   const css = await read("public/living-systems.css");
   assert.match(css, /\.living-feature__sources \.lineage-field__fallback \{ display: block; \}/);
   assert.match(css, /\.hope-brand \.living-feature__actions a\.living-feature__action \{[^}]*background: #e1e8c4; color: #102820;/);
@@ -104,14 +116,16 @@ test("review fixes preserve one-step source access and a bounded decorative laye
 });
 
 test("homepage-only styling adds no scroll simulation or hidden-content entrance", async () => {
-  const paths = ["public/portfolio-v2.css", "public/portfolio-v3.css", "public/interactions.css", "public/living-systems.css"];
+  const paths = ["public/portfolio-v2.css", "public/portfolio-v3.css", "public/interactions.css", "public/living-systems.css", "public/living-architecture.css", "public/landing-story.css"];
   const styles = await Promise.all(paths.map(read));
   assert.ok(styles.reduce((sum, css) => sum + gzipSync(css).byteLength, 0) <= 47 * 1024);
-  const css = styles.at(-1);
+  const css = styles.slice(3).join("\n");
   assert.doesNotMatch(css, /infinite|backdrop-filter|mix-blend-mode|animation-timeline|scroll-timeline|opacity:\s*0[;}]/);
   assert.match(css, /prefers-reduced-motion: reduce/);
   assert.match(css, /\[data-art-static\]/);
   assert.match(css, /--mobile-x/);
   assert.match(css, /min-height: 44px/);
-  assert.match(html, /living-systems\.css\?v=20260930-clarity/);
+  assert.match(html, /living-systems\.css\?v=20261001-philosophy/);
+  assert.match(html, /living-architecture\.css\?v=20261003-palette/);
+  assert.match(html, /landing-story\.css\?v=20261003-badge-surface/);
 });

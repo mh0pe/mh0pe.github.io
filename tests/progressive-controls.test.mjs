@@ -57,10 +57,12 @@ test("selected projects explain individual contribution and models lead to a con
     assert.ok(study.contributionSummary.split(/\s+/).length <= 18);
   }
   const home = await readFile(new URL("app/page.tsx", root), "utf8");
-  assert.match(home, /<strong>My contribution<\/strong> \{caseStudy.contributionSummary\}/);
-  const { default: Home } = await tsImport(new URL("app/page.tsx", root).href, import.meta.url);
-  const html = renderToStaticMarkup(createElement(Home));
+  assert.match(home, /<strong>My contribution<\/strong> \{project\.contributionSummary\}/);
+  const html = (await readFile(new URL("pages-dist/index.html", root), "utf8")).replaceAll("<!-- -->", "");
   assert.equal((html.match(/<strong>My contribution<\/strong>/g) ?? []).length, 4);
+  for (const study of caseStudies) {
+    assert.ok(html.includes(study.contributionSummary), study.id);
+  }
   assert.ok((html.match(/<(?!\/|!)[A-Za-z][^>]*>/g) ?? []).length <= 1850);
   const css = await readFile(new URL("public/interactions.css", root), "utf8");
   assert.match(css, /\.hope-story__contribution \{[^}]*color: var\(--hope-porcelain\)/);

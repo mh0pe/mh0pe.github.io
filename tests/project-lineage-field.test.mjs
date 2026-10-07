@@ -71,6 +71,6 @@ test("PAUL and SEED remain distinct and shared project links are deduplicated", 
 test("source links keep phone labels, target sizes, contrast and visible focus", () => {
   const css = readFileSync(new URL("../public/portfolio-v3.css", import.meta.url), "utf8");
   assert.match(css, /\.hope-brand \.source-records__link \{[^}]*min-height: 44px/);
-  assert.match(css, /\.hope-brand \.source-records :focus-visible \{[^}]*outline: 2px solid #f3efe6/);
+  assert.match(css, /\.hope-brand \.source-records :focus-visible \{[^}]*outline: 2px solid #f7f5f0/);
   assert.doesNotMatch(css, /\.source-records[^{}]*\{[^}]*display:\s*none/);
 });

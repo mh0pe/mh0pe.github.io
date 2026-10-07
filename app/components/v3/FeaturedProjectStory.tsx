@@ -18,6 +18,18 @@ export default function FeaturedProjectStory() {
         </div>
       </div>
       <CapabilityFeatureArt />
+      <section className="living-feature__recent" aria-label="Recent contributions to Automated Security Helper">
+        <p className="living-feature__eyebrow">Recent contributions</p>
+        <ul>
+          {project.recentWork.map((work) => (
+            <li key={work.sourceId}>
+              <h4>{work.title}</h4>
+              <p>{work.summary}</p>
+              <SourceLink sourceId={work.sourceId}>Read the change</SourceLink>
+            </li>
+          ))}
+        </ul>
+      </section>
       <details className="living-feature__sources">
         <summary>View code and reviewed changes</summary>
         <ProjectLineageField caseStudy={project} compact inlineSources />

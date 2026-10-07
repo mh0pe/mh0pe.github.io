@@ -7,19 +7,21 @@
 }
 
 :root {
-  --night: #071116;
-  --night-raised: #0c191f;
-  --night-soft: #112229;
-  --paper: #f4efe4;
-  --paper-muted: #d4d0c7;
-  --ink: #152127;
-  --cyan: #68e4ea;
-  --coral: #ff7b5d;
-  --lime: #c9f36b;
-  --line: rgb(244 239 228 / 20%);
-  --line-strong: rgb(244 239 228 / 38%);
-  --paper-line: rgb(21 33 39 / 22%);
-  --ink-muted: #426b70;
+  --night: #101828;
+  --night-raised: #19263d;
+  --night-soft: #24324b;
+  --paper: #f7f5f0;
+  --paper-muted: #c6d1e5;
+  --ink: #182239;
+  --cyan: #aebdff;
+  --coral: #f4b29b;
+  --lime: #97d2c1;
+  --gold: #f3d49c;
+  --violet: #ccb4eb;
+  --line: rgb(247 245 240 / 20%);
+  --line-strong: rgb(247 245 240 / 38%);
+  --paper-line: rgb(24 34 57 / 22%);
+  --ink-muted: #536078;
   --shell: min(100% - 2.5rem, 78rem);
   --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;

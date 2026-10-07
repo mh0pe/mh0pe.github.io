@@ -60,13 +60,7 @@ function attributes(source, name) {
   );
 }
 
-function journeyLinkAttributes(source) {
-  return [...source.matchAll(/<a href="#[^"]+" data-journey-section="([^"]+)"/g)].map(
-    (match) => match[1],
-  );
-}
-
-function createHarness(source, linkAttributes, sectionKeys) {
+function createHarness(source, linkAttributes, sectionKeys, { hasRail = true } = {}) {
   const links = linkAttributes.map(
     (journeySection) =>
       new ElementHarness({
@@ -103,7 +97,7 @@ function createHarness(source, linkAttributes, sectionKeys) {
   document.hidden = false;
   document.querySelector = (selector) => {
     if (selector === ".site-header") return header;
-    if (selector === "[data-journey-rail]") return rail;
+    if (selector === "[data-journey-rail]") return hasRail ? rail : null;
     return null;
   };
   document.querySelectorAll = (selector) => {
@@ -137,9 +131,8 @@ function createHarness(source, linkAttributes, sectionKeys) {
       observer.targets.length === sections.length &&
       observer.targets.every((target) => sections.includes(target)),
   );
-  assert.ok(journeyObserver, "the journey uses one IntersectionObserver for its sections");
-
   function show(sectionKey) {
+    assert.ok(journeyObserver, "the journey uses one IntersectionObserver for its sections");
     journeyObserver.callback(
       sections.map((section) => ({
         target: section,
@@ -149,35 +142,22 @@ function createHarness(source, linkAttributes, sectionKeys) {
     );
   }
 
-  return { header, links, show, window };
+  return { header, links, journeyObserver, observers, show, window };
 }
 
-test("journey groups related sections while keeping one current link and accurate progress", async () => {
-  const [source, page] = await Promise.all([
-    readFile(new URL("../public/interactions.js", import.meta.url), "utf8"),
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-  ]);
-  const linkAttributes = journeyLinkAttributes(page);
-  const sectionKeys = attributes(page, "data-home-section");
-  const coveredKeys = new Set(linkAttributes.flatMap((value) => value.split(/\s+/)));
-  assert.deepEqual(
-    sectionKeys.filter((key) => !coveredKeys.has(key)),
-    [],
-    "every homepage section is represented by a journey link",
-  );
-
+test("optional journey rails track grouped sections with one current link and accurate progress", async () => {
+  const source = await readFile(new URL("../public/interactions.js", import.meta.url), "utf8");
+  const linkAttributes = ["opening outcomes", "selected-work", "philosophy", "context"];
+  const sectionKeys = ["opening", "outcomes", "selected-work", "philosophy", "context"];
   const harness = createHarness(source, linkAttributes, sectionKeys);
-  const modelsIndex = linkAttributes.findIndex((value) => value.split(/\s+/).includes("composition"));
-  const approachIndex = linkAttributes.findIndex((value) => value.split(/\s+/).includes("practice-detail"));
-  assert.notEqual(modelsIndex, -1);
-  assert.notEqual(approachIndex, -1);
-
-  for (const section of ["composition", "practice-detail", "practice", "practice-detail", "composition"]) {
+  assert.ok(harness.journeyObserver);
+  assert.equal(harness.observers.filter((observer) => observer.targets.length > 0).length, 1);
+  for (const section of [...sectionKeys, ...sectionKeys.toReversed()]) {
     harness.show(section);
     const current = harness.links
       .map((link, index) => (link.getAttribute("aria-current") === "location" ? index : -1))
       .filter((index) => index >= 0);
-    const expected = section === "composition" ? modelsIndex : approachIndex;
+    const expected = linkAttributes.findIndex((value) => value.split(/\s+/).includes(section));
     assert.deepEqual(current, [expected], `${section} has exactly one current journey link`);
     assert.equal(
       harness.header.style.properties.get("--page-progress"),
@@ -188,10 +168,28 @@ test("journey groups related sections while keeping one current link and accurat
   assert.equal(
     harness.window.listeners.get("scroll")?.length ?? 0,
     0,
-    "the homepage journey needs no scroll listener when no motion film is present",
+    "section tracking needs no scroll listener when no motion film is present",
   );
   assert.doesNotMatch(
     source.slice(source.indexOf("function observeJourney"), source.indexOf("function connectMobileNavigation")),
     /getBoundingClientRect|requestAnimationFrame|addEventListener\(["']scroll/,
   );
+});
+
+test("the landing page uses native anchors without an unnecessary journey observer", async () => {
+  const [source, page] = await Promise.all([
+    readFile(new URL("../public/interactions.js", import.meta.url), "utf8"),
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(page, /data-journey-rail|data-journey-section/);
+  for (const id of ["work", "philosophy", "experience", "connect"]) {
+    assert.match(page, new RegExp(`\\bid="${id}"`), `${id} should be a native navigation target`);
+  }
+
+  const harness = createHarness(source, [], attributes(page, "data-home-section"), { hasRail: false });
+  assert.equal(harness.journeyObserver, undefined);
+  assert.equal(harness.observers.filter((observer) => observer.targets.length > 0).length, 0);
+  assert.equal(harness.header.getAttribute("data-page-progress"), null);
+  assert.equal(harness.header.style.properties.has("--page-progress"), false);
+  assert.equal(harness.window.listeners.get("scroll")?.length ?? 0, 0);
 });

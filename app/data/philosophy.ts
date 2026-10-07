@@ -1,0 +1,42 @@
+export const developmentPhilosophy = [
+  {
+    id: "constraints",
+    title: "Start with the real constraint.",
+    summary: "Understand what must hold before choosing how to build.",
+    body: "I define what needs to change before choosing the technology. Security boundaries, platform behavior, and the people who will operate the result shape the design.",
+    example: "Preserving behavior across platforms in Nix",
+    href: "/work/nix-windows/#stage-constraint",
+  },
+  {
+    id: "meaning",
+    title: "Test the meaning, not just the execution.",
+    summary: "A passing check should answer the question it was meant to test.",
+    body: "A successful command is not the same as a correct outcome. I test the behavior that matters, including failure paths, so people can act on the result with confidence.",
+    example: "Protecting policy results in CloudFormation Guard",
+    href: "/work/cloudformation-guard/",
+  },
+  {
+    id: "contracts",
+    title: "Give shared behavior a shared contract.",
+    summary: "Make improvements carry across tools instead of maintaining copies.",
+    body: "When several tools need the same capability, I look for a common model with explicit interfaces. That makes differences visible and lets improvements carry across implementations.",
+    example: "One definition across fifteen coding tools",
+    href: "/decisions/#generate-agent-integrations",
+  },
+  {
+    id: "judgment",
+    title: "Use AI without outsourcing judgment.",
+    summary: "Models extend the work I can do. Responsibility stays with me.",
+    body: "I use models and coordinated agents to explore alternatives and carry out focused work. I remain responsible for the architectural choices and for checking what the system actually does. Shared context and review make agent teams useful; lessons should improve the team's playbook.",
+    example: "Context and handoffs for agent teams",
+    href: "/work/agent-systems/",
+  },
+  {
+    id: "continuity",
+    title: "Leave a system others can continue.",
+    summary: "The reasoning should survive the person or session that produced it.",
+    body: "I favor small, reviewable changes and durable context. Another person should be able to maintain the system, challenge the decision, or build something I had not anticipated.",
+    example: "A reviewable SVG implementation for Lightpanda",
+    href: "/decisions/#reviewable-svg-stack",
+  },
+] as const;

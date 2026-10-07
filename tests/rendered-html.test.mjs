@@ -2,8 +2,18 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { gzipSync } from "node:zlib";
+import { tsImport } from "tsx/esm/api";
 
 const root = new URL("../", import.meta.url);
+const load = (path) => tsImport(new URL(path, root).href, import.meta.url);
+const { developmentPhilosophy } = await load("app/data/philosophy.ts");
+const { publicCredentials, credentialsByCategory } = await load("app/data/credentials.ts");
+const { organizationContexts } = await load("app/data/portfolio-v2.ts");
+const professionalHistory = JSON.parse(await readFile(new URL("app/data/professional-history.json", root), "utf8"));
+
+function escapeHtml(value) {
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#x27;");
+}
 
 async function render(pathname = "/") {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -21,24 +31,35 @@ async function render(pathname = "/") {
 
 function visibleMain(html) {
   const main = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/i)?.[0] ?? "";
-  return main
+  let visible = main
     .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
-    .replace(
-      /<details(?![^>]*\bopen\b)[^>]*>[\s\S]*?<summary\b[^>]*>([\s\S]*?)<\/summary>[\s\S]*?<\/details>/gi,
-      " $1 ",
-    )
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ");
+  // Resolve inner disclosures first: an open source detail inside a closed
+  // project story is still hidden until the visitor opens the outer story.
+  let previous;
+  do {
+    previous = visible;
+    visible = visible.replace(/<details\b([^>]*)>((?:(?!<details\b)[\s\S])*?)<\/details>/gi, (_, attributes, body) => (
+      /\bopen(?:\s|=|$)/i.test(attributes) ? body : body.match(/<summary\b[^>]*>([\s\S]*?)<\/summary>/i)?.[1] ?? ""
+    ));
+  } while (visible !== previous);
+  return visible
     .replace(/<[^>]+>/g, " ")
     .replace(/&(?:#x?[0-9a-f]+|[a-z]+);/gi, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
 
+test("visible-word measurement excludes nested content inside a closed story", () => {
+  assert.equal(visibleMain('<main>Opening <details><summary>Project</summary>Hidden <details open><summary>Code</summary>Also hidden</details>Still hidden</details> Ending</main>'), "Opening Project Ending");
+  assert.equal(visibleMain('<main><details open><summary>Project</summary>Visible <details><summary>Code</summary>Hidden</details></details></main>'), "Project Visible Code");
+});
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^$()|[\]\\]/g, "\\$&");
 }
 
-test("renders the contribution-led workbench homepage contract", async () => {
+test("renders one visual landing journey with four distinct contribution stories", async () => {
   const response = await render("/");
   assert.equal(response.status, 200);
   const html = (await response.text()).replaceAll("<!-- -->", "");
@@ -48,11 +69,8 @@ test("renders the contribution-led workbench homepage contract", async () => {
   );
   assert.deepEqual(sections, [
     "opening",
-    "outcomes",
     "selected-work",
-    "practice",
-    "practice-detail",
-    "composition",
+    "philosophy",
     "context",
   ]);
 
@@ -60,9 +78,9 @@ test("renders the contribution-led workbench homepage contract", async () => {
   assert.match(html, /Principal AI Architect/i);
   assert.match(
     html,
-    /I help teams build, run, and improve AI, security, and cloud platforms at enterprise scale\./i,
+    /I help teams make AI, security, and cloud platforms work together at enterprise scale\./i,
   );
-  const visibleText = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  const visibleText = visibleMain(html);
   assert.equal(
     (
       visibleText.match(
@@ -73,35 +91,33 @@ test("renders the contribution-led workbench homepage contract", async () => {
   );
   assert.match(
     html,
-    /One governed workflow helps teams plan, run, and trace security checks across many projects/i,
+    /Coordinate checks across projects, bring the findings together, and keep each project(?:&#x27;|')s context intact/i,
   );
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
   assert.match(html, /<main id="main-content" tabindex="-1" data-route="home">/i);
   assert.doesNotMatch(html, /data-visualization="hope-line"/i);
-  assert.match(html, /What I added\.<br\s*\/?><em>What it enables\.<\/em>/i);
-  assert.equal(
-    new Set([...html.matchAll(/data-cap-project="([^"]+)"/g)].map((match) => match[1])).size,
-    3,
+  assert.match(html, /The pieces matter\.<br\s*\/?>(?:<!-- -->)?So does how they fit\./i);
+  assert.deepEqual(
+    [...html.matchAll(/data-story-kind="([^"]+)"/g)].map((match) => match[1]),
+    ["security", "policy", "windows", "continuity"],
   );
   for (const kind of ["project", "change", "commit", "file"]) {
     assert.ok(html.includes(`data-source-kind="${kind}"`), kind);
   }
-  assert.equal((html.match(/type="radio"/g) ?? []).length, 12);
-  assert.equal((html.match(/checked=""/g) ?? []).length, 4);
-  assert.equal(
-    (html.match(/class="cap-change"/g) ?? []).length,
-    9,
-  );
-  const contributions = [...html.matchAll(/<section class="cap-change"[\s\S]*?<\/section>/g)];
+  const contributions = [...html.matchAll(/<article class="landing-project"[\s\S]*?<\/article>/g)];
+  assert.equal(contributions.length, 4);
   for (const [contribution] of contributions) {
-    assert.ok(contribution.indexOf("<h3") < contribution.indexOf('class="cap-scene"'));
-    for (const role of ["Starting point", "My contribution", "Enables"]) {
-      assert.ok(contribution.includes(`<span class="cap-scene__role">${role}</span>`), role);
-    }
-    assert.match(contribution, /Read this contribution on GitHub/i);
+    const titleId = contribution.match(/aria-labelledby="([^"]+)"/)?.[1];
+    assert.ok(titleId && contribution.includes(`<h3 id="${titleId}">`), "each story has a programmatic heading");
+    assert.ok(contribution.indexOf("<h3") < contribution.indexOf("<figure"), "the outcome precedes its illustration");
+    assert.match(contribution, /<strong>My contribution<\/strong>/);
+    assert.match(contribution, /<summary>Explore the contribution<\/summary>/);
+    assert.match(contribution, /See the working code/);
+    assert.match(contribution, /Read the reviewed change/);
+    assert.match(contribution, /class="source-records__details" open=""/);
+    assert.match(contribution, /href="\/work\/[a-z-]+\/">Read the full project story/);
   }
-  assert.match(html, /the contributions are not steps that must be used in sequence/i);
-  assert.doesNotMatch(html, /Neutral bricks provide context|cap-tower|data-lineage-field/);
+  assert.doesNotMatch(html, /Neutral bricks provide context|cap-tower|data-lineage-field|data-cap-project|class="cap-change"/);
 });
 
 test("keeps the homepage concise, inspectable, and free of retired visual islands", async () => {
@@ -117,8 +133,8 @@ test("keeps the homepage concise, inspectable, and free of retired visual island
   const buttons = html.match(/<button\b/gi) ?? [];
   const summaries = html.match(/<summary\b/gi) ?? [];
 
-  assert.ok(words.length >= 1_700, "homepage should contain at least 1,700 visible words; found " + words.length);
-  assert.ok(words.length <= 3_000, "homepage should contain at most 3,000 visible words; found " + words.length);
+  assert.ok(words.length >= 600, "the visual landing page should retain meaningful visible project explanations; found " + words.length);
+  assert.ok(words.length <= 2_200, "homepage should contain at most 2,200 visible words; found " + words.length);
   assert.ok(
     links.length <= 188,
     "homepage should contain at most 188 links, including complete accessible lineage fallbacks; found " +
@@ -153,29 +169,90 @@ test("renders contribution scope, model context, independence, and compatibility
     "range",
     "frontier",
     "practice",
+    "philosophy",
     "record",
     "trust",
     "agent-collaboration",
     "contribution-lineage",
+    "experience",
+    "credentials",
+    "connect",
   ]) {
     assert.match(html, new RegExp('id="' + anchor + '"'));
   }
 
   assert.match(
     html,
-    /<section class="hope-act hope-work" id="work"[^>]*aria-labelledby="work-title"/i,
+    /<section class="landing-work" id="work"[^>]*aria-labelledby="work-title"/i,
   );
   assert.doesNotMatch(html, /<span[^>]+id="work"/i);
 
-  assert.match(html, /Selected changes/i);
-  assert.match(html, /Where model collaboration appears in the work/i);
-  assert.match(html, /Use models to extend judgment without losing accountability\./i);
-  assert.match(html, /href="\/models\/#agent-collaboration"[^>]*><span>Explore model collaboration<\/span>/i);
+  assert.match(html, /Selected work/i);
+  assert.match(html, /Extend what a team can do\./i);
+  assert.match(html, /Use AI without outsourcing judgment\./i);
+  assert.match(html, /href="\/models\/#agent-collaboration"[^>]*>Explore how I work with models/i);
   assert.match(html, /not statements made on behalf of any current or former employer/i);
   assert.match(html, /href="\/work\/automated-security-helper\//i);
   assert.match(html, /href="https:\/\/github\.com\//i);
   assert.match(html, /GitHub · mh0pe[\s\S]{0,240}Madison Hope Steiner on GitHub as mh0pe/i);
   assert.doesNotMatch(html, /Live upstream|Model spectrum|trusted by/i);
+});
+
+test("landing page contains complete philosophy, organizational scope and earned credentials without another route", async () => {
+  const html = (await readFile(new URL("pages-dist/index.html", root), "utf8")).replaceAll("<!-- -->", "");
+  const principles = [...html.matchAll(/<details class="landing-principle"[\s\S]*?<\/details>/g)].map(([value]) => value);
+  assert.equal(principles.length, developmentPhilosophy.length);
+  for (const [index, principle] of developmentPhilosophy.entries()) {
+    assert.ok(principles[index].includes(escapeHtml(principle.title)), principle.title);
+    assert.ok(principles[index].includes(escapeHtml(principle.body)), principle.id);
+    assert.ok(principles[index].includes(`href="${principle.href}"`), principle.href);
+  }
+  const employers = [...html.matchAll(/<details class="landing-employer"[\s\S]*?<\/details>/g)].map(([value]) => value);
+  assert.equal(employers.length, 10);
+  for (const [index, employer] of professionalHistory.employers.entries()) {
+    assert.ok(employers[index].includes(escapeHtml(employer.name)), employer.name);
+    assert.ok(employers[index].includes(escapeHtml(employer.scope)), employer.name);
+  }
+  for (const context of organizationContexts) {
+    assert.ok(html.includes(escapeHtml(context.label)), context.label);
+    assert.ok(html.includes(escapeHtml(context.scope)), context.id);
+  }
+  assert.doesNotMatch(html, /\b(?:Visa|Bank of America|Toyota|Nissan|Fidelity Management)\b/i);
+
+  const credentialSection = html.match(/<section\b[^>]*\bid="credentials"[^>]*>[\s\S]*?(?=<span\b[^>]*\bid="connect")/)?.[0];
+  assert.ok(credentialSection, "the full learning record is a homepage section");
+  assert.match(credentialSection, /class="landing-credential-groups"/);
+  assert.doesNotMatch(credentialSection, /<details\b|\shidden(?:\s|=|>)|aria-hidden="true"/);
+  const groups = [...credentialSection.matchAll(/<section class="landing-credential-group"[^>]*>[\s\S]*?<\/section>/g)].map(([group]) => group);
+  assert.equal(groups.length, credentialsByCategory.length);
+  let badgeCount = 0;
+  for (const [index, category] of credentialsByCategory.entries()) {
+    const group = groups[index];
+    assert.ok(group.includes(`aria-labelledby="badges-${category.id}"`));
+    assert.ok(group.includes(`<h3 id="badges-${category.id}">${escapeHtml(category.label)}</h3>`));
+    const gallery = group.match(/<ul class="landing-credential-gallery">([\s\S]*?)<\/ul>/)?.[1];
+    assert.ok(gallery, `${category.id} has a visible badge gallery`);
+    const badges = [...gallery.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map(([, badge]) => badge);
+    assert.equal(badges.length, category.credentials.length);
+    badgeCount += badges.length;
+    for (const [badgeIndex, credential] of category.credentials.entries()) {
+      const badge = badges[badgeIndex];
+      assert.equal((badge.match(/<a\b/g) ?? []).length, 1, `${credential.id} has one complete badge link`);
+      assert.ok(badge.includes(`href="${credential.href}"`), credential.href);
+      assert.ok(badge.includes(`src="${credential.image}"`), `${credential.id} includes its local badge art`);
+      assert.ok(badge.includes(`<strong>${escapeHtml(credential.name)}</strong>`), credential.name);
+      assert.ok(badge.includes(`Earned ${credential.issued}`), credential.id);
+      assert.match(badge, /<img\b[^>]*\balt=""/);
+      assert.match(badge, /opens in a new tab/);
+    }
+  }
+  assert.equal(badgeCount, publicCredentials.length);
+  assert.equal(badgeCount, 25);
+  assert.equal((credentialSection.match(/<img\b/g) ?? []).length, 25);
+  assert.doesNotMatch(html, /landing-credential-list|landing-credential-highlights|Explore all 25 credentials earned/);
+  assert.doesNotMatch(html, /25 (?:active |current )?certifications|currently certified|certificate number|\b(?:expired|expiration|expires)\b/i);
+  const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(new Set(ids).size, ids.length, "the complete landing page must have unique anchors and accessible IDs");
 });
 
 test("renders every primary redesign route with its promised content", async () => {
@@ -189,7 +266,7 @@ test("renders every primary redesign route with its promised content", async () 
     ["/about", /Experience across industries/i],
     ["/credentials", /Learning is part of the architecture/i],
     ["/decisions", /The trade-off is part of the architecture/i],
-    ["/method", /How I approach architecture/i],
+    ["/method", /Build capability\. Keep responsibility\./i],
     ["/capabilities", /Tools other teams can use/i],
     ["/models", /The models I work with/i],
   ];
@@ -323,7 +400,9 @@ test("renders case pages with an outcome H1 and a six-stage operating path", asy
     }
     assert.match(html, /From constraint to a system a team can own/i);
     assert.match(html, /Inspect the work behind the result/i);
-    assert.doesNotMatch(html, /Scan[\s\S]*Read[\s\S]*Verify/i);
+    const headings = [...html.matchAll(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/gi)]
+      .map((match) => match[1].replace(/<[^>]+>/g, "").trim());
+    assert.ok(!headings.some((heading) => /^(Scan|Read|Verify)$/i.test(heading)), "use outcome-led headings instead of the retired generic steps");
   }
 });
 

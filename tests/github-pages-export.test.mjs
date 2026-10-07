@@ -63,23 +63,36 @@ test("exports every redesign route with production canonical metadata", async ()
   }
 });
 
-test("exports the contribution workbenches as a static, outcome-first document", async () => {
+test("exports the visual landing story as a static, outcome-first document", async () => {
   const html = await artifact("index.html");
   assert.match(
     html,
-    /I help teams build, run, and improve AI, security, and cloud platforms at enterprise scale\./i,
+    /I help teams make AI, security, and cloud platforms work together at enterprise scale\./i,
   );
-  assert.match(html, /data-home-section="outcomes"/i);
-  assert.equal((html.match(/class="cap-change"/g) ?? []).length, 9);
-  assert.equal((html.match(/type="radio"/g) ?? []).length, 12);
-  assert.equal((html.match(/checked=""/g) ?? []).length, 4);
-  for (const role of ["Starting point", "My contribution", "Enables"]) {
-    assert.ok(html.includes(`<span class="cap-scene__role">${role}</span>`), role);
+  assert.match(html, /data-home-section="selected-work"/i);
+  assert.deepEqual(
+    [...html.matchAll(/data-story-kind="([^"]+)"/g)].map((match) => match[1]),
+    ["security", "policy", "windows", "continuity"],
+  );
+  assert.equal((html.match(/<strong>My contribution<\/strong>/g) ?? []).length, 4);
+  assert.equal((html.match(/<summary>Explore the contribution<\/summary>/g) ?? []).length, 4);
+  for (const id of ["automated-security-helper", "cloudformation-guard", "nix-windows", "agent-systems"]) {
+    assert.ok(html.includes(`id="project-${id}"`), id);
+    assert.ok(html.includes(`href="/work/${id}/"`), `${id} remains shareable`);
   }
   for (const kind of ["project", "change", "commit", "file"]) {
     assert.ok(html.includes(`data-source-kind="${kind}"`), kind);
   }
-  assert.match(html, /Read this contribution on GitHub/i);
+  assert.match(html, /Read the reviewed change/i);
+  assert.equal((html.match(/class="landing-principle"/g) ?? []).length, 5);
+  assert.equal((html.match(/class="landing-employer"/g) ?? []).length, 10);
+  assert.match(html, /class="landing-credential-groups"/);
+  const galleries = [...html.matchAll(/<ul class="landing-credential-gallery">([\s\S]*?)<\/ul>/g)].map(([, gallery]) => gallery);
+  assert.equal(galleries.length, 4);
+  assert.equal(galleries.reduce((count, gallery) => count + (gallery.match(/<img\b/g) ?? []).length, 0), 25);
+  assert.equal(galleries.reduce((count, gallery) => count + (gallery.match(/<li\b/g) ?? []).length, 0), 25);
+  assert.doesNotMatch(html, /landing-credential-list|landing-credential-highlights|Explore all 25 credentials earned/);
+  assert.doesNotMatch(html, /class="cap-change"|data-cap-project=/);
   assert.match(
     html,
     /Bringing\s*(?:<em[^>]*>)?Hope(?:<\/em>)?\s*to distributed systems\./i,

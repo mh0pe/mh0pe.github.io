@@ -62,8 +62,8 @@ function artifactForPathname(pathname) {
 
 test("light-route semantic colors meet WCAG AA", async () => {
   const css = await readFile(new URL("public/portfolio-v3.css", root), "utf8");
-  const surfaces = ["#f3efe6", "#e9e3d8"];
-  const textColors = ["#59615d", "#596825", "#3f56a0", "#985037"];
+  const surfaces = ["#f7f5f0", "#e9edf5"];
+  const textColors = ["#536078", "#845022", "#3549bf", "#a04732"];
 
   for (const foreground of textColors) {
     for (const background of surfaces) {
@@ -104,7 +104,9 @@ test("ARIA stays on semantic elements and forced colors remove decorative motifs
 
   assert.doesNotMatch(caseStudy, /className="case-hero__signal"\s+aria-label=/);
   assert.doesNotMatch(explorer, /className="attribution-chart"[\s\S]{0,100}aria-labelledby=/);
-  assert.match(header, /aria-current=\{current === item\.key \? "location"/);
+  assert.doesNotMatch(header, /aria-current=/, "landing anchors must not announce a supporting page as current");
+  assert.match(header, /data-active-section=\{activeKey === item\.key \? "true" : undefined\}/);
+  assert.match(header, /<nav className="primary-nav" aria-label="Primary navigation">/);
   assert.match(
     css,
     /@media \(forced-colors: active\)\s*\{[\s\S]*?\.route-motif\s*\{[\s\S]*?display:\s*none !important/,
@@ -190,15 +192,15 @@ test("fixed dark chambers keep readable foregrounds and mobile-safe lineage link
 
   assert.match(
     credentialCss,
-    /\.hope-brand \.credential-overview\s*\{[\s\S]*?background:\s*#0b100e;[\s\S]*?color:\s*#f3efe6;[\s\S]*?color-scheme:\s*dark;/,
+    /\.hope-brand \.credential-overview\s*\{[\s\S]*?background:\s*#101828;[\s\S]*?color:\s*#f7f5f0;[\s\S]*?color-scheme:\s*dark;/,
   );
   assert.match(
     brandCss,
-    /\.lineage-field\s*\{[\s\S]*?background:[\s\S]*?#091314;[\s\S]*?color-scheme:\s*dark;/,
+    /\.lineage-field\s*\{[\s\S]*?background:[\s\S]*?#121e32;[\s\S]*?color-scheme:\s*dark;/,
   );
   assert.match(
     brandCss,
-    /\.hope-brand \.source-records :focus-visible\s*\{[^}]*outline:\s*2px solid #f3efe6;/,
+    /\.hope-brand \.source-records :focus-visible\s*\{[^}]*outline:\s*2px solid #f7f5f0;/,
   );
   assert.match(
     brandCss,
@@ -210,27 +212,27 @@ test("fixed dark chambers keep readable foregrounds and mobile-safe lineage link
   );
   assert.match(
     interactionCss,
-    /\.motion-film\s*\{[\s\S]*?background:\s*#0b100e;[\s\S]*?color:\s*#f3efe6;[\s\S]*?color-scheme:\s*dark;/,
+    /\.motion-film\s*\{[\s\S]*?background:\s*#101828;[\s\S]*?color:\s*#f7f5f0;[\s\S]*?color-scheme:\s*dark;/,
   );
   assert.match(
     brandCss,
-    /\.hope-brand \.hope-work \.hope-act__summary\s*\{[\s\S]*?color:\s*rgb\(243 239 230 \/ 78%\);/,
+    /\.hope-brand \.hope-work \.hope-act__summary\s*\{[\s\S]*?color:\s*rgb\(247 245 240 \/ 78%\);/,
   );
 });
 
 test("paper-surface status colors remain AA-readable in both themes", async () => {
   const css = await readFile(new URL("public/portfolio-v3.css", root), "utf8");
   const lightPairs = [
-    ["#59615d", "#e9e3d8"],
-    ["#4b6100", "#e9e3d8"],
-    ["#355d64", "#e9e3d8"],
-    ["#985037", "#e9e3d8"],
+    ["#536078", "#e9edf5"],
+    ["#21664f", "#e9edf5"],
+    ["#3549bf", "#e9edf5"],
+    ["#a04732", "#e9edf5"],
   ];
   const darkPairs = [
-    ["#aeb8b2", "#18201c"],
-    ["#c5dc79", "#18201c"],
-    ["#a9b6ff", "#18201c"],
-    ["#f0a084", "#18201c"],
+    ["#b6c2d8", "#1b263b"],
+    ["#ffd09c", "#1b263b"],
+    ["#b8c5ff", "#1b263b"],
+    ["#f4b29b", "#1b263b"],
   ];
 
   for (const [foreground, background] of [...lightPairs, ...darkPairs]) {

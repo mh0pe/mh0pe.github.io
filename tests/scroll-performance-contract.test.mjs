@@ -126,9 +126,9 @@ test("mobile presentation linearizes the portfolio while retaining bounded data 
 test("interactive surfaces retain legible contrast, focus, and touch targets", async () => {
   const css = await readFile(new URL("public/portfolio-v3.css", root), "utf8");
 
-  assert.match(css, /--hope-green-dark:\s*#596825/);
+  assert.match(css, /--hope-green-dark:\s*#845022/);
   assert.match(css, /\.hope-brand h1,[\s\S]*?hyphens:\s*none[\s\S]*?overflow-wrap:\s*normal[\s\S]*?text-wrap:\s*balance[\s\S]*?word-break:\s*normal/);
-  assert.match(css, /\.hope-composition :focus-visible\s*\{[\s\S]*?outline-color:\s*#f5f0e7/);
+  assert.match(css, /\.hope-composition :focus-visible\s*\{[\s\S]*?outline-color:\s*#f7f5f0/);
   assert.match(css, /\.hope-line-chamber :focus-visible,[\s\S]*?outline-color:\s*var\(--hope-green\)/);
   assert.match(css, /\.hope-line__index-actions a\s*\{[\s\S]*?min-height:\s*44px/);
   assert.match(css, /\.hope-brand \.site-footer nav a\s*\{[\s\S]*?min-height:\s*44px/);

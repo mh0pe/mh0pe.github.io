@@ -41,6 +41,7 @@ next-env.d.ts
 *.tsbuildinfo
 /dist/
 /pages-dist/
+/public/route-styles/
 /.wrangler/
 /build/local-preview/
 /outputs/

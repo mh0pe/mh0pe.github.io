@@ -34,7 +34,7 @@
     if (root.style.colorScheme !== theme) root.style.colorScheme = theme;
     synchronizeControls(theme);
     document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
-      meta.setAttribute("content", theme === "dark" ? "#111714" : "#f3efe6");
+      meta.setAttribute("content", theme === "dark" ? "#111827" : "#f7f5f0");
     });
   }
 

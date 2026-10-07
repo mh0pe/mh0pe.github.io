@@ -10,6 +10,7 @@ import {
 } from "node:fs/promises";
 import { dirname, posix, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { compactExportedStylesheets } from "./export-stylesheets.mjs";
 
 const EXPECTED_ORIGIN = "https://mh0pe.github.io";
 const toolsDirectory = dirname(fileURLToPath(import.meta.url));
@@ -225,6 +226,17 @@ function stripVinextRuntime(html) {
     });
 }
 
+function prioritizeVisibleContent(html) {
+  // The complete server-rendered page does not need hydration to paint. Keep
+  // fetching its interactive code, but do not let speculative module hints
+  // compete at the same priority as render-blocking CSS and visible fonts.
+  return html.replace(/<link\b[^>]*>/gi, (tag) => (
+    attribute(tag, "rel")?.toLowerCase() === "modulepreload" && attribute(tag, "fetchpriority") === null
+      ? tag.replace(/^<link\b/i, '<link fetchpriority="low"')
+      : tag
+  ));
+}
+
 function escapeHtmlAttribute(value) {
   return value
     .replaceAll("&", "&amp;")
@@ -283,9 +295,18 @@ function normalizeNotFoundMetadata(html) {
     })
     .join("");
 
+  // Recovery links are literal in the serialized fallback to avoid preloading
+  // them on healthy routes. The standalone 404 can discover them in its head.
+  let recoveryStyles = "";
+  normalized = normalized.replace(/<div\b[^>]*data-recovery-styles="true"[^>]*>([\s\S]*?)<\/div>/i, (_, links) => {
+    recoveryStyles = links;
+    return "";
+  });
+  invariant(recoveryStyles && htmlTags(recoveryStyles, "link").length === 3, "Recovery styles are missing.");
+
   return normalized.replace(
     /<\/head>/i,
-    `${missingMetadata}<title>${NOT_FOUND_TITLE}</title></head>`,
+    `${missingMetadata}<title>${NOT_FOUND_TITLE}</title>${recoveryStyles}</head>`,
   );
 }
 
@@ -543,6 +564,7 @@ async function main() {
     recursive: true,
     filter: shouldCopyClientAsset,
   });
+  await compactExportedStylesheets(outputDirectory);
 
   const workerUrl = pathToFileURL(serverEntry);
   workerUrl.searchParams.set("github-pages-export", `${process.pid}-${Date.now()}`);
@@ -579,7 +601,7 @@ async function main() {
 
   const exportedRouteHtml = routeHtml.map((route) => ({
     ...route,
-    html: route.hydrate ? route.html : stripVinextRuntime(route.html),
+    html: route.hydrate ? prioritizeVisibleContent(route.html) : stripVinextRuntime(route.html),
   }));
   const exportedNotFoundHtml = normalizeNotFoundMetadata(notFoundHtml);
   invariant(

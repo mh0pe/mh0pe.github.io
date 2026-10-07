@@ -1,19 +1,17 @@
 import type { Metadata } from "next";
-
-import { Arrow, SourceLink } from "./components/v2/Evidence";
+import Image from "next/image";
+import { SourceLink } from "./components/v2/Evidence";
 import { RouteFrame } from "./components/v2/RouteFrame";
 import { ProfilePageData } from "./components/v2/StructuredData";
 import ProjectLineageField from "./components/v3/ProjectLineageField";
-import CapabilityBricks, { CapabilityHero } from "@/app/components/v3/CapabilityBricks";
-import FeaturedProjectStory from "./components/v3/FeaturedProjectStory";
-import { publicCredentials } from "./data/credentials";
+import { ArchitectureHero, ContributionScene } from "./components/v3/LivingArchitecture";
+import { developmentPhilosophy } from "./data/philosophy";
+import { credentialsByCategory } from "./data/credentials";
+import professionalHistory from "./data/professional-history.json";
 import {
   agentSystemsCaseStudy,
-  architectureDecisions,
   automatedSecurityHelperFlagship,
-  capabilityIndexRows,
   cloudFormationGuardCaseStudy,
-  homepageCapabilityIds,
   nixWindowsCaseStudy,
   organizationContexts,
   publicSources,
@@ -23,201 +21,178 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://mh0pe.github.io/" },
 };
 
-const homepageCapabilities = homepageCapabilityIds.map((id) => {
-  const row = capabilityIndexRows.find((candidate) => candidate.id === id);
-  if (!row) throw new Error(`Missing homepage capability: ${id}`);
-  return row;
-});
-
-const selectedCases = [
-  automatedSecurityHelperFlagship,
-  cloudFormationGuardCaseStudy,
-  nixWindowsCaseStudy,
-  agentSystemsCaseStudy,
+const stories = [
+  { project: automatedSecurityHelperFlagship, kind: "security", title: "Security checks that work together.", description: "Coordinate checks across projects, bring the findings together, and keep each project's context intact.", layer: "Security & delivery" },
+  { project: cloudFormationGuardCaseStudy, kind: "policy", title: "A result you can act on.", description: "Keep the meaning of a policy intact, from the rule a person writes to the result they receive.", layer: "Developer tools" },
+  { project: nixWindowsCaseStudy, kind: "windows", title: "Open another place to build.", description: "Bring the shared Nix build system to Windows, with native execution and builds that can invoke further work.", layer: "Infrastructure" },
+  { project: agentSystemsCaseStudy, kind: "continuity", title: "Let the next session pick up the work.", description: "Carry decisions, working context, and recoverable state across the tools an agent team uses.", layer: "AI workflows" },
 ] as const;
 
 export default function HomePage() {
   return (
     <RouteFrame>
-      {/* Keep this route-only stylesheet after the theme, like other static routes. */}
-      {/* eslint-disable-next-line @next/next/no-css-tags */}
-      <link rel="stylesheet" href="/living-systems.css?v=20260930-clarity" />
+      {/* Route styles follow the shared theme in the static export. */}
+      {/* eslint-disable @next/next/no-css-tags */}
+      <link rel="stylesheet" href="/living-systems.css?v=20261001-philosophy" />
+      {/* eslint-disable @next/next/no-css-tags */}
+      <link rel="stylesheet" href="/living-architecture.css?v=20261003-palette" />
+      {/* eslint-disable @next/next/no-css-tags */}
+      <link rel="stylesheet" href="/landing-story.css?v=20261003-badge-surface" />
       <ProfilePageData />
-      <nav className="journey-rail" aria-label="Page journey" data-journey-rail>
-        <a href="#top" data-journey-section="opening"><span>Opening</span></a>
-        <a href="#outcomes" data-journey-section="outcomes"><span>Contributions</span></a>
-        <a href="#work" data-journey-section="selected-work"><span>Work</span></a>
-        <a href="#practice" data-journey-section="practice practice-detail"><span>Approach</span></a>
-        <a href="#agent-collaboration" data-journey-section="composition"><span>Models</span></a>
-        <a href="#trust" data-journey-section="context"><span>Experience</span></a>
-      </nav>
-      <span className="anchor-alias" id="top" aria-hidden="true" />
-
-      <section className="living-opening" data-home-section="opening" data-motion-once aria-labelledby="home-title">
-        <div className="shell living-opening__grid">
-          <div className="living-opening__copy">
-            <p className="living-opening__eyebrow">Madison Hope Steiner / Principal AI Architect</p>
-            <h1 id="home-title">Bringing <em>Hope</em> to distributed systems.</h1>
-            <p className="living-opening__lead">I help teams build, run, and improve AI, security, and cloud platforms at enterprise scale.</p>
-            <p className="living-opening__note">Architecture, hands-on engineering, and open-source work that others can build on.</p>
-            <div className="hope-actions living-opening__actions">
-              <a className="hope-button hope-button--primary" href="#outcomes">
-                <span>Explore my work</span><span aria-hidden="true">↘</span>
-              </a>
-              <a className="hope-button hope-button--quiet" href={publicSources.linkedinMadison.href} target="_blank" rel="noreferrer">
-                <span>Connect on LinkedIn<span className="visually-hidden">, opens in a new tab</span></span><span aria-hidden="true">↗</span>
-              </a>
+      <div className="landing-story">
+        <span className="anchor-alias" id="top" aria-hidden="true" />
+        <section className="landing-opening shell" data-home-section="opening" aria-labelledby="home-title">
+          <div className="landing-opening__copy">
+            <p className="landing-role">Principal AI Architect</p>
+            <h1 id="home-title">Bringing Hope to distributed systems.</h1>
+            <p className="landing-lead">I help teams make AI, security, and cloud platforms work together at enterprise scale.</p>
+            <div className="landing-actions">
+              <a className="hope-button hope-button--primary" href="#work">Explore my work</a>
+              <a className="landing-link" href="#philosophy">How I think</a>
             </div>
           </div>
+          <ArchitectureHero />
+        </section>
 
-          <CapabilityHero />
-        </div>
-      </section>
-
-      <span className="anchor-alias" id="range" aria-hidden="true" />
-      <span className="anchor-alias" id="outcomes" aria-hidden="true" />
-      <span className="anchor-alias" id="atlas" aria-hidden="true" />
-      <CapabilityBricks />
-
-      <section className="hope-act hope-work" id="work" data-home-section="selected-work" aria-labelledby="work-title">
-        <div className="shell hope-act__heading hope-act__heading--light">
-          <p className="hope-index">02</p>
-          <div>
-            <p className="hope-kicker">Selected work</p>
-            <h2 id="work-title">What dependable operation looks like in practice.</h2>
-            <p className="hope-act__summary">See what changed, my contribution, and the architecture behind it.</p>
-          </div>
-        </div>
-
-        <div className="shell hope-work__stories">
-          <FeaturedProjectStory />
-          {selectedCases.slice(1).map((caseStudy, index) => (
-            <article className="hope-story" data-family={caseStudy.family} key={caseStudy.id}>
-              <div className="hope-story__copy">
-                <p className="hope-story__meta">0{index + 2} · {caseStudy.family}</p>
-                <h3>{caseStudy.cardHeadline}</h3>
-                <p className="hope-story__project">{caseStudy.title}</p>
-                <p className="hope-story__summary">{caseStudy.summary}</p>
-                <p className="hope-story__contribution"><strong>My contribution</strong> {caseStudy.contributionSummary}</p>
-                <div className="hope-story__actions">
-                  <a href={`/work/${caseStudy.id}/`}>Explore the system <Arrow /></a>
-                  <SourceLink sourceId={caseStudy.repositorySourceId}>See the working code</SourceLink>
+        <span className="anchor-alias" id="range" aria-hidden="true" />
+        <span className="anchor-alias" id="outcomes" aria-hidden="true" />
+        <span className="anchor-alias" id="atlas" aria-hidden="true" />
+        <section className="landing-work" id="work" data-home-section="selected-work" aria-labelledby="work-title">
+          <header className="shell landing-section-heading">
+            <p className="landing-label">Selected work</p>
+            <h2 id="work-title">The pieces matter.<br />So does how they fit.</h2>
+            <p>Explore what I contributed, what it enables, and the work behind it.</p>
+          </header>
+          <div className="shell landing-projects">
+            {stories.map(({ project, kind, title, description, layer }, index) => (
+              <article className="landing-project" id={`project-${project.id}`} data-story-kind={kind} key={project.id} aria-labelledby={`story-${project.id}`}>
+                <div className="landing-project__copy">
+                  <p className="landing-project__identity">{project.title}</p>
+                  <h3 id={`story-${project.id}`}>{title}</h3>
+                  <p className="landing-project__description">{description}</p>
+                  <p className="landing-project__contribution"><strong>My contribution</strong> {project.contributionSummary}</p>
+                  <span className="landing-project__layer">{layer}</span>
                 </div>
+                <ContributionScene kind={kind} />
+                <div className="landing-project__depth">
+                  <details className="landing-details">
+                    <summary>Explore the contribution</summary>
+                    <div className="landing-details__body">
+                      {index === 0 ? (
+                        <>
+                          <h4>One definition, fifteen coding tools.</h4>
+                          <p>A shared definition becomes the configuration each tool needs, so teams can carry the same guidance across working environments.</p>
+                          <ContributionScene kind="guidance" />
+                          <section className="landing-recent" aria-label="Recent contributions to Automated Security Helper">
+                            <h4>Recent work</h4>
+                            <ul>{automatedSecurityHelperFlagship.recentWork.map((work) => (
+                              <li key={work.sourceId}><h5>{work.title}</h5><p>{work.summary}</p><SourceLink sourceId={work.sourceId}>Read the change</SourceLink></li>
+                            ))}</ul>
+                          </section>
+                        </>
+                      ) : null}
+                      <ProjectLineageField caseStudy={project} compact inlineSources />
+                      <a className="landing-link" href={`/work/${project.id}/`}>Read the full project story</a>
+                    </div>
+                  </details>
+                  <SourceLink sourceId={project.repositorySourceId}>See the working code</SourceLink>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <span className="anchor-alias" id="frontier" aria-hidden="true" />
+        <span className="anchor-alias" id="contribution-lineage" aria-hidden="true" />
+        <span className="anchor-alias" id="practice" aria-hidden="true" />
+        <span className="anchor-alias" id="agent-collaboration" aria-hidden="true" />
+        <section className="shell landing-philosophy" id="philosophy" data-home-section="philosophy" aria-labelledby="philosophy-title">
+          <div className="landing-philosophy__intro">
+            <p className="landing-label">Development &amp; AI philosophy</p>
+            <h2 id="philosophy-title">Extend what a team can do.</h2>
+            <p>I use AI to explore further and build more. Responsibility for the architecture and the result stays with me.</p>
+            <a className="landing-link" href="/models/#agent-collaboration">Explore how I work with models</a>
+          </div>
+          <div className="landing-principles">
+            {developmentPhilosophy.map((principle) => (
+              <details className="landing-principle" key={principle.id}>
+                <summary><h3>{principle.title}<span aria-hidden="true">+</span></h3></summary>
+                <div><p>{principle.body}</p><a className="landing-link" href={principle.href}>{principle.example}</a></div>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <span className="anchor-alias" id="record" aria-hidden="true" />
+        <span className="anchor-alias" id="trust" aria-hidden="true" />
+        <section className="landing-experience" id="experience" data-home-section="context" aria-labelledby="experience-title">
+          <div className="shell">
+            <div className="landing-experience__intro">
+              <picture className="landing-portrait">
+                <source type="image/avif" srcSet="/portraits/madison-outdoor-480.avif 480w, /portraits/madison-outdoor-720.avif 720w" sizes="(max-width: 700px) 70vw, 320px" />
+                <img src="/portraits/madison-outdoor-720.webp" width="720" height="960" alt="Madison Hope Steiner outdoors" loading="lazy" decoding="async" />
+              </picture>
+              <div>
+                <p className="landing-label">Experience</p>
+                <h2 id="experience-title">Different environments.<br />A wider perspective.</h2>
+                <p>My work spans cloud platforms, financial systems, consumer products, mobility, and media. Each brings a different set of constraints, and a different reason to get the architecture right.</p>
+                <a className="landing-link" href={publicSources.linkedinMadison.href} target="_blank" rel="noreferrer">My professional background on LinkedIn<span className="visually-hidden">, opens in a new tab</span></a>
               </div>
-              <ProjectLineageField caseStudy={caseStudy} compact />
-            </article>
-          ))}
-        </div>
-
-      </section>
-
-      <span className="anchor-alias" id="frontier" aria-hidden="true" />
-      <span className="anchor-alias" id="contribution-lineage" aria-hidden="true" />
-      <section className="hope-act hope-patterns" data-home-section="practice" aria-labelledby="patterns-title" id="practice">
-        <div className="shell hope-patterns__layout">
-          <div className="hope-patterns__intro">
-            <p className="hope-index">03</p>
-            <p className="hope-kicker">Staff-level leverage</p>
-            <h2 id="patterns-title">Turn isolated fixes into capabilities other teams can use.</h2>
-            <p>Clarify who owns the system, make the trade-offs explicit, and leave architecture another team can run.</p>
-            <div className="hope-actions">
-              <a className="hope-text-link" href="/method/">See the approach <Arrow /></a>
-              <a className="hope-text-link" href="/decisions/">Read key decisions <Arrow /></a>
             </div>
-          </div>
-
-          <ol className="hope-patterns__list">
-            {homepageCapabilities.slice(0, 3).map((row, index) => (
-              <li key={row.id}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <div><h3>{row.system}</h3><p>{row.capability}</p></div>
-                <small>{row.family}</small>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        <div className="shell principal-scope" role="group" aria-label="How I create leverage">
-          <article><span>Frame</span><h3>Name the boundary that actually matters.</h3><p>Trust, ownership, portability, and failure behavior shape the system before technology choices do.</p></article>
-          <article><span>Decide</span><h3>Make the trade-off useful to the next team.</h3><p>A durable decision explains the choice, the cost, and the conditions that would change it.</p></article>
-          <article><span>Enable</span><h3>Leave a path others can operate and extend.</h3><p>Working code, tests, documentation, and clear boundaries turn individual delivery into organizational leverage.</p></article>
-        </div>
-      </section>
-
-      <section className="hope-act hope-practice" data-home-section="practice-detail" aria-labelledby="practice-title">
-        <div className="shell hope-practice__grid">
-          <div className="hope-practice__intro">
-            <p className="hope-index">04</p>
-            <p className="hope-kicker">Architecture as judgment</p>
-            <h2 id="practice-title">The reasoning should remain visible after the build.</h2>
-            <p>Pressure, constraints, decisions, implementation, current state, and source form one continuous operating story.</p>
-          </div>
-
-          <ol className="hope-decisions">
-            {architectureDecisions.map((decision) => (
-              <li key={decision.id}>
-                <p>{decision.family}</p>
-                <h3>{decision.question}</h3>
-                <a href={`/decisions/#${decision.id}`}>Read the decision <Arrow /></a>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <span className="anchor-alias" id="agent-collaboration" aria-hidden="true" />
-      <section className="hope-act hope-composition" data-home-section="composition" aria-labelledby="composition-title">
-        <div className="shell hope-composition__grid">
-          <div>
-            <p className="hope-index">05</p>
-            <p className="hope-kicker">Human judgment, extended</p>
-            <h2 id="composition-title">Use models to extend judgment without losing accountability.</h2>
-          </div>
-          <div className="hope-composition__copy">
-            <p>I have helped pioneer practical patterns for subagents, coordinated agent teams, and organizations that improve their own operating playbooks.</p>
-            <p>Explore where model collaboration appears in the work, then follow any result back to its public source.</p>
-            <div className="hope-actions">
-              <a className="hope-button hope-button--primary" href="/models/#agent-collaboration"><span>Explore model collaboration</span><span aria-hidden="true">↗</span></a>
-              <a className="hope-button hope-button--quiet" href="/work/agent-systems/"><span>See the agent systems</span><span aria-hidden="true">↗</span></a>
+            <h3 className="landing-employers-title">Organizations where I have worked</h3>
+            <div className="landing-employers">
+              {professionalHistory.employers.map((employer) => (
+                <details className="landing-employer" key={employer.logo_key}>
+                  <summary>
+                    <span className="landing-employer__logo" aria-hidden="true">
+                      {employer.logo ? <Image src={employer.logo} alt="" width={employer.width ?? 240} height={employer.height ?? 96} loading="lazy" unoptimized /> : <span>F.T.</span>}
+                    </span>
+                    <span>{employer.name}</span>
+                    <span className="landing-employer__plus" aria-hidden="true">+</span>
+                  </summary>
+                  <p>{employer.scope}</p>
+                </details>
+              ))}
             </div>
+            <details className="landing-details landing-contexts">
+              <summary>Work across payments, banking, mobility, and investment</summary>
+              <div className="landing-contexts__grid">
+                {organizationContexts.map((context) => <div key={context.id}><h4>{context.label}</h4><p>{context.scope}</p></div>)}
+              </div>
+            </details>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <span className="anchor-alias" id="record" aria-hidden="true" />
-      <span className="anchor-alias" id="trust" aria-hidden="true" />
-      <section className="hope-act hope-context" data-home-section="context" aria-labelledby="context-title">
-        <div className="shell hope-context__heading">
-          <p className="hope-index">06</p>
-          <div>
-            <p className="hope-kicker">Impact in context</p>
-            <h2 id="context-title">Architecture shaped across demanding environments.</h2>
-            <p>Work has crossed cloud infrastructure, blockchain, consumer marketplaces, digital insurance, mobility, media accessibility, and enterprise platforms.</p>
+        <section className="shell landing-credentials" id="credentials" aria-labelledby="credentials-title">
+          <div className="landing-section-heading">
+            <p className="landing-label">Always learning</p>
+            <h2 id="credentials-title">Breadth built through practice and study.</h2>
+            <p>Certifications and training badges earned across security, architecture, AI, and platforms.</p>
           </div>
-        </div>
-
-        <div className="shell hope-context__grid">
-          {organizationContexts.map((context) => (
-            <article key={context.id}><h3>{context.label}</h3><p>{context.scope}</p></article>
-          ))}
-        </div>
-
-        <a className="shell hope-credential-signal" href="/credentials/">
-          <span className="hope-credential-signal__count">{publicCredentials.length}</span>
-          <span>
-            <strong>Credentials earned across the systems disciplines.</strong>
-            <small>Security, cloud architecture, AI, data, networking, and infrastructure, each linked to its public Credly record.</small>
-          </span>
-          <span className="hope-credential-signal__action">Explore the learning record <Arrow /></span>
-        </a>
-
-        <div className="shell hope-context__close">
-          <p>Explore the organizations and operating environments that shaped this work, or inspect the public systems behind it.</p>
-          <div className="hope-actions">
-            <a className="hope-text-link" href="/about/">See experience <Arrow /></a>
+          <div className="landing-credential-groups">
+            {credentialsByCategory.map((category) => (
+              <section className="landing-credential-group" key={category.id} aria-labelledby={`badges-${category.id}`}>
+                <h3 id={`badges-${category.id}`}>{category.label}</h3>
+                <ul className="landing-credential-gallery">
+                  {category.credentials.map((credential) => (
+                    <li key={credential.id}>
+                      <a href={credential.href} target="_blank" rel="noreferrer">
+                        <Image src={credential.image} alt="" width={128} height={128} loading="lazy" unoptimized />
+                        <span>
+                          <strong>{credential.name}</strong>
+                          <small>Earned {credential.issued}</small>
+                          <span className="visually-hidden">View Credly record, opens in a new tab</span>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
+        <span className="anchor-alias" id="connect" aria-hidden="true" />
+      </div>
     </RouteFrame>
   );
 }

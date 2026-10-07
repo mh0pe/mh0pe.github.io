@@ -2,8 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { preload } from "react-dom";
 
-/* eslint-disable @next/next/no-css-tags -- Vinext dev serves imported global CSS as a JavaScript module. */
-
 const title = "Madison Hope Steiner | Principal AI Architect";
 const description =
   "Principal AI Architect Madison Hope Steiner (mh0pe, awsmadi) helps teams govern, ship, and scale AI, security, cloud, and developer systems.";
@@ -149,8 +147,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f3efe6" },
-    { media: "(prefers-color-scheme: dark)", color: "#111714" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f5f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#111827" },
   ],
   colorScheme: "light dark",
 };
@@ -189,10 +187,7 @@ export default function RootLayout({
             __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
           }}
         />
-        <link rel="stylesheet" href="/portfolio-v2.css?v=20260906-outcomes-v1" />
-        <link rel="stylesheet" href="/portfolio-v3.css?v=20260930-clarity" />
-        <link rel="stylesheet" href="/interactions.css?v=20260927-motion-v2" />
-        <script data-static-runtime="theme" src="/theme.js?v=20260927-readiness-v1" defer />
+        <script data-static-runtime="theme" src="/theme.js?v=20261003-palette" defer />
         <script data-static-runtime="interactions" src="/interactions.js?v=20260930-clarity" defer />
       </head>
       <body className="hope-brand">{children}</body>

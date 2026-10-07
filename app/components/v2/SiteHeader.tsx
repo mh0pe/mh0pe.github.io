@@ -1,34 +1,32 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- native anchors keep the exported GitHub Pages build free of RSC navigation requests. */
 
-const navigation = [
-  { key: "work", label: "Work", href: "/work/" },
-  { key: "capabilities", label: "How I help", href: "/capabilities/" },
-  { key: "decisions", label: "Decisions", href: "/decisions/" },
-  { key: "about", label: "Experience", href: "/about/" },
-  { key: "proof", label: "Evidence", href: "/proof/" },
+export const landingNavigation = [
+  { key: "work", label: "Work", href: "/#work" },
+  { key: "philosophy", label: "Philosophy", href: "/#philosophy" },
+  { key: "experience", label: "Experience", href: "/#experience" },
+  { key: "connect", label: "Connect", href: "/#connect" },
 ] as const;
 
 function NavigationLinks({ current, activeSection }: { readonly current?: string; readonly activeSection?: string }) {
+  const section = activeSection ?? current;
+  const activeKey = section === "method"
+    ? "philosophy"
+    : section === "about" || section === "credentials"
+      ? "experience"
+      : section;
+
   return (
     <>
-      {navigation.map((item) => (
+      {landingNavigation.map((item) => (
         <a
           href={item.href}
           key={item.href}
-          aria-current={current === item.key ? "location" : undefined}
-          data-active-section={activeSection === item.key ? "true" : undefined}
+          className={item.key === "connect" ? "primary-nav__conversation" : undefined}
+          data-active-section={activeKey === item.key ? "true" : undefined}
         >
           {item.label}
         </a>
       ))}
-      <a
-        className="primary-nav__conversation"
-        href="https://www.linkedin.com/in/madisonhsteiner"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Connect<span className="visually-hidden"> with Madison Hope Steiner on LinkedIn, opens in a new tab</span>
-      </a>
     </>
   );
 }

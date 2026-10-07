@@ -103,19 +103,55 @@ test("external profile and lineage links announce new tabs", async () => {
   assert.doesNotMatch(lineage, /<svg|data-lineage-tooltip|aria-live=/);
 });
 
-test("secondary navigation exposes semantic touch-target hooks", async () => {
+test("project source collections are named groups, not nested page landmarks", async () => {
+  const lineage = await source("app/components/v3/ProjectLineageField.tsx");
+  assert.match(lineage, /<div role="group"[^>]*aria-label=\{`\$\{caseStudy\.title\}: contributions on GitHub`\}/);
+  assert.doesNotMatch(lineage, /<\/?aside\b|role="complementary"/);
+  assert.match(lineage, /<ul className="source-records__list">/);
+  for (const kind of ["project", "change", "commit", "file"]) {
+    assert.ok(lineage.includes(`kind="${kind}"`), `${kind} remains in the named source group`);
+  }
+  assert.match(lineage, /open=\{inlineSources \|\| undefined\}/);
+});
+
+test("landing disclosures and secondary navigation preserve native semantics", async () => {
   const [home, method] = await Promise.all([
     source("app/page.tsx"),
     source("app/method/page.tsx"),
   ]);
 
-  assert.match(home, /className="hope-button hope-button--quiet" href=\{publicSources\.linkedinMadison\.href\}/);
+  assert.match(home, /className="landing-link" href=\{publicSources\.linkedinMadison\.href\}/);
   assert.match(
     home,
-    /className="shell principal-scope" role="group" aria-label="How I create leverage"/,
+    /id="philosophy" data-home-section="philosophy" aria-labelledby="philosophy-title"/,
   );
-  assert.equal(
-    (method.match(/className="method-stage__action"/g) ?? []).length,
-    3,
-  );
+  assert.match(home, /<div className="landing-principles">/);
+  assert.match(home, /developmentPhilosophy\.map\(\(principle\)/);
+  assert.match(home, /<details className="landing-principle"[^>]*>\s*<summary><h3>\{principle\.title\}<span aria-hidden="true">\+<\/span><\/h3><\/summary>/);
+  assert.match(home, /<details className="landing-employer"[^>]*>\s*<summary>/);
+  assert.doesNotMatch(home, /role="button"|tabIndex=\{?[1-9]|onClick=|onKeyDown=/);
+  assert.match(home, /<ProjectLineageField caseStudy=\{project\} compact inlineSources \/>/);
+  assert.match(home, /<h2 id="philosophy-title">/);
+  assert.match(method, /className="method-stage__action" href=\{principle.href\}/);
+  assert.match(method, /className="method-stage__action" href="\/decisions\/"/);
+  assert.match(method, /className="method-stage__action" href="\/models\/#agent-collaboration"/);
+});
+
+test("all landing credentials use visible named category galleries without disclosure controls", async () => {
+  const home = await source("app/page.tsx");
+  const section = home.slice(home.indexOf('<section className="shell landing-credentials"'), home.indexOf('<span className="anchor-alias" id="connect"'));
+  assert.ok(section.length > 0, "the homepage contains a complete credential section");
+  assert.match(section, /<div className="landing-credential-groups">/);
+  assert.match(section, /credentialsByCategory\.map\(\(category\)/);
+  assert.match(section, /<section className="landing-credential-group"[^>]*aria-labelledby=\{`badges-\$\{category\.id\}`\}/);
+  assert.match(section, /<h3 id=\{`badges-\$\{category\.id\}`\}>\{category\.label\}<\/h3>/);
+  assert.match(section, /<ul className="landing-credential-gallery">/);
+  assert.match(section, /category\.credentials\.map\(\(credential\)/);
+  assert.match(section, /<a href=\{credential\.href\} target="_blank" rel="noreferrer">/);
+  assert.match(section, /<Image src=\{credential\.image\} alt=""[^>]*loading="lazy"[^>]*unoptimized/);
+  assert.match(section, /<strong>\{credential\.name\}<\/strong>/);
+  assert.match(section, /Earned \{credential\.issued\}/);
+  assert.match(section, /View Credly record, opens in a new tab/);
+  assert.doesNotMatch(section, /<details\b|<summary\b|\shidden(?:\s|=|>)|aria-hidden="true"|selectedCredentials|\.slice\(/);
+  assert.doesNotMatch(home, /landing-credential-list|landing-credential-highlights/);
 });

@@ -1,5 +1,6 @@
 import SiteFooter from "./SiteFooter";
 import SiteHeader from "./SiteHeader";
+import RouteStyles from "./RouteStyles";
 import RouteMotif, {
   resolveRouteMotif,
   type RouteMotifKey,
@@ -9,7 +10,7 @@ import { CollectionPageData } from "./StructuredData";
 const routeCollections = {
   work: ["/work/", "Selected systems", "Open-source systems that make difficult security, infrastructure, and agent work easier for teams to own."],
   capabilities: ["/capabilities/", "How I help", "Reusable architecture for security, cloud platforms, browser systems, and agent teams."],
-  method: ["/method/", "Approach", "How operating pressure becomes a clear decision, working software, and a result another team can carry forward."],
+  method: ["/method/", "Development & AI philosophy", "Madison Hope Steiner's principles for engineering, AI collaboration, and systems other teams can continue."],
   decisions: ["/decisions/", "Architecture decisions", "The choices, costs, and public work behind selected systems."],
   about: ["/about/", "Experience", "The organizations and operating environments that shaped Madison Hope Steiner's architecture work."],
   credentials: ["/credentials/", "Credentials earned", "A public learning record across security, cloud architecture, AI, data, networking, infrastructure, and financial services."],
@@ -36,6 +37,7 @@ export function RouteFrame({
 
   return (
     <>
+      <RouteStyles route={routeMotif ?? current ?? "home"} />
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>

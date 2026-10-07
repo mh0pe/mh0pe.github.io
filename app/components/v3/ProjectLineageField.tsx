@@ -42,7 +42,7 @@ export default function ProjectLineageField({ caseStudy, compact = false, inline
 }) {
   const records = contributionRecords(getContributionGraph(caseGraphIds[caseStudy.id]));
   return (
-    <aside className={`lineage-field source-records${compact ? " source-records--compact" : ""}`} data-family={caseStudy.family} aria-label={`${caseStudy.title}: contributions on GitHub`}>
+    <div role="group" className={`lineage-field source-records${compact ? " source-records--compact" : ""}`} data-family={caseStudy.family} aria-label={`${caseStudy.title}: contributions on GitHub`}>
       <div className="source-records__heading"><p>Explore the contributions</p><span>On GitHub</span></div>
       <ul className="source-records__list">
         {records.map(({ repository, change, commit, file }, index) => (
@@ -59,6 +59,6 @@ export default function ProjectLineageField({ caseStudy, compact = false, inline
           </li>
         ))}
       </ul>
-    </aside>
+    </div>
   );
 }

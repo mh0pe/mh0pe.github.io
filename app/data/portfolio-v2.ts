@@ -498,6 +498,56 @@ export const publicSources = {
     kind: "pull-request",
     href: "https://github.com/aws/jsii/pull/5057",
   },
+  ashPr640: {
+    label: "ASH #640, explicit scan-completeness results",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/640",
+  },
+  ashPr696: {
+    label: "ASH #696, stale scanner-data handling",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/696",
+  },
+  ashPr661: {
+    label: "ASH #661, workspace coverage and reporting",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/661",
+  },
+  ashPr665: {
+    label: "ASH #665, scoped agent access",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/665",
+  },
+  ashPr673: {
+    label: "ASH #673, dependency declarations and configuration boundaries",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/673",
+  },
+  ashPr687: {
+    label: "ASH #687, package-specific risk acceptance",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/687",
+  },
+  ashPr690: {
+    label: "ASH #690, reliable scan-result progress",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/690",
+  },
+  ashPr692: {
+    label: "ASH #692, verified offline base-image reuse",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/692",
+  },
+  ashPr693: {
+    label: "ASH #693, scanner database freshness",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/693",
+  },
+  ashPr699: {
+    label: "ASH #699, bounded Windows result-read retries",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/699",
+  },
   publicHistorySnapshot: {
     label: "Public contribution summary",
     kind: "snapshot",
@@ -999,6 +1049,11 @@ export interface CaseStudy {
   readonly responsibility: string;
   readonly contributionSummary: string;
   readonly summary: string;
+  readonly recentWork?: readonly {
+    readonly title: string;
+    readonly summary: string;
+    readonly sourceId: PublicSourceId;
+  }[];
   readonly claims: readonly EvidenceClaim[];
   readonly stages: AuditableLoadPathStages;
 }
@@ -1017,14 +1072,31 @@ export const automatedSecurityHelperFlagship = {
   audience:
     "Platform and security teams responsible for many projects, tools, and agent-driven workflows.",
   proofState:
-    "Workspace orchestration is available in ASH v3.7.0. Distributed scanning and workspace-aware agent tools are now integrated upstream.",
+    "Workspace orchestration is available in ASH v3.7.0. Recent work on reporting, agent access, and repeatable scan environments is integrated upstream.",
   operatingResult:
     "Teams can plan, scan, and report on a multi-project workspace as one governed system without losing project identity, target boundaries, failure state, or source traceability.",
   responsibility:
     "I led the architecture and implementation of workspace orchestration and agent integrations, then strengthened execution boundaries, repeatability, result integrity, and distributed operation.",
-  contributionSummary: "Architecture and implementation of workspace orchestration and AI coding-tool integrations.",
+  contributionSummary: "Workspace orchestration and AI integrations, extended with precise security reporting, scoped agent access, and repeatable scan environments.",
   summary:
     "One governed workflow helps teams plan, run, and trace security checks across many projects.",
+  recentWork: [
+    {
+      title: "Know what a security report covers.",
+      summary: "Workspace policies enable their required scanners, and reports show skipped projects and policy-origin findings.",
+      sourceId: "ashPr661",
+    },
+    {
+      title: "Give agents deliberate boundaries.",
+      summary: "Remote tools use operator-approved paths and keep neighboring sessions out of reach.",
+      sourceId: "ashPr665",
+    },
+    {
+      title: "Reuse a verified base image.",
+      summary: "Container builds verify and reuse a previously downloaded base image instead of fetching it again.",
+      sourceId: "ashPr692",
+    },
+  ],
   claims: [
     {
       id: "ash-workspace-release",
@@ -1083,6 +1155,54 @@ export const automatedSecurityHelperFlagship = {
       observedAt: "2026-09-19",
       publicOnly: true,
     },
+    {
+      id: "ash-result-integrity",
+      outcome: "Security reports preserve coverage, package identity, and scan progress so teams can act on the right result.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available on the upstream main branch.",
+      adoption: "Integrated through ASH #661, #673, #687, #690, and #699.",
+      maturity: "Targeted regression checks cover skipped projects, package-specific suppression, atomic result writes, and Windows read retries. Package-instance paths require npm v2+ lockfiles; ambiguous package copies remain unsuppressed.",
+      sourceIds: ["ashPr661", "ashPr673", "ashPr687", "ashPr690", "ashPr699"],
+      observedAt: "2026-10-01",
+      publicOnly: true,
+    },
+    {
+      id: "ash-scoped-agent-access",
+      outcome: "Remote agents operate within explicitly granted paths while workspace tools retain session and profile context.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available on the upstream main branch.",
+      adoption: "Integrated in ASH #665.",
+      maturity: "Remote access defaults to denied without a grant; neighboring session directories are refused. Session names separate work, not authenticate callers. Local command-line transport retains its existing access model.",
+      sourceIds: ["ashPr665"],
+      observedAt: "2026-10-01",
+      publicOnly: true,
+    },
+    {
+      id: "ash-repeatable-environments",
+      outcome: "Teams can reuse verified base images and bound the age of cached scanner intelligence.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available on the upstream main branch.",
+      adoption: "Integrated in ASH #692 and #693.",
+      maturity: "Container checks verify base-image contents and architecture across four build engines, not the completed ASH image. Grype database caches use a shared 120-hour freshness bound. This does not establish fail-closed handling of every stale offline database.",
+      sourceIds: ["ashPr692", "ashPr693"],
+      observedAt: "2026-10-01",
+      publicOnly: true,
+    },
+    {
+      id: "ash-completeness-implementation",
+      outcome: "A public implementation makes incomplete scans explicit and preserves results when scanner intelligence is too old.",
+      contribution: "Implemented",
+      state: "Open",
+      availability: "Available in the linked public implementation branches.",
+      adoption: "ASH #640 and #696 provide the implementation and its review history.",
+      maturity: "The branches propose stricter completeness and database-age policies, including structured reasons and explicit operator overrides. These defaults are not yet adopted upstream; the linked reviews describe test coverage and remaining limits.",
+      sourceIds: ["ashPr640", "ashPr696"],
+      observedAt: "2026-10-01",
+      publicOnly: true,
+    },
   ],
   stages: [
     {
@@ -1131,7 +1251,7 @@ export const automatedSecurityHelperFlagship = {
       index: "04",
       title: "One control plane connects planning, execution, and results.",
       body:
-        "The implementation connects workspace planning, per-project execution, agent tooling, reproducible scanner supply, file-selection semantics, and result integrity instead of treating them as separate features.",
+        "The implementation connects workspace planning, per-project execution, agent tooling, and reproducible scanner supply. Recent work carries that contract through coverage reporting, precise package exceptions, and progress that reflects completed work.",
       points: [
         "Plan validated workspaces and retain project identity through aggregate reports.",
         "Generate integrations for fifteen agent platforms and provide installable skills from one source of truth.",
@@ -1140,6 +1260,9 @@ export const automatedSecurityHelperFlagship = {
         "Pin all ten scanner binaries across Linux and macOS, x86-64 and ARM, with nine participating end to end through Nix mode.",
         "Apply nested ignore rules to the correct subtree and stabilize finding paths across Windows drives.",
         "Split scanners across AgentCore, ECS Fargate, Lambda, or CodePipeline targets and combine their results.",
+        "Show skipped projects without counting them as vulnerabilities, and match accepted risks to the exact package version and installation path.",
+        "Write results atomically and distinguish usable results from incomplete writes or a still-running scanner.",
+        "Scan hand-authored dependency declarations for secrets, and restrict which environment values project configuration can read into reports.",
       ],
       sourceIds: [
         "ashPr456",
@@ -1156,20 +1279,29 @@ export const automatedSecurityHelperFlagship = {
         "ashPr501",
         "ashPr502",
         "ashPr494",
+        "ashPr661",
+        "ashPr665",
+        "ashPr687",
+        "ashPr690",
+        "ashPr699",
+        "ashPr673",
       ],
       claimIds: [
         "ash-workspace-release",
         "ash-agent-integrations",
         "ash-distributed-execution",
         "ash-workspace-agent-tools",
+        "ash-result-integrity",
+        "ash-scoped-agent-access",
+        "ash-repeatable-environments",
       ],
     },
     {
       name: "State",
       index: "05",
-      title: "The capability runs from workspace setup through distributed execution.",
+      title: "From coordinating scans to making their results dependable.",
       body:
-        "ASH v3.7.0 introduced governed multi-project workspaces. Subsequent upstream contributions let agents operate on those workspaces and distribute scanners across AWS targets. Results retain project identity and explicit failure states, while pinned scanner environments support repeatable runs on Linux and macOS.",
+        "ASH v3.7.0 introduced governed multi-project workspaces. Subsequent work added agent tools and distributed scanning. The latest contributions are integrated on the upstream main branch: reports preserve scan coverage, remote tools use explicit access grants, package exceptions target specific installations, and container builds reuse verified base images. These additions are separate from the earlier published release.",
       sourceIds: [
         "ashRelease370",
         "ashPr456",
@@ -1188,12 +1320,20 @@ export const automatedSecurityHelperFlagship = {
         "ashPr515",
         "ashPr494",
         "ashPr514",
+        "ashPr661",
+        "ashPr665",
+        "ashPr687",
+        "ashPr692",
+        "ashPr693",
       ],
       claimIds: [
         "ash-workspace-release",
         "ash-agent-integrations",
         "ash-distributed-execution",
         "ash-workspace-agent-tools",
+        "ash-result-integrity",
+        "ash-scoped-agent-access",
+        "ash-repeatable-environments",
       ],
     },
     {
@@ -1221,12 +1361,23 @@ export const automatedSecurityHelperFlagship = {
         "ashPr514",
         "ashRepository",
         "ashDocumentation",
+        "ashPr661",
+        "ashPr665",
+        "ashPr673",
+        "ashPr687",
+        "ashPr690",
+        "ashPr692",
+        "ashPr693",
+        "ashPr699",
       ],
       claimIds: [
         "ash-workspace-release",
         "ash-agent-integrations",
         "ash-distributed-execution",
         "ash-workspace-agent-tools",
+        "ash-result-integrity",
+        "ash-scoped-agent-access",
+        "ash-repeatable-environments",
       ],
     },
   ],
@@ -1363,12 +1514,12 @@ export const nixWindowsCaseStudy = {
   audience:
     "Infrastructure and developer-platform teams bringing reproducible builds across operating-system boundaries.",
   proofState:
-    "The Windows builder foundation is integrated upstream. The wider runtime is available in the linked public fork and branches.",
+    "The Windows builder foundation and portable process-handle inheritance are integrated upstream. The wider runtime is available in the linked public fork and branches.",
   operatingResult:
     "The upstream foundation can execute a minimal Windows builder and cross-build the complete project. Public implementations extend that path through recursive builds, lossless filenames, network paths, and explicit process boundaries.",
   responsibility:
     "I built and validated the Windows execution path in independently testable stages, from the first builder through project-wide cross-builds and recursive operation.",
-  contributionSummary: "A Windows execution path, built and validated in independently testable stages.",
+  contributionSummary: "A Windows execution path built in testable stages, with shared process-handle behavior now integrated upstream.",
   summary:
     "A staged path for bringing reproducible Nix builds to Windows while keeping each layer independently testable.",
   claims: [
@@ -1398,14 +1549,26 @@ export const nixWindowsCaseStudy = {
       publicOnly: true,
     },
     {
+      id: "nix-portable-inheritance",
+      outcome: "Unix and Windows callers share an explicit contract for which process handles a child inherits.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available in the upstream Nix project.",
+      adoption: "Merged upstream in Nix #16449 on September 20, 2026.",
+      maturity: "Portable closeOnExec handling with platform-specific implementations behind a common interface.",
+      sourceIds: ["nixPr16449"],
+      observedAt: "2026-10-01",
+      publicOnly: true,
+    },
+    {
       id: "nix-portable-boundaries",
-      outcome: "Windows filenames survive conversion intact, child processes receive explicit handles, and recursive build connections have coordinated shutdown.",
+      outcome: "Windows filenames survive conversion intact, and recursive build connections have coordinated shutdown.",
       contribution: "Implemented",
       state: "Open",
       availability: "Available in the linked public implementation branches.",
-      adoption: "Implemented in Nix #16449 and #16451; #16453 defines the network-isolation settings contract.",
+      adoption: "Implemented in Nix #16451 and the linked public revisions; #16453 defines the network-isolation settings contract.",
       maturity: "Focused path and process tests. Network-isolation settings reject unsupported backends; they do not implement a Windows sandbox.",
-      sourceIds: ["nixPr16449", "nixPr16451", "nixPr16453", "nixShutdownCommit", "nixSocketCommit"],
+      sourceIds: ["nixPr16451", "nixPr16453", "nixShutdownCommit", "nixSocketCommit"],
       observedAt: "2026-09-19",
       publicOnly: true,
     },
@@ -1457,16 +1620,16 @@ export const nixWindowsCaseStudy = {
         "Coordinate recursive-build shutdown across listening sockets, connected clients, and worker threads.",
       ],
       sourceIds: ["nixPr16347", "nixPr16368", "nixPr16411", "nixPr16414", "nixPr16449", "nixPr16451", "nixPr16453", "nixShutdownCommit", "nixSocketCommit", "nixValidationPr1"],
-      claimIds: ["nix-builder-merged", "nix-runtime-open", "nix-portable-boundaries"],
+      claimIds: ["nix-builder-merged", "nix-runtime-open", "nix-portable-boundaries", "nix-portable-inheritance"],
     },
     {
       name: "State",
       index: "05",
       title: "Windows now has an upstream foundation and a usable wider runtime.",
       body:
-        "The Windows derivation builder and complete cross-build coverage are integrated upstream. Public branches extend that foundation with libstore checks, richer output semantics, recursive operation, lossless filenames, and explicit process-handle inheritance. An independent validation harness checks the resulting build path.",
+        "The Windows derivation builder, complete cross-build coverage, and portable process-handle inheritance are integrated upstream. Public branches extend that foundation with libstore checks, richer output semantics, recursive operation, and lossless filenames. An independent validation harness checks the resulting build path.",
       sourceIds: ["nixPr16347", "nixPr16368", "nixPr16411", "nixPr16414", "nixPr16449", "nixPr16451", "nixFork"],
-      claimIds: ["nix-builder-merged", "nix-runtime-open", "nix-portable-boundaries"],
+      claimIds: ["nix-builder-merged", "nix-runtime-open", "nix-portable-boundaries", "nix-portable-inheritance"],
     },
     {
       name: "Proof",
@@ -1475,7 +1638,7 @@ export const nixWindowsCaseStudy = {
       body:
         "The linked pull requests connect each Windows capability to its implementation and tests. The public fork brings the full runtime path together, while the separate validation harness checks the build results through an independent code path.",
       sourceIds: ["nixPr16347", "nixPr16368", "nixPr16411", "nixPr16414", "nixPr16449", "nixPr16451", "nixShutdownCommit", "nixSocketCommit", "nixValidationPr1", "nixFork"],
-      claimIds: ["nix-builder-merged", "nix-runtime-open", "nix-portable-boundaries"],
+      claimIds: ["nix-builder-merged", "nix-runtime-open", "nix-portable-boundaries", "nix-portable-inheritance"],
     },
   ],
 } as const satisfies CaseStudy;
@@ -1838,10 +2001,10 @@ export const capabilityIndexRows = [
     availability:
       "The complete implementation is available in the linked public fork branch.",
     adoption:
-      "The complete public implementation incorporates maintainer feedback and is available from the linked branch.",
+      "The complete public implementation incorporates maintainer feedback and remains available from the linked branch after upstream review concluded.",
     statusIds: [
       "available-public-fork",
-      "upstream-review-active",
+      "upstream-review-closed",
       "validated-implementation",
     ],
     sourceIds: ["rulesJsPr2957", "rulesJsBranch", "rulesJsRepository"],

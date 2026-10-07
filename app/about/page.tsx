@@ -98,7 +98,7 @@ export default function AboutPage() {
             <p>Security, regulation, scale, customer experience, and platform ownership create different constraints. The work is to turn those constraints into systems teams can keep using.</p>
             <div className="button-row">
               <a className="text-action" href="/work/">Explore the systems <Arrow /></a>
-              <a className="text-action" href="/method/">See the approach <Arrow /></a>
+              <a className="text-action" href="/method/">Read my philosophy <Arrow /></a>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 import sharp from "sharp";
 import { createPagesServer } from "../tools/serve-pages.mjs";
+import { compactStylesheet, sharedStylesheets } from "../tools/export-stylesheets.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = resolve(root, "pages-dist");
@@ -104,15 +105,23 @@ test("every exported route serves complete, decodable local media and correct as
   context.diagnostic(`Checked ${pages.length} exported documents and ${assets.size} unique local assets.`);
 });
 
-test("exported public assets exactly match their current source bytes", async () => {
+test("exported public assets match source bytes with declared stylesheet compaction", async () => {
   let compared = 0;
+  let compacted = 0;
   for (const path of await walk(output)) {
-    const source = resolve(root, "public", relative(output, path));
+    const assetPath = relative(output, path);
+    const source = resolve(root, "public", assetPath);
     let sourceBytes;
     try { sourceBytes = await readFile(source); }
     catch (error) { if (error.code === "ENOENT") continue; throw error; }
-    assert.ok((await readFile(path)).equals(sourceBytes), `Stale exported asset: ${relative(output, path)}`);
+    let expectedBytes = sourceBytes;
+    if (sharedStylesheets.includes(assetPath)) {
+      expectedBytes = Buffer.from(compactStylesheet(sourceBytes.toString("utf8"), assetPath));
+      compacted += 1;
+    }
+    assert.ok((await readFile(path)).equals(expectedBytes), `Stale exported asset: ${assetPath}`);
     compared += 1;
   }
+  assert.equal(compacted, sharedStylesheets.length, "compare every compacted stylesheet");
   assert.ok(compared >= 50, `only ${compared} public assets compared`);
 });

@@ -42,6 +42,7 @@ next-env.d.ts
 /dist/
 /pages-dist/
 /public/route-styles/
+/public/article-motion.js
 /.wrangler/
 /build/local-preview/
 /outputs/

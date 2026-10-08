@@ -2,7 +2,7 @@
 
 export default function RouteStyles({ route }: { readonly route?: string }) {
   // Development uses editable originals so a CSS edit updates immediately.
-  if (process.env.NODE_ENV === "production" && (route === "home" || route === "models" || route === "method")) {
+  if (process.env.NODE_ENV === "production" && (route === "home" || route === "models" || route === "method" || route === "blog")) {
     return <link rel="stylesheet" href={`/route-styles/${route}.css?v=20261003-loading`} precedence="portfolio" />;
   }
   return (

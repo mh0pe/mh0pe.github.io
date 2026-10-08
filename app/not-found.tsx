@@ -2,6 +2,7 @@
 
 import type { Metadata } from "next";
 import { ThemeToggle } from "./components/v2/SiteHeader";
+import { socialImageFor } from "./data/social";
 
 const notFoundTitle = "Page not found | Madison Hope Steiner";
 const notFoundDescription =
@@ -15,12 +16,16 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
+    type: "website",
     title: notFoundTitle,
     description: notFoundDescription,
+    images: [socialImageFor("/404.html")],
   },
   twitter: {
+    card: "summary_large_image",
     title: notFoundTitle,
     description: notFoundDescription,
+    images: [socialImageFor("/404.html")],
   },
 };
 

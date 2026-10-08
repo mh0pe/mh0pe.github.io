@@ -6,6 +6,7 @@ Madison Hope Steiner, also known on GitHub as mh0pe and awsmadi, makes difficult
 
 - Portfolio: https://mh0pe.github.io/
 - Selected systems: https://mh0pe.github.io/work/
+- Illustrated essays: https://mh0pe.github.io/blog/
 - How Madison helps: https://mh0pe.github.io/capabilities/
 - Development & AI philosophy: https://mh0pe.github.io/method/
 - Architecture decisions: https://mh0pe.github.io/decisions/
@@ -21,6 +22,18 @@ Madison Hope Steiner, also known on GitHub as mh0pe and awsmadi, makes difficult
 - Advance reproducible Windows builds with testable layers, lossless filenames, and explicit process boundaries: https://mh0pe.github.io/work/nix-windows/
 - Help agent teams retain reviewed decisions, recover work, and hand delivery across tools: https://mh0pe.github.io/work/agent-systems/
 - Connect agent applications to AWS-authenticated model endpoints through Rig's dedicated integration: https://mh0pe.github.io/capabilities/#capability-rig-bedrock
+
+## Writing from the work
+
+- Preserve project ownership in a shared security workflow: https://mh0pe.github.io/blog/workspace-security/
+- Adapt one capability definition for fifteen AI coding tools: https://mh0pe.github.io/blog/one-definition-many-agent-tools/
+- Make scanner environments explicit: https://mh0pe.github.io/blog/reproducible-security-checks/
+- Bring security findings into the editor: https://mh0pe.github.io/blog/security-feedback-where-you-work/
+- Carry decisions and working state across agent sessions: https://mh0pe.github.io/blog/handoffs-that-carry-the-work/
+- Verify a dependency graph and its files before execution: https://mh0pe.github.io/blog/integrity-bound-yarn-pnp-for-bazel/
+- Build a browser's SVG document model in seven reviewable layers: https://mh0pe.github.io/blog/typed-svg-dom/
+- Give agent tools clear input and session boundaries: https://mh0pe.github.io/blog/aws-labs-mcp/
+- Make cloud development feedback more useful: https://mh0pe.github.io/blog/cloud-runtime/
 
 ## Public profiles
 

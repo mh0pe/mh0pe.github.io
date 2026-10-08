@@ -291,7 +291,7 @@ test("static navigation and route metadata remain GitHub Pages native", async ()
   assert.doesNotMatch(header, /from ["']next\/link["']/);
   assert.match(header, /<a className="site-identity" href="\/"/);
   assert.match(metadata, /summary_large_image/);
-  assert.match(metadata, /https:\/\/mh0pe\.github\.io\/og-v3\.jpg/);
+  assert.match(metadata, /socialImageFor/);
 
   for (const artifact of [
     "work/index.html",
@@ -304,7 +304,7 @@ test("static navigation and route metadata remain GitHub Pages native", async ()
     assert.doesNotMatch(html, /index\.rsc/);
     assert.match(
       html,
-      /<meta property="og:image" content="https:\/\/mh0pe\.github\.io\/og-v3\.jpg"/,
+      /<meta property="og:image" content="https:\/\/mh0pe\.github\.io\/social\/[a-z0-9-]+\.jpg"/,
     );
     assert.match(html, /<meta name="twitter:card" content="summary_large_image"/);
   }

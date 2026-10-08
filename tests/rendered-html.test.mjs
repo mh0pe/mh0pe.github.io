@@ -71,6 +71,7 @@ test("renders one visual landing journey with four distinct contribution stories
     "opening",
     "selected-work",
     "philosophy",
+    "writing",
     "context",
   ]);
 

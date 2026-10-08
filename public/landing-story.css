@@ -51,6 +51,14 @@
 .landing-principle[open] summary h3 > span { transform: rotate(45deg); }
 .landing-principle > div { padding: 0 1.5rem 1.5rem 0; }
 .landing-principle > div > p { margin-top: 0; font-size: 1rem; }
+.landing-writing { display: grid; grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); gap: 4rem; border-top: 1px solid var(--hope-hairline); padding-block: 4rem 5rem; }
+.landing-writing > header > p:not(.landing-label) { max-width: 40ch; }
+.landing-writing__entries article { border-top: 1px solid var(--hope-hairline); padding-block: 1.5rem; scroll-margin-top: 7rem; }
+.landing-writing__entries article > p:first-child { font-size: .9rem; color: var(--hope-ink-muted); margin: 0 0 .5rem; }
+.hope-brand .landing-writing h3 { font-size: clamp(1.75rem,2.4vw,2.5rem); line-height: 1.12; letter-spacing: -.025em; margin: .5rem 0 1rem; }
+.landing-writing h3 a { display: block; min-height: 44px; text-decoration: none; }
+.landing-writing h3 a:is(:hover,:focus-visible) { text-decoration: underline; text-underline-offset: .12em; }
+.landing-writing__entries article > p:last-child { max-width: 56ch; font-size: 1rem; margin-bottom: 0; }
 .landing-experience { padding-block: 5rem; background: color-mix(in srgb, var(--hope-green) 9%, var(--hope-porcelain)); }
 .landing-experience__intro { display: grid; grid-template-columns: minmax(0, .55fr) minmax(0, 1fr); gap: 5rem; align-items: center; margin-bottom: 3rem; }
 .landing-experience__intro > div { max-width: 62ch; }
@@ -91,6 +99,7 @@
   .landing-opening { gap: 1.5rem; }
   .landing-project { gap: 1.5rem; }
   .landing-philosophy { gap: 2rem; }
+  .landing-writing { gap: 2rem; }
   .landing-experience__intro { gap: 2.5rem; }
   .landing-credential-group { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
   .hope-brand .landing-credential-group h3 { max-width: none; }
@@ -108,6 +117,7 @@
   .landing-details__body { padding: 1rem; }
   .landing-recent ul, .landing-philosophy { grid-template-columns: minmax(0, 1fr); }
   .landing-philosophy { padding-block: 3.5rem; gap: 2rem; }
+  .landing-writing { grid-template-columns: minmax(0,1fr); gap: 2rem; padding-block: 3rem; }
   .landing-experience { padding-block: 3rem; }
   .landing-experience__intro { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
   .landing-portrait { justify-self: start; width: min(70%, 260px); }

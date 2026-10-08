@@ -1,0 +1,375 @@
+{
+  "kind": "Rendered static sharing graphics, not webpage screenshots",
+  "renderer": "Remotion 4.0.520",
+  "sourceHash": "93bf376b46a9880fe6b5f44c6e932c0aa2522b203499bfd3db235b4e3e320286",
+  "inputs": [
+    {
+      "file": "app/data/social-pages.json",
+      "sha256": "5fa13a71959037987da8acc86cb656d780f378dfa72b731e2dfde9227f372b91"
+    },
+    {
+      "file": "app/data/social.ts",
+      "sha256": "19fece8eaa1ec743caf753e2bcf0eb55299153a7405a35f7ac7429fdb37be4f7"
+    },
+    {
+      "file": "app/data/blog.ts",
+      "sha256": "b778f9893dbaa07c32b3c18ddb4e50058280e8305a42ec47690a9c0f90f325fa"
+    },
+    {
+      "file": "app/data/article-motion.ts",
+      "sha256": "6402ee60bd9792b39b1f69c9852e70d7bd65483d0bab9f30c52d8064dbcd112a"
+    },
+    {
+      "file": "app/data/credentials.ts",
+      "sha256": "d1a78ac19576673489943e34b2148ec5c6817792a52f3a7b307c78bdad666d75"
+    },
+    {
+      "file": "remotion/index.ts",
+      "sha256": "957e481dd33a29b4a55ae0e95dbf763b7e48c37c427ca4bd1275faf34bc07a74"
+    },
+    {
+      "file": "remotion/Root.tsx",
+      "sha256": "2e15fdcf0a5b2adbe7d442b4fef49fdb9e1f66f9c158c27981696be100156e90"
+    },
+    {
+      "file": "remotion/compositions/SocialCard.tsx",
+      "sha256": "477a00fb652cb112ccc6ef3711ddb1c4364b219fd6f7ae93a74e554df7cdcf2a"
+    },
+    {
+      "file": "app/components/blog/motion/StoryScene.tsx",
+      "sha256": "ad3f2ea0b532144b4cc0c1f6fad27e579988e915d975059d7a327984046b92cf"
+    },
+    {
+      "file": "app/components/blog/motion/story-timing.ts",
+      "sha256": "aa72dd2b2b422031eeda0832114fdc6c0b81f9a35e4b949a199d9d194774685f"
+    },
+    {
+      "file": "app/components/blog/motion/miura-geometry.ts",
+      "sha256": "2bfeca337f3545e342136fa16b7ca7a7cd03d55b77511f09df12c10ab24a82d1"
+    },
+    {
+      "file": "app/components/v3/LivingArchitecture.tsx",
+      "sha256": "b9ae1cd7e358e066d0c028f0f92af296698e604dcc74817ac76144ba5ad6a68f"
+    },
+    {
+      "file": "public/fonts/newsreader-variable.woff2",
+      "sha256": "62981321d9a3cc7a61a73792729043703fd6112da86e8ec848bb57f088578757"
+    },
+    {
+      "file": "public/fonts/instrument-sans-variable.woff2",
+      "sha256": "2ee17598a98d8a59e4df8152d015bec9ab8e4d5672cc0ab42bef806b568e3971"
+    },
+    {
+      "file": "tools/render-social-cards.mjs",
+      "sha256": "c2c58d4d8dd0d54126b13dfffb23509cc9cfe7a32fd9bf83a204ad6627ec934c"
+    },
+    {
+      "file": "package-lock.json",
+      "sha256": "a31b8d1e010bab952e0f2df69635e25d7f48d0558833e5d82c728a33748ed14b"
+    },
+    {
+      "file": "public/portraits/madison-outdoor-720.webp",
+      "sha256": "98f0018350a9d7d4be27a44ccf01e235b9af6c6f54519884c5f400e50ca5c853"
+    },
+    {
+      "file": "public/credentials/4b68c719-c0c0-4875-91c5-8a29f2d14a63.webp",
+      "sha256": "1e5270d36003cf3d1da996bc3a8e27a21876e6c7e3b528103dfe473a9c744364"
+    },
+    {
+      "file": "public/credentials/c054bfdf-abdb-4b0b-bbbd-dc8c99ca0be7.webp",
+      "sha256": "fed723a1ea29a4b135607093433045ec7252177aa19c0a1259f056e1269c814c"
+    },
+    {
+      "file": "public/credentials/ae819b31-11bd-4ba8-9c62-4d011a71c797.webp",
+      "sha256": "34766bc5dcc1c40530c7a6dd4ac1a9f2d32824414c15c77353b8a647e8c76602"
+    },
+    {
+      "file": "public/credentials/8c186c65-bfa7-438f-983c-0aca58e76c31.webp",
+      "sha256": "2e5cfd0ff3ab3e02aa5e91d0ef9ed003dffbb66b2c5e7ebdca220478e55be94e"
+    },
+    {
+      "file": "public/credentials/b3b85296-0e88-4075-a52c-8966a93c4ba5.webp",
+      "sha256": "0766089e9950ca49371884bae3031e7ecc64d850c88f30c02fe3735ef3c4d896"
+    },
+    {
+      "file": "public/credentials/652eaaae-55d6-436b-8b73-763610552b1d.webp",
+      "sha256": "374baa73f09328eebd56b62086b8ad21d430dbba49785a9a8511109550406c6d"
+    }
+  ],
+  "cards": [
+    {
+      "path": "/",
+      "file": "portfolio.jpg",
+      "art": "stack",
+      "title": "Madison Hope Steiner | Principal AI Architect",
+      "alt": "Bringing Hope to systems at scale. Four assembled layers represent foundations, security, developer tools, and AI workflows.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 57926,
+      "sha256": "2c56156438dc6aa6b706f338ed0e9a53290891bf49d157ccc591d0f8cd1265a4"
+    },
+    {
+      "path": "/blog/",
+      "file": "writing.jpg",
+      "art": "journal",
+      "title": "Notes from the work | Madison Hope Steiner",
+      "alt": "Notes from the work by Madison Hope Steiner. Three illustrated editorial sheets introduce essays on engineering and AI.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 45784,
+      "sha256": "260a16be1004602c554cc44e72b0c85230bde58c6f335c39ebf6c233259c1557"
+    },
+    {
+      "path": "/blog/workspace-security/",
+      "file": "workspace-security.jpg",
+      "art": "workspace-security",
+      "title": "Workspace security in ASH | Madison Hope Steiner",
+      "alt": "A shared view. Local context. Three separate project territories illustrate workspace security in Automated Security Helper.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 55381,
+      "sha256": "e8c3558789d5bfed0461b1de33be2853b941360eaf38717178a6ebc169a3c326"
+    },
+    {
+      "path": "/blog/one-definition-many-agent-tools/",
+      "file": "one-definition-many-agent-tools.jpg",
+      "art": "one-definition-many-agent-tools",
+      "title": "One definition, 15 agent tools | Madison Hope Steiner",
+      "alt": "One definition. Fifteen native forms. A shared diamond-shaped definition is surrounded by platform-specific packages.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 60848,
+      "sha256": "d7f1672fcdf6e292ffad9e8215d495c9e50f75a8f348053d0c00f2d3c5353e1e"
+    },
+    {
+      "path": "/blog/reproducible-security-checks/",
+      "file": "reproducible-security-checks.jpg",
+      "art": "reproducible-security-checks",
+      "title": "Reproducible ASH checks | Madison Hope Steiner",
+      "alt": "The tools are part of the result. A fixed tool collar sits beside separate code, rules, and external-data inputs.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 58657,
+      "sha256": "fcdf071eb2728a57d4bc78704bbda0cc5299db236f4394175e77d562615f9509"
+    },
+    {
+      "path": "/blog/security-feedback-where-you-work/",
+      "file": "security-feedback-where-you-work.jpg",
+      "art": "security-feedback-where-you-work",
+      "title": "Security feedback at work | Madison Hope Steiner",
+      "alt": "Security feedback, where the work happens. An annotation appears beside a marked line on an illustrated work surface.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 61973,
+      "sha256": "9e9f40289f31ad6d125efe125590112dbf5beecce5ef6f5c9d6de8fb429253d3"
+    },
+    {
+      "path": "/blog/handoffs-that-carry-the-work/",
+      "file": "handoffs-that-carry-the-work.jpg",
+      "art": "handoffs-that-carry-the-work",
+      "title": "Handoffs for people and agents | Madison Hope Steiner",
+      "alt": "Carry the work, not just the conversation. A folded handoff sheet keeps Why, Now, and Next together.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 63637,
+      "sha256": "0fb6b2968b3fb23db786f9cfe27052bb1658d4e6d1c3a23d7c16b4207cc45004"
+    },
+    {
+      "path": "/blog/integrity-bound-yarn-pnp-for-bazel/",
+      "file": "integrity-bound-yarn-pnp-for-bazel.jpg",
+      "art": "integrity-bound-yarn-pnp-for-bazel",
+      "title": "Yarn PnP integrity in Bazel | Madison Hope Steiner",
+      "alt": "Make the build prove what it loaded. Interlocking inspection rings illustrate file identity before a resolver can load.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 52042,
+      "sha256": "b4422c73131f5024dae1d21e178501b6eb178423a27c9245cd793f452bd9295e"
+    },
+    {
+      "path": "/blog/typed-svg-dom/",
+      "file": "typed-svg-dom.jpg",
+      "art": "typed-svg-dom",
+      "title": "Building SVG in Lightpanda | Madison Hope Steiner",
+      "alt": "A browser capability, built in layers. Transparent strata reveal the SVG document-model anatomy beneath a letterform.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 60301,
+      "sha256": "6ab544dc6f40b3b583f20cc016cedc7376c24d440ecd0d28ca6c75432d5a56fc"
+    },
+    {
+      "path": "/blog/aws-labs-mcp/",
+      "file": "aws-labs-mcp.jpg",
+      "art": "aws-labs-mcp",
+      "title": "AWS Labs MCP contributions | Madison Hope Steiner",
+      "alt": "Useful tools. Clear boundaries. Separate rooms represent documents, images, connection, and session capabilities.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 56838,
+      "sha256": "93630915666d4e9be01a75763c686ccb7fe6ee06447de7724d679d02ad961ac6"
+    },
+    {
+      "path": "/blog/cloud-runtime/",
+      "file": "cloud-runtime.jpg",
+      "art": "cloud-runtime",
+      "title": "AWS CDK and jsii feedback | Madison Hope Steiner",
+      "alt": "Developer feedback is part of the platform. An illustrated preview distinguishes intended change from unresolved values.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 62702,
+      "sha256": "4a082905f84ac3e159e6bf98af8092421dba50dbd600cda1e92d19c856524c70"
+    },
+    {
+      "path": "/work/",
+      "file": "selected-work.jpg",
+      "art": "work",
+      "title": "Selected open-source systems | Madison Hope Steiner",
+      "alt": "Systems built for the next team. Four labeled layers introduce foundations, security, developer tools, and AI workflows.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 56593,
+      "sha256": "c4a8154f6733d9b20d94f2d8560ffaf1bb5d89a62244c93ab39153a2c19f2545"
+    },
+    {
+      "path": "/work/automated-security-helper/",
+      "file": "automated-security-helper.jpg",
+      "art": "workspace-security",
+      "title": "Automated Security Helper | Madison Hope Steiner",
+      "alt": "Shared security. Clear ownership. Separate project territories represent independently scoped security work.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 59179,
+      "sha256": "5f4e7ac39a1cff4a086751c22a782f5ed8bbee7fafbd8813fe8a1573b5790709"
+    },
+    {
+      "path": "/work/cloudformation-guard/",
+      "file": "cloudformation-guard.jpg",
+      "art": "policy",
+      "title": "CloudFormation Guard integrity | Madison Hope Steiner",
+      "alt": "Keep policy intent intact. Separate pass, reject, missing, and error outcomes show distinct policy evaluation meanings.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 47972,
+      "sha256": "0ab2b33a3334199baaf551263432ec036a048abf12b4c7169838028d4fc26c74"
+    },
+    {
+      "path": "/work/nix-windows/",
+      "file": "nix-windows.jpg",
+      "art": "windows",
+      "title": "Nix on Windows | Madison Hope Steiner",
+      "alt": "A path across platforms. Interlocking tiles labeled Nix and Windows illustrate a staged platform boundary.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 45850,
+      "sha256": "64b186d693fb51a2ce93c018876dcde16f86b4fd32757b2f8dc00b12f18418eb"
+    },
+    {
+      "path": "/work/agent-systems/",
+      "file": "agent-systems.jpg",
+      "art": "handoffs-that-carry-the-work",
+      "title": "Organizational agent systems | Madison Hope Steiner",
+      "alt": "Agent teams. Decisions that travel. A folded handoff sheet carries reasons, current state, and the next step.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 61847,
+      "sha256": "f76c792fc76befc45542401e2c63cd6fe91be8f06e81c003cab7df355f6fcc3f"
+    },
+    {
+      "path": "/proof/",
+      "file": "public-work.jpg",
+      "art": "proof",
+      "title": "Public work and direct links | Madison Hope Steiner",
+      "alt": "Follow the result back to the work. Three illustrated source sheets are labeled code, review, and release.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 52352,
+      "sha256": "6163aff2562149eb59fcf1b581baddaf708a0f2e2d21f98d2d1709aa91178882"
+    },
+    {
+      "path": "/about/",
+      "file": "experience.jpg",
+      "art": "portrait",
+      "title": "Experience and organizational scale | Madison Hope Steiner",
+      "alt": "Experience across industries. A portrait of Madison Hope Steiner accompanies the experience page.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 64601,
+      "sha256": "24615cc5032dcd258e738563cedf7b95b5e221c310849e918d241000047f4d6a"
+    },
+    {
+      "path": "/credentials/",
+      "file": "credentials.jpg",
+      "art": "credentials",
+      "title": "Credentials earned | Madison Hope Steiner",
+      "alt": "Curiosity, put into practice. Earned certification badges accompany Madison Hope Steiner's learning history.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 68166,
+      "sha256": "60a564aa204f9ecb1913681935590916e4e5af84adf8483051e2b705490353c6"
+    },
+    {
+      "path": "/decisions/",
+      "file": "architecture-decisions.jpg",
+      "art": "decisions",
+      "title": "Architecture decisions | Madison Hope Steiner",
+      "alt": "The trade-off is part of the architecture. Three editorial cards identify pressure, choice, and cost.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 53568,
+      "sha256": "c699af7865abb59361f4b006724a82b456ced78cd09ff76ff4f118b81ada376f"
+    },
+    {
+      "path": "/method/",
+      "file": "development-ai-philosophy.jpg",
+      "art": "method",
+      "title": "Development & AI philosophy | Madison Hope Steiner",
+      "alt": "Build capability. Keep responsibility. Three connected editorial sheets represent understand, build, and verify.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 54529,
+      "sha256": "58f8a5e6ff25f9395ff4d2c0a618bdfe8d8a85f70fc26d56d825175612ce1f5b"
+    },
+    {
+      "path": "/capabilities/",
+      "file": "capabilities.jpg",
+      "art": "capabilities",
+      "title": "How I help teams | Madison Hope Steiner",
+      "alt": "Tools other teams can use. Assembled layers show work spanning foundations, security, developer tools, and AI workflows.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 54845,
+      "sha256": "a4f6b7b94dae58f9fbbde9b62cf34f3b90d67dc033b68443b330ceccdbe2e07c"
+    },
+    {
+      "path": "/models/",
+      "file": "model-collaboration.jpg",
+      "art": "models",
+      "title": "Model collaboration | Madison Hope Steiner",
+      "alt": "The models I work with. Three editorial sheets labeled Direction, Models, and Review illustrate a collaborative workflow.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 47234,
+      "sha256": "803c3d60c1998fcf3a23384b571ae1158963343e9fc4ce10e32601a6eddff744"
+    },
+    {
+      "path": "/404.html",
+      "file": "page-not-found.jpg",
+      "art": "recovery",
+      "title": "Page not found | Madison Hope Steiner",
+      "alt": "Another way into the work. An open editorial doorway introduces links back to the portfolio.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 41314,
+      "sha256": "3d8d0bae79656a5e6a21ad65332245ac1b851125c89cde6c82ab340f73d76051"
+    }
+  ],
+  "aliases": [
+    {
+      "path": "/evidence/",
+      "canonical": "/proof/"
+    },
+    {
+      "path": "/career/",
+      "canonical": "/about/"
+    }
+  ]
+}

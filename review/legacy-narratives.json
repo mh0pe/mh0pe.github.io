@@ -1,0 +1,632 @@
+{
+  "sourceCommit": "94dc1e84679ef75dd4556ff35960285aa54d0e2e",
+  "sourcePath": "app/page.tsx",
+  "inventoryScope": "Embedded project narratives, not a complete external blog inventory",
+  "narratives": [
+    {
+      "id": "automated-security-helper",
+      "graphId": "automated-security-helper",
+      "clusterId": "security",
+      "index": "01",
+      "title": "Automated Security Helper",
+      "repository": "awslabs / automated-security-helper",
+      "repositoryHref": "https://github.com/awslabs/automated-security-helper",
+      "period": "Contributor and public maintainer activity · 2024–2026",
+      "focus": "Workspace orchestration, reproducible toolchains, and scan integrity",
+      "status": "Workspace mode shipped in v3.7.0 · pinned Nix scanner execution merged",
+      "context": "ASH coordinates source, dependency, infrastructure, and agent-workflow security across developer environments.",
+      "value": "Advanced ASH into workspace-scale security orchestration, then strengthened the execution beneath it with a pinned multi-language scanner environment, correctly scoped ignore rules, stable finding paths, and explicit failure semantics.",
+      "contributions": [
+        {
+          "evidenceId": "ash-workspace",
+          "text": "Shipped workspace planning and per-project execution, with aggregate results that retain project identity and workspace-level policy controls."
+        },
+        {
+          "evidenceId": "ash-mcp-confinement",
+          "text": "Confined MCP scan targets to configured roots through canonical, symlink-aware containment and per-session isolation."
+        },
+        {
+          "evidenceId": "ash-distributed",
+          "text": "Built a public execute-and-collect architecture with scanner sharding and deployable AgentCore, Fargate, Lambda, and CodePipeline targets."
+        },
+        {
+          "evidenceId": "ash-nix-toolchain",
+          "text": "Added a hash-pinned Nix mode that supplies ten scanners across Linux and macOS, x86-64 and ARM, without requiring adopters to build a container image."
+        },
+        {
+          "evidenceId": "ash-scan-integrity",
+          "text": "Closed false-confidence paths by applying nested ignore rules to the correct subtree, reporting their effect, and making secret-finding paths stable across Windows drives."
+        },
+        {
+          "evidenceId": "ash-failure-guard",
+          "text": "Made all-target scanner failures observable as execution errors and migrated the cdk-nag integration to its real 3.x policy-validation API."
+        }
+      ],
+      "links": [
+        {
+          "kind": "Release",
+          "label": "ASH v3.7.0 · workspace mode shipped",
+          "href": "https://github.com/awslabs/automated-security-helper/releases/tag/v3.7.0",
+          "evidenceId": "ash-workspace"
+        },
+        {
+          "kind": "PR",
+          "label": "#456 · complete workspace stack · merged to main",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/456",
+          "evidenceId": "ash-workspace"
+        },
+        {
+          "kind": "PR",
+          "label": "#462 · stacked project execution series",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/462",
+          "evidenceId": "ash-workspace"
+        },
+        {
+          "kind": "PR",
+          "label": "#478 · stacked reporting and policy series",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/478",
+          "evidenceId": "ash-workspace"
+        },
+        {
+          "kind": "PR",
+          "label": "#477 · confined MCP targets · merged",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/477",
+          "evidenceId": "ash-mcp-confinement"
+        },
+        {
+          "kind": "Capability",
+          "label": "#493 · agent-driven workspace scans over MCP",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/493"
+        },
+        {
+          "kind": "Prototype",
+          "label": "#494 · distributed execution and deployable targets",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/494",
+          "evidenceId": "ash-distributed"
+        },
+        {
+          "kind": "PR",
+          "label": "#499 · Python package coverage depth · merged",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/499"
+        },
+        {
+          "kind": "Capability",
+          "label": "#500 · TypeScript CI with pinned scope",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/500"
+        },
+        {
+          "kind": "PR",
+          "label": "#501 · nested ignore semantics and exclusion reporting · merged",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/501",
+          "evidenceId": "ash-scan-integrity"
+        },
+        {
+          "kind": "PR",
+          "label": "#502 · stable detect-secrets scan roots · merged",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/502",
+          "evidenceId": "ash-secret-paths"
+        },
+        {
+          "kind": "PR",
+          "label": "#508 · pinned Nix scanner mode · merged",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/508",
+          "evidenceId": "ash-nix-toolchain"
+        },
+        {
+          "kind": "Capability",
+          "label": "#514 · cdk-nag 3.x and per-target failure reporting",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/514",
+          "evidenceId": "ash-failure-guard"
+        },
+        {
+          "kind": "PR",
+          "label": "#515 · dependency upgrade lanes by risk · merged",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/515"
+        },
+        {
+          "kind": "PR",
+          "label": "#331 · integrations for 15 agent platforms · merged",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/331",
+          "evidenceId": "ash-transpiler"
+        },
+        {
+          "kind": "PR",
+          "label": "#440 · external scan assurance · merged",
+          "href": "https://github.com/awslabs/automated-security-helper/pull/440"
+        },
+        {
+          "kind": "Docs",
+          "label": "ASH documentation",
+          "href": "https://awslabs.github.io/automated-security-helper/"
+        },
+        {
+          "kind": "Repository",
+          "label": "Upstream source",
+          "href": "https://github.com/awslabs/automated-security-helper"
+        }
+      ],
+      "originalGroup": "featuredProjects"
+    },
+    {
+      "id": "cloudformation-guard",
+      "graphId": "cloudformation-guard",
+      "clusterId": "security",
+      "index": "02",
+      "title": "CloudFormation Guard correctness",
+      "repository": "aws-cloudformation / cloudformation-guard",
+      "repositoryHref": "https://github.com/aws-cloudformation/cloudformation-guard",
+      "period": "Contributor · 2026",
+      "focus": "Trustworthy evaluation, reporting, and published rule packs",
+      "status": "Core correction shipped in Guard 3.2.1 · rule-pack assurance available",
+      "context": "CloudFormation Guard evaluates infrastructure policy before deployment, where precise outcomes and trustworthy rule packs support confident decisions.",
+      "value": "Strengthened evaluator semantics and reporting, then extended the work into assembled-pack validation, executable rule tests, deterministic tooling, and publication gates tied to successful checks.",
+      "contributions": [
+        {
+          "evidenceId": "guard-enforcement",
+          "text": "Made negation, empty references, scoping, mixed numeric comparisons, indexes, and reporter output preserve the intended policy result."
+        },
+        {
+          "evidenceId": "guard-outcomes",
+          "text": "Designed a four-valued outcome model so unevaluatable and not-applicable states remain distinct instead of becoming false compliance."
+        },
+        {
+          "evidenceId": "guard-query-reporting",
+          "text": "Extended the public implementation into query capture isolation, parser limits, reporter integrity, and tests that prove the intended rule path executed."
+        },
+        {
+          "evidenceId": "guard-registry-pack",
+          "text": "Added assembled-pack validation across 50 distributions and paired orphaned tests with real per-resource rules while preserving published identifiers."
+        }
+      ],
+      "links": [
+        {
+          "kind": "PR",
+          "label": "#717 · verdict integrity correction · merged",
+          "href": "https://github.com/aws-cloudformation/cloudformation-guard/pull/717",
+          "evidenceId": "guard-enforcement"
+        },
+        {
+          "kind": "Release",
+          "label": "Guard 3.2.1 · shipped correction",
+          "href": "https://github.com/aws-cloudformation/cloudformation-guard/releases/tag/3.2.1"
+        },
+        {
+          "kind": "PR",
+          "label": "#720 · outcome semantics",
+          "href": "https://github.com/aws-cloudformation/cloudformation-guard/pull/720",
+          "evidenceId": "guard-outcomes"
+        },
+        {
+          "kind": "PR",
+          "label": "#727 · query and reporter integrity",
+          "href": "https://github.com/aws-cloudformation/cloudformation-guard/pull/727",
+          "evidenceId": "guard-query-reporting"
+        },
+        {
+          "kind": "PR",
+          "label": "Rules registry #287 · assembled-pack assurance",
+          "href": "https://github.com/aws-cloudformation/aws-guard-rules-registry/pull/287",
+          "evidenceId": "guard-registry-pack"
+        },
+        {
+          "kind": "PR",
+          "label": "Rules registry #285 · explicit operand semantics",
+          "href": "https://github.com/aws-cloudformation/aws-guard-rules-registry/pull/285",
+          "evidenceId": "guard-registry-operands"
+        },
+        {
+          "kind": "PR",
+          "label": "Rules registry #288 · executable rule expectations",
+          "href": "https://github.com/aws-cloudformation/aws-guard-rules-registry/pull/288",
+          "evidenceId": "guard-registry-tests"
+        },
+        {
+          "kind": "Repository",
+          "label": "Working Guard fork",
+          "href": "https://github.com/awsmadi/cloudformation-guard"
+        }
+      ],
+      "originalGroup": "featuredProjects"
+    },
+    {
+      "id": "nix-windows",
+      "graphId": "nix-windows",
+      "clusterId": "durability",
+      "index": "03",
+      "title": "Nix on Windows",
+      "repository": "NixOS / nix + awsmadi / nix",
+      "repositoryHref": "https://github.com/NixOS/nix",
+      "period": "Contributor · 2026",
+      "focus": "Windows build execution, libstore assurance, and recursive operation",
+      "status": "Derivation builder merged · broader Windows runtime capabilities available",
+      "context": "Nix brings reproducible build and package semantics to a growing Windows implementation.",
+      "value": "Advanced the Windows build chain from its portability foundation to an upstream derivation builder and whole-project cross-build coverage, then extended libstore testing, content-addressed outputs, evaluator startup, and recursive Nix operation.",
+      "contributions": [
+        {
+          "evidenceId": "nix-builder",
+          "text": "Introduced a deliberately scoped builder that executes supported derivations, registers valid store outputs, and reports build results under Wine."
+        },
+        {
+          "evidenceId": "nix-cross-build-ci",
+          "text": "Enabled large COFF objects across Windows targets and expanded CI from a narrow utility suite to the complete MinGW cross-build graph."
+        },
+        {
+          "evidenceId": "nix-libstore-runtime",
+          "text": "Turned Windows libstore tests into a real merge gate while enabling content-addressed and fixed-output derivations and restoring evaluator startup under Wine."
+        },
+        {
+          "evidenceId": "nix-recursive-runtime",
+          "text": "Lifted the recursive-Nix daemon into the shared builder and supplied the narrow platform hooks needed to make it available on Windows."
+        }
+      ],
+      "links": [
+        {
+          "kind": "PR",
+          "label": "#16347 · Windows derivation builder · merged",
+          "href": "https://github.com/NixOS/nix/pull/16347",
+          "evidenceId": "nix-builder"
+        },
+        {
+          "kind": "PR",
+          "label": "#16367 · large COFF objects across Windows targets · merged",
+          "href": "https://github.com/NixOS/nix/pull/16367",
+          "evidenceId": "nix-big-coff"
+        },
+        {
+          "kind": "PR",
+          "label": "#16368 · cross-build every Windows component · merged",
+          "href": "https://github.com/NixOS/nix/pull/16368",
+          "evidenceId": "nix-cross-build-ci"
+        },
+        {
+          "kind": "PR",
+          "label": "#16364 · certificate-path startup handling · merged",
+          "href": "https://github.com/NixOS/nix/pull/16364",
+          "evidenceId": "nix-cert-startup"
+        },
+        {
+          "kind": "Capability",
+          "label": "#16359 · handle-relative Windows store deletion",
+          "href": "https://github.com/NixOS/nix/pull/16359",
+          "evidenceId": "nix-store-deletion"
+        },
+        {
+          "kind": "Capability",
+          "label": "#16383 · post-startup certificate configuration",
+          "href": "https://github.com/NixOS/nix/pull/16383",
+          "evidenceId": "nix-cert-config"
+        },
+        {
+          "kind": "Capability",
+          "label": "Working Windows implementation and branches",
+          "href": "https://github.com/awsmadi/nix"
+        },
+        {
+          "kind": "Capability",
+          "label": "Windows validation harness · independent result checks",
+          "href": "https://github.com/nix-windows/nix-windows-demo/pull/1",
+          "evidenceId": "nix-validation-harness"
+        },
+        {
+          "kind": "Capability",
+          "label": "#16411 · Windows libstore gate and content-addressed outputs",
+          "href": "https://github.com/NixOS/nix/pull/16411",
+          "evidenceId": "nix-libstore-runtime"
+        },
+        {
+          "kind": "Capability",
+          "label": "#16414 · recursive Nix on Windows",
+          "href": "https://github.com/NixOS/nix/pull/16414",
+          "evidenceId": "nix-recursive-runtime"
+        },
+        {
+          "kind": "PR",
+          "label": "#16342 · Winsock initialization · merged",
+          "href": "https://github.com/NixOS/nix/pull/16342",
+          "evidenceId": "nix-winsock"
+        },
+        {
+          "kind": "PR",
+          "label": "#16343 · Windows store paths · merged",
+          "href": "https://github.com/NixOS/nix/pull/16343",
+          "evidenceId": "nix-aterm"
+        },
+        {
+          "kind": "PR",
+          "label": "#16345 · environment semantics · merged",
+          "href": "https://github.com/NixOS/nix/pull/16345",
+          "evidenceId": "nix-environment"
+        },
+        {
+          "kind": "PR",
+          "label": "#16354 · setEnv contract · merged",
+          "href": "https://github.com/NixOS/nix/pull/16354",
+          "evidenceId": "nix-setenv"
+        },
+        {
+          "kind": "PR",
+          "label": "#16355 · proxy variables · merged",
+          "href": "https://github.com/NixOS/nix/pull/16355",
+          "evidenceId": "nix-proxy"
+        }
+      ],
+      "originalGroup": "featuredProjects"
+    },
+    {
+      "id": "portable-frameworks",
+      "graphId": "portable-frameworks",
+      "clusterId": "agents",
+      "index": "04",
+      "title": "Organizational agent systems",
+      "repository": "mh0pe / base-v1 + carl + paul + seed",
+      "repositoryHref": "https://github.com/mh0pe/base-v1",
+      "period": "Builder and maintainer · 2026",
+      "focus": "Subagents, agent teams, decision memory, and recursive improvement",
+      "status": "Four portable frameworks · native plugins and multi-CLI runtimes",
+      "context": "BASE, CARL, PAUL, and SEED form an interoperable toolkit for organizing agent teams, retaining decisions, planning work, and improving the workflows that produce software.",
+      "value": "Helped pioneer the practical application of subagents, agent teams, durable decision memory, and organizational recursive self-improvement, then made that operating model portable across native plugins, skills directories, package runners, and multiple coding CLIs.",
+      "contributions": [
+        {
+          "evidenceId": "portable-base",
+          "text": "Turned agent-team and improvement patterns into recoverable, TOML-backed state with explicit integration boundaries."
+        },
+        {
+          "evidenceId": "portable-carl-runtime",
+          "text": "Made decision memory portable across plugin and multi-CLI runtimes, with session-start state and schema validation."
+        },
+        {
+          "evidenceId": "portable-paul",
+          "text": "Packaged planning and workflow capabilities for native plugins, standalone skills directories, and project-root discovery."
+        },
+        {
+          "evidenceId": "code-index-skill",
+          "text": "Extended the operating model with an installable code-index-first skill for staged reading, tool routing, and subagent guidance."
+        }
+      ],
+      "links": [
+        {
+          "kind": "PR",
+          "label": "BASE #2 · state and integration hardening",
+          "href": "https://github.com/mh0pe/base-v1/pull/2",
+          "evidenceId": "portable-base"
+        },
+        {
+          "kind": "PR",
+          "label": "CARL #2 · multi-CLI runtime · merged",
+          "href": "https://github.com/mh0pe/carl/pull/2",
+          "evidenceId": "portable-carl-runtime"
+        },
+        {
+          "kind": "PR",
+          "label": "CARL #3 · schema validation · merged",
+          "href": "https://github.com/mh0pe/carl/pull/3"
+        },
+        {
+          "kind": "Capability",
+          "label": "PAUL #1 · portable planning integration",
+          "href": "https://github.com/mh0pe/paul/pull/1",
+          "evidenceId": "portable-paul"
+        },
+        {
+          "kind": "Capability",
+          "label": "SEED #1 · portable workflow integration",
+          "href": "https://github.com/mh0pe/seed/pull/1",
+          "evidenceId": "portable-seed"
+        },
+        {
+          "kind": "Capability",
+          "label": "code-index-mcp #111 · index-first agent skill",
+          "href": "https://github.com/johnhuang316/code-index-mcp/pull/111",
+          "evidenceId": "code-index-skill"
+        },
+        {
+          "kind": "Docs",
+          "label": "BASE · session memory and reviewed insight-to-rule flow",
+          "href": "https://github.com/mh0pe/base-v1#per-session-meta-memory-psmm--session-intelligence"
+        },
+        {
+          "kind": "Docs",
+          "label": "CARL · selective decision recall",
+          "href": "https://github.com/mh0pe/carl#decisions"
+        },
+        {
+          "kind": "Docs",
+          "label": "PAUL · explicit subagent and reconciliation policy",
+          "href": "https://github.com/mh0pe/paul#in-session-context"
+        },
+        {
+          "kind": "Docs",
+          "label": "SEED · typed handoff into managed delivery",
+          "href": "https://github.com/mh0pe/seed#the-paul-connection--ideation-to-managed-build"
+        }
+      ],
+      "originalGroup": "featuredProjects"
+    },
+    {
+      "id": "rules-js-pnp",
+      "graphId": "rules-js-pnp",
+      "clusterId": "durability",
+      "index": "A",
+      "title": "Integrity-bound Yarn PnP for Bazel",
+      "repository": "aspect-build / rules_js + mh0pe / rules_js",
+      "period": "Contributor · 2026",
+      "status": "Available public implementation · upstream review active",
+      "text": "After maintainer feedback, I replaced an exporter design with a zero-install importer that never runs Yarn or constructs node_modules. It cross-validates Yarn 3 and 4 lock/PnP graphs, then integrity-binds the resolver, caches, unplugged files, file types, and executable modes before Bazel loads the project.",
+      "links": [
+        {
+          "kind": "PR",
+          "label": "#2957 · Yarn PnP importer",
+          "href": "https://github.com/aspect-build/rules_js/pull/2957",
+          "evidenceId": "rules-js-pnp"
+        },
+        {
+          "kind": "Capability",
+          "label": "Exact public implementation branch",
+          "href": "https://github.com/mh0pe/rules_js/tree/codex/yarn-lock-repo-cache-v2.3.7",
+          "evidenceId": "rules-js-pnp"
+        },
+        {
+          "kind": "Repository",
+          "label": "rules_js source",
+          "href": "https://github.com/aspect-build/rules_js"
+        }
+      ],
+      "originalGroup": "frontierWork"
+    },
+    {
+      "id": "lightpanda-svg",
+      "graphId": "lightpanda-svg",
+      "clusterId": "browser",
+      "index": "B",
+      "title": "A typed SVG DOM for an agent-native browser",
+      "repository": "lightpanda-io / browser + mh0pe / browser",
+      "period": "Contributor · 2026",
+      "status": "Seven capability layers merged upstream",
+      "text": "Lightpanda merged the complete dependency-ordered SVG stack: compile-time prototype chains, live scalar values, transactional collections, analytic path geometry and bounding boxes, stack-safe structural elements, typed resources, and deterministic UTF-8 text metrics.",
+      "links": [
+        {
+          "kind": "PR",
+          "label": "#3012 · prototype chains · merged",
+          "href": "https://github.com/lightpanda-io/browser/pull/3012",
+          "evidenceId": "svg-prototypes"
+        },
+        {
+          "kind": "PR",
+          "label": "#3034 · live scalar values · merged",
+          "href": "https://github.com/lightpanda-io/browser/pull/3034",
+          "evidenceId": "svg-scalars"
+        },
+        {
+          "kind": "PR",
+          "label": "#3030 · transactional collections · merged",
+          "href": "https://github.com/lightpanda-io/browser/pull/3030",
+          "evidenceId": "svg-collections"
+        },
+        {
+          "kind": "PR",
+          "label": "#3033 · analytic geometry and paths · merged",
+          "href": "https://github.com/lightpanda-io/browser/pull/3033",
+          "evidenceId": "svg-geometry"
+        },
+        {
+          "kind": "PR",
+          "label": "#3031 · stack-safe structural DOM · merged",
+          "href": "https://github.com/lightpanda-io/browser/pull/3031",
+          "evidenceId": "svg-structure"
+        },
+        {
+          "kind": "PR",
+          "label": "#3029 · typed resource DOM · merged",
+          "href": "https://github.com/lightpanda-io/browser/pull/3029",
+          "evidenceId": "svg-resources"
+        },
+        {
+          "kind": "PR",
+          "label": "#3032 · dependency-free text DOM · merged",
+          "href": "https://github.com/lightpanda-io/browser/pull/3032",
+          "evidenceId": "svg-text"
+        },
+        {
+          "kind": "Capability",
+          "label": "Complete seven-layer SVG stack",
+          "href": "https://github.com/mh0pe/browser/tree/codex/svg-07-text",
+          "evidenceId": "svg-text"
+        },
+        {
+          "kind": "Docs",
+          "label": "Lightpanda documentation",
+          "href": "https://lightpanda.io/docs/"
+        }
+      ],
+      "originalGroup": "frontierWork"
+    },
+    {
+      "id": "aws-labs-mcp",
+      "graphId": "aws-labs-mcp",
+      "clusterId": "agents",
+      "project": "AWS Labs MCP",
+      "status": "Document intelligence · transport · browser sessions",
+      "text": "Added richer document ingestion, document-asset extraction, Streamable HTTP/SSE transport, and an MCP server for isolated AgentCore browser sessions.",
+      "links": [
+        {
+          "kind": "PR",
+          "label": "#2586 · document loader",
+          "href": "https://github.com/awslabs/mcp/pull/2586",
+          "evidenceId": "mcp-doc-loader"
+        },
+        {
+          "kind": "PR",
+          "label": "#2658 · document assets",
+          "href": "https://github.com/awslabs/mcp/pull/2658",
+          "evidenceId": "mcp-assets"
+        },
+        {
+          "kind": "PR",
+          "label": "#2645 · HTTP/SSE transport",
+          "href": "https://github.com/awslabs/mcp/pull/2645",
+          "evidenceId": "mcp-transport"
+        },
+        {
+          "kind": "PR",
+          "label": "#2740 · isolated browser sessions",
+          "href": "https://github.com/awslabs/mcp/pull/2740",
+          "evidenceId": "mcp-browser"
+        }
+      ],
+      "originalGroup": "supportingWork"
+    },
+    {
+      "id": "cloud-runtime",
+      "graphId": "cloud-runtime",
+      "clusterId": "cloud",
+      "project": "AWS CDK and jsii",
+      "status": "Infrastructure semantics · executable documentation · runtime efficiency",
+      "text": "Made Fn::ForEach changes visible in cdk diff, added Cloud Control hotswap for QuickSight, kept 803 documented package paths aligned with shipped CDK exports, and improved jsii runtime efficiency.",
+      "links": [
+        {
+          "kind": "PR",
+          "label": "CDK #1063 · Fn::ForEach diff",
+          "href": "https://github.com/aws/aws-cdk-cli/pull/1063",
+          "evidenceId": "cdk-foreach"
+        },
+        {
+          "kind": "PR",
+          "label": "CDK #1457 · QuickSight hotswap",
+          "href": "https://github.com/aws/aws-cdk-cli/pull/1457",
+          "evidenceId": "cdk-quicksight"
+        },
+        {
+          "kind": "PR",
+          "label": "CDK #38675 · executable documentation contract · merged",
+          "href": "https://github.com/aws/aws-cdk/pull/38675",
+          "evidenceId": "cdk-doc-exports"
+        },
+        {
+          "kind": "PR",
+          "label": "jsii #5054 · promise cleanup",
+          "href": "https://github.com/aws/jsii/pull/5054",
+          "evidenceId": "jsii-promises"
+        },
+        {
+          "kind": "PR",
+          "label": "jsii #5055 · type cache",
+          "href": "https://github.com/aws/jsii/pull/5055",
+          "evidenceId": "jsii-types"
+        },
+        {
+          "kind": "PR",
+          "label": "jsii #5056 · member lookup",
+          "href": "https://github.com/aws/jsii/pull/5056",
+          "evidenceId": "jsii-members"
+        },
+        {
+          "kind": "PR",
+          "label": "jsii #5057 · runtime bundle",
+          "href": "https://github.com/aws/jsii/pull/5057",
+          "evidenceId": "jsii-runtime"
+        }
+      ],
+      "originalGroup": "supportingWork"
+    }
+  ]
+}

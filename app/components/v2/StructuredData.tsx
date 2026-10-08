@@ -1,4 +1,5 @@
 import type { PublicCredential } from "../../data/credentials";
+import { socialImageData } from "../../data/social";
 
 const siteUrl = "https://mh0pe.github.io";
 const personId = `${siteUrl}/#madison-hope-steiner`;
@@ -25,6 +26,7 @@ export function ProfilePageData() {
         name: "Madison Hope Steiner | Principal AI Architect",
         about: { "@id": personId },
         mainEntity: { "@id": personId },
+        image: socialImageData("/"),
       }}
     />
   );
@@ -50,6 +52,7 @@ export function CollectionPageData({
         name,
         description,
         author: { "@id": personId },
+        image: socialImageData(path), mainEntityOfPage: url,
       }}
     />
   );
@@ -112,6 +115,7 @@ export function CaseStudyData({
             headline: title,
             description,
             url,
+            image: socialImageData(path), mainEntityOfPage: url,
             author: { "@id": personId },
             citation: sources,
             isPartOf: { "@id": `${siteUrl}/work/#collection` },

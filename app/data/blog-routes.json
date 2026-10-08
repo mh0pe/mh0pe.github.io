@@ -1,0 +1,11 @@
+[
+  "workspace-security",
+  "one-definition-many-agent-tools",
+  "reproducible-security-checks",
+  "security-feedback-where-you-work",
+  "handoffs-that-carry-the-work",
+  "integrity-bound-yarn-pnp-for-bazel",
+  "typed-svg-dom",
+  "aws-labs-mcp",
+  "cloud-runtime"
+]

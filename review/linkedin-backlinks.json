@@ -1,0 +1,16 @@
+{
+  "scope": "Public post read without changing LinkedIn",
+  "verifiedOn": "2026-10-07",
+  "backlinks": [
+    {
+      "article": "typed-svg-dom",
+      "url": "https://www.linkedin.com/posts/madisonhsteiner_webapi-derive-svg-prototype-chains-by-mh0pe-activity-7498223977895559168-vUST",
+      "correspondingWork": "https://github.com/lightpanda-io/browser/pull/3012",
+      "verification": "The public LinkedIn post names Lightpanda SVG prototype foundations and previews the exact GitHub pull request."
+    }
+  ],
+  "gaps": [
+    "No exact corresponding LinkedIn post has been verified for the other eight articles.",
+    "The eight recovered legacy narratives are an embedded site inventory, not a complete inventory of external blog publications."
+  ]
+}

@@ -16,6 +16,7 @@ export const routeFamilies = {
   home: [...sharedFamilies, "landing-", "architecture-", "contribution-scene", "lineage-", "source-"],
   models: [...sharedFamilies, "proof-models", "attribution-"],
   method: [...sharedFamilies, "philosophy-", "method-", "motion-film"],
+  blog: [...sharedFamilies, "journal", "article-"],
 };
 
 export function includesRouteClass(route, className) {

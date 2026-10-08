@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Native links preserve the static portfolio's navigation. */
 import type { Metadata } from "next";
 import Image from "next/image";
 import { SourceLink } from "./components/v2/Evidence";
@@ -8,6 +9,7 @@ import { ArchitectureHero, ContributionScene } from "./components/v3/LivingArchi
 import { developmentPhilosophy } from "./data/philosophy";
 import { credentialsByCategory } from "./data/credentials";
 import professionalHistory from "./data/professional-history.json";
+import { articleBySlug, articlePath, legacyEntryPoints, topicFor } from "./data/blog";
 import {
   agentSystemsCaseStudy,
   automatedSecurityHelperFlagship,
@@ -28,6 +30,11 @@ const stories = [
   { project: agentSystemsCaseStudy, kind: "continuity", title: "Let the next session pick up the work.", description: "Carry decisions, working context, and recoverable state across the tools an agent team uses.", layer: "AI workflows" },
 ] as const;
 
+const writingEntries = legacyEntryPoints.filter((entry) => entry.kind === "article").map((entry) => ({
+  entry,
+  article: articleBySlug(entry.href.split("/")[2])!,
+}));
+
 export default function HomePage() {
   return (
     <RouteFrame>
@@ -37,7 +44,7 @@ export default function HomePage() {
       {/* eslint-disable @next/next/no-css-tags */}
       <link rel="stylesheet" href="/living-architecture.css?v=20261003-palette" />
       {/* eslint-disable @next/next/no-css-tags */}
-      <link rel="stylesheet" href="/landing-story.css?v=20261003-badge-surface" />
+      <link rel="stylesheet" href="/landing-story.css?v=20261007-journal-targets" />
       <ProfilePageData />
       <div className="landing-story">
         <span className="anchor-alias" id="top" aria-hidden="true" />
@@ -67,6 +74,7 @@ export default function HomePage() {
             {stories.map(({ project, kind, title, description, layer }, index) => (
               <article className="landing-project" id={`project-${project.id}`} data-story-kind={kind} key={project.id} aria-labelledby={`story-${project.id}`}>
                 <div className="landing-project__copy">
+                  <span className="anchor-alias" id={`post-${project.id === "agent-systems" ? "portable-frameworks" : project.id}`} aria-hidden="true" />
                   <p className="landing-project__identity">{project.title}</p>
                   <h3 id={`story-${project.id}`}>{title}</h3>
                   <p className="landing-project__description">{description}</p>
@@ -120,6 +128,22 @@ export default function HomePage() {
                 <div><p>{principle.body}</p><a className="landing-link" href={principle.href}>{principle.example}</a></div>
               </details>
             ))}
+          </div>
+        </section>
+
+        <section className="shell landing-writing" id="writing" data-home-section="writing" aria-labelledby="writing-title">
+          <header>
+            <p className="landing-label">Writing</p>
+            <h2 id="writing-title">The decisions behind the work.</h2>
+            <p>Illustrated essays on how a platform comes together, where a boundary belongs, and what makes software useful to the next person.</p>
+            <a className="landing-link" href="/blog/">Explore all writing</a>
+          </header>
+          <div className="landing-writing__entries">
+            {writingEntries.map(({ entry, article }) => <article id={`post-${entry.id}`} key={entry.id}>
+              <p>{topicFor(article).label}</p>
+              <h3><a href={articlePath(article)}>{article.title}</a></h3>
+              <p>{article.deck}</p>
+            </article>)}
           </div>
         </section>
 

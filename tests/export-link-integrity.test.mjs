@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { lstat, readFile, readdir } from "node:fs/promises";
 import { posix } from "node:path";
 import test from "node:test";
+import blogRoutes from "../app/data/blog-routes.json" with { type: "json" };
 
 const output = new URL("../pages-dist/", import.meta.url);
 const origin = "https://mh0pe.github.io";
@@ -153,7 +154,7 @@ test("reference parsing preserves responsive images, CSS escapes, queries and re
 test("all exported page links, anchors and asset references resolve inside the artifact", async () => {
   const files = new Set(await inventory());
   const pages = [...files].filter((name) => name.endsWith(".html"));
-  assert.equal(pages.length, 16, "check the complete set of exported pages, including recovery and legacy routes");
+  assert.equal(pages.length, 17 + blogRoutes.length, "check the complete set of exported pages, including the journal, recovery and legacy routes");
   const documents = new Map(await Promise.all(pages.map(async (name) => [
     name, htmlDocument(await readFile(new URL(name, output), "utf8")),
   ])));

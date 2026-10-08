@@ -1,5 +1,50 @@
 # Third-party source notices
 
+## OriginKit Miura scroll-story adaptation
+
+`app/components/blog/motion/miura-geometry.ts` modifies the geometric core of
+[Miura Image Fold](https://www.originkit.dev/components/miura-image-fold),
+retrieved and read through OriginKit on October 7, 2026. The Miura cell and
+alternating vertex construction become a small, deterministic projected sheet
+in the agent-handoff story. The source's independent animation loop, WebGL
+renderer, texture loading, trigger state machine and fixed 1200-pixel sizing
+are not included. Remotion supplies the frame; native article scroll chooses
+that frame. The story, labels, camera projection and other eight visual worlds
+are site-authored. This is not a drop-in stock component.
+
+The adapted mathematics remain subject to OriginKit's Licensing & Usage, not
+the repository's ISC grant. The existing real-portfolio use boundary applies;
+no template redistribution or endorsement is claimed. No demonstration media
+or third-party font assets are included.
+
+## OriginKit editorial motion adaptations
+
+`app/components/blog/EditorialArt.tsx` and `public/editorial-art.css` adapt
+selected treatments from actual React sources retrieved through the OriginKit
+connector on October 7, 2026:
+
+- [Pulse Lines](https://www.originkit.dev/components/pulse-lines): the paired
+  static track and moving dash, with the source's 10-to-100 dash/gap relationship
+  and cubic-bezier(.65, 0, .35, 1) timing. This site uses bounded paths, a finite
+  3.2-second pass, and no client-size measurement or infinite alternating loop.
+- [Text Gather](https://www.originkit.dev/components/text-gather): the individual
+  character scatter-to-registration treatment, limited to the illustrated SVG
+  text specimen. Here the offsets are deterministic, the text is present in
+  exported HTML, and native CSS replaces the source's GSAP/React effect.
+- [Pixel Unfold](https://www.originkit.dev/components/pixel-unfold): ordered tile
+  reveal, reinterpreted as staggered native SVG transforms. The tiles are
+  supplied at export time; there is no random shuffle, image fetch, canvas,
+  offscreen pixel buffer, scroll listener, or frame loop.
+
+The nine article compositions, explanatory labels, palettes, and editorial
+storyboards are site-specific. These are modified visual interpretations, not
+the stock components. No OriginKit demonstration media, fonts, or icons are
+included. The underlying treatments remain under
+[OriginKit Licensing & Usage](https://www.originkit.dev/docs/licensing), reviewed
+in the browser on October 7, 2026, and are not relicensed under this site's ISC
+grant. Use is as part of this real portfolio, not as a template or component
+catalog. No OriginKit, Guardian, or 404 Media endorsement is claimed.
+
 ## OriginKit Plate Stack
 
 `app/components/v3/capability-geometry.ts`, retained from the earlier stack

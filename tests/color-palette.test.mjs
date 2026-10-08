@@ -100,7 +100,7 @@ test("theme metadata and runtime use the actual page surface colors", () => {
   assert.match(read("app/components/v2/RouteStyles.tsx"), /portfolio-v3\.css\?v=20261003-palette-contrast/);
   assert.match(layout, /theme\.js\?v=20261003-palette/);
   assert.match(read("app/page.tsx"), /living-architecture\.css\?v=20261003-palette/);
-  assert.match(read("app/page.tsx"), /landing-story\.css\?v=20261003-badge-surface/);
+  assert.match(read("app/page.tsx"), /landing-story\.css\?v=20261007-journal-targets/);
 });
 
 test("the brand icon uses the palette without recoloring official badge artwork", () => {

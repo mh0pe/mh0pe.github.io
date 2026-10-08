@@ -139,6 +139,7 @@ export default function SiteFooter({
           ))}
           <details className="site-footer__details">
             <summary>Go deeper</summary>
+            <a href="/blog/">Writing <Arrow /></a>
             <a href="/#credentials">Credentials <Arrow /></a>
             <a href="/work/">All project stories <Arrow /></a>
             <a href="/decisions/">Architecture decisions <Arrow /></a>

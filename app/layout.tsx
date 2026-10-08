@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { preload } from "react-dom";
+import { socialImageFor } from "./data/social";
 
 const title = "Madison Hope Steiner | Principal AI Architect";
 const description =
@@ -90,7 +91,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const origin =
     configuredSiteOrigin() ??
     (localHost ? `http://${localHost}` : "https://mh0pe.github.io");
-  const socialImage = new URL("/og-v3.jpg", origin).toString();
+  const socialImage = socialImageFor("/");
 
   return {
     metadataBase: new URL(origin),
@@ -123,22 +124,16 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       type: "website",
-      url: origin,
+      url: new URL("/", origin).toString(),
       siteName,
-      images: [
-        {
-          url: socialImage,
-          width: 1200,
-          height: 630,
-          alt: "Abstract connected-systems illustration for Madison Hope Steiner's portfolio",
-        },
-      ],
+      locale: "en_US",
+      images: [socialImage],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [socialImage],
+      images: [{ url: socialImage.url, alt: socialImage.alt }],
     },
   };
 }

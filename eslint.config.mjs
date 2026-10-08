@@ -11,6 +11,8 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    // Generated from separately linted React, Remotion and player source.
+    "public/article-motion.js",
     "next-env.d.ts",
   ]),
 ]);

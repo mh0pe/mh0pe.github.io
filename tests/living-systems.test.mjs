@@ -127,5 +127,5 @@ test("homepage-only styling adds no scroll simulation or hidden-content entrance
   assert.match(css, /min-height: 44px/);
   assert.match(html, /living-systems\.css\?v=20261001-philosophy/);
   assert.match(html, /living-architecture\.css\?v=20261003-palette/);
-  assert.match(html, /landing-story\.css\?v=20261003-badge-surface/);
+  assert.match(html, /landing-story\.css\?v=20261007-journal-targets/);
 });

@@ -11,6 +11,8 @@ import {
 import { dirname, posix, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { compactExportedStylesheets } from "./export-stylesheets.mjs";
+import blogRoutes from "../app/data/blog-routes.json" with { type: "json" };
+import socialPages from "../app/data/social-pages.json" with { type: "json" };
 
 const EXPECTED_ORIGIN = "https://mh0pe.github.io";
 const toolsDirectory = dirname(fileURLToPath(import.meta.url));
@@ -23,6 +25,8 @@ const NOT_FOUND_DESCRIPTION =
   "The requested path does not exist. Continue through Madison Hope Steiner's open-source systems work or public GitHub profiles.";
 const routeManifest = [
   { pathname: "/", output: "index.html" },
+  { pathname: "/blog", output: "blog/index.html" },
+  ...blogRoutes.map((slug) => ({ pathname: "/blog/" + slug, output: "blog/" + slug + "/index.html" })),
   { pathname: "/work", output: "work/index.html" },
   {
     pathname: "/work/automated-security-helper",
@@ -221,7 +225,9 @@ function stripVinextRuntime(html) {
       const isStaticRuntime =
         (runtime === "theme-bootstrap" && src === null) ||
         (runtime === "theme" && src?.startsWith("/theme.js?") === true) ||
-        (runtime === "interactions" && src?.startsWith("/interactions.js?") === true);
+        (runtime === "interactions" && src?.startsWith("/interactions.js?") === true) ||
+        (runtime === "journal" && src?.startsWith("/journal.js?") === true) ||
+        (runtime === "article-scroll" && src === "/article-scroll.js?v=20261007-living-feature");
       return type === "application/ld+json" || isStaticRuntime ? tag : "";
     });
 }
@@ -251,6 +257,9 @@ function metadataIdentity(key) {
 }
 
 function normalizeNotFoundMetadata(html) {
+  const card = socialPages.find(page => page.path === "/404.html");
+  invariant(card?.image && card.alt, "404 social card is missing.");
+  const image = `${EXPECTED_ORIGIN}/social/${card.image}.jpg`;
   const metadata = new Map([
     ["name:robots", "noindex, follow"],
     ["name:description", NOT_FOUND_DESCRIPTION],
@@ -258,10 +267,19 @@ function normalizeNotFoundMetadata(html) {
     ["property:og:description", NOT_FOUND_DESCRIPTION],
     ["name:twitter:title", NOT_FOUND_TITLE],
     ["name:twitter:description", NOT_FOUND_DESCRIPTION],
+    ["property:og:type", "website"],
+    ["property:og:image", image],
+    ["property:og:image:width", "1200"],
+    ["property:og:image:height", "630"],
+    ["property:og:image:alt", card.alt],
+    ["property:og:image:type", "image/jpeg"],
+    ["name:twitter:card", "summary_large_image"],
+    ["name:twitter:image", image],
+    ["name:twitter:image:alt", card.alt],
   ]);
   const seen = new Set();
   let normalized = stripVinextRuntime(html)
-    .replace(/<title\b[^>]*>[\s\S]*?<\/title>/gi, "")
+    .replace(/<head\b[^>]*>[\s\S]*?<\/head>/i, head => head.replace(/<title\b[^>]*>[\s\S]*?<\/title>/gi, ""))
     .replace(/<link\b[^>]*>/gi, (tag) =>
       attribute(tag, "rel")?.toLowerCase() === "canonical" ? "" : tag,
     )
@@ -352,14 +370,14 @@ function validateIndexHtml(html) {
   invariant(
     hasTag(html, "meta", {
       property: "og:image",
-      content: `${EXPECTED_ORIGIN}/og-v3.jpg`,
+      content: `${EXPECTED_ORIGIN}/social/portfolio.jpg`,
     }),
     "The Open Graph image is missing or has the wrong origin.",
   );
   invariant(
     hasTag(html, "meta", {
       name: "twitter:image",
-      content: `${EXPECTED_ORIGIN}/og-v3.jpg`,
+      content: `${EXPECTED_ORIGIN}/social/portfolio.jpg`,
     }),
     "The Twitter image is missing or has the wrong origin.",
   );
@@ -401,6 +419,33 @@ function validateRouteHtml(html, pathname, declaredCanonicalPath) {
     !/\/_vinext\/image\b/.test(html),
     `${pathname} depends on the Worker image optimizer.`,
   );
+  validateSocialMetadata(html, pathname);
+}
+
+function validateSocialMetadata(html, pathname) {
+  const path = pathname === "/" || pathname === "/404.html" ? pathname : pathname.replace(/\/$/, "") + "/";
+  const entry = socialPages.find(page => page.path === path);
+  const card = entry?.alias ? socialPages.find(page => page.path === entry.alias) : entry;
+  invariant(card?.image && card.title && card.alt, `${path} is missing its social catalog entry.`);
+  const head = html.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? "";
+  const expected = {
+    "property:og:title": card.title,
+    "property:og:image": `${EXPECTED_ORIGIN}/social/${card.image}.jpg`,
+    "property:og:image:width": "1200", "property:og:image:height": "630",
+    "property:og:image:alt": card.alt, "property:og:image:type": "image/jpeg",
+    "name:twitter:card": "summary_large_image", "name:twitter:title": card.title,
+    "name:twitter:image": `${EXPECTED_ORIGIN}/social/${card.image}.jpg`, "name:twitter:image:alt": card.alt,
+  };
+  if (path !== "/404.html") expected["property:og:url"] = new URL(card.path, EXPECTED_ORIGIN).toString();
+  for (const [key, content] of Object.entries(expected)) {
+    const [attributeName, attributeValue] = metadataIdentity(key);
+    const tags = htmlTags(head, "meta").filter(tag => attribute(tag, attributeName) === attributeValue);
+    invariant(tags.length === 1 && decodeReference(attribute(tags[0], "content") ?? "") === content, `${path}: incorrect or duplicate ${key}`);
+  }
+  for (const [attributeName, attributeValue] of [["name", "description"], ["property", "og:description"], ["name", "twitter:description"]]) {
+    const tags = htmlTags(head, "meta").filter(tag => attribute(tag, attributeName) === attributeValue);
+    invariant(tags.length === 1 && (attribute(tags[0], "content")?.length ?? 0) > 40, `${path}: missing or duplicate ${attributeValue}`);
+  }
 }
 
 function decodeReference(value) {
@@ -604,6 +649,7 @@ async function main() {
     html: route.hydrate ? prioritizeVisibleContent(route.html) : stripVinextRuntime(route.html),
   }));
   const exportedNotFoundHtml = normalizeNotFoundMetadata(notFoundHtml);
+  validateSocialMetadata(exportedNotFoundHtml, "/404.html");
   invariant(
     htmlTags(exportedNotFoundHtml, "title").length === 1 &&
       exportedNotFoundHtml.includes(`<title>${NOT_FOUND_TITLE}</title>`),

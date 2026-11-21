@@ -163,7 +163,7 @@ test("a first-ever upward arrival moves below its authored pose without a prior 
   assert.equal(h.mounts.length - h.destroyed.length, 1);
 });
 
-test("all 29 chapters opt into first-upward motion without changing their authored arrival or forward rate", async () => {
+test("all 33 chapters opt into first-upward motion without changing their authored arrival or forward rate", async () => {
   let count = 0;
   for (const story of motionStorySlugs) for (const beat of motionStories[story].chapters) {
     const data = { storySlug: story, storyStage: beat.moment, storyFrame: String(beat.frame),
@@ -179,7 +179,7 @@ test("all 29 chapters opt into first-upward motion without changing their author
     assert.equal(forward.seeks.at(-1), Math.round(beat.frame + (beat.end - beat.frame) * 100 / 525));
     count++;
   }
-  assert.equal(count, 29);
+  assert.equal(count, 33);
 });
 
 test("missing or malformed reverse metadata preserves the exact legacy clamp; zero is valid", async () => {

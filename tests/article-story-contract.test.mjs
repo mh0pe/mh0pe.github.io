@@ -118,7 +118,7 @@ test("new reverse prefixes retain their current semantic artifacts at every admi
 test("every story beat has an exact paragraph, real source and ordered nonoverlapping frame range", () => {
   for (const article of blogArticles) {
     const chapters = motionStories[article.slug].chapters;
-    assert.deepEqual(chapters.map(beat => beat.moment), ["cloud-runtime", "aws-labs-mcp"].includes(article.slug)
+    assert.deepEqual(chapters.map(beat => beat.moment), ["cloud-runtime", "aws-labs-mcp", "zero-findings"].includes(article.slug)
       ? ["opening", "middle", "later", "ending"] : ["opening", "middle", "ending"]);
     assert.equal(new Set(chapters.map(beat => beat.moment)).size, chapters.length);
     for (const [index, beat] of chapters.entries()) {

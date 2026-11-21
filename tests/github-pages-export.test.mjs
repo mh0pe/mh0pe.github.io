@@ -29,6 +29,7 @@ const routes = [
   ["models/index.html", "https://mh0pe.github.io/models/"],
   ["evidence/index.html", "https://mh0pe.github.io/proof/"],
   ["career/index.html", "https://mh0pe.github.io/about/"],
+  ["blog/zero-findings/index.html", "https://mh0pe.github.io/blog/zero-findings/"],
 ];
 
 const staticRuntimePattern =
@@ -50,7 +51,7 @@ function fontPreloadTags(html) {
 
 test("every exported document keeps one same-origin favicon without weakening its security policy", async () => {
   const catalog = await discoverExportCatalog(fileURLToPath(output));
-  assert.equal(catalog.length, 26);
+  assert.equal(catalog.length, 27);
   for (const entry of catalog) {
     const html = await artifact(entry.output);
     const icons = [...html.matchAll(/<link\b[^>]*>/gi)].map(([tag]) => tag).filter(tag => /\brel="icon"/i.test(tag));
@@ -80,7 +81,7 @@ test("every exported identity link retains its visible accessible name", async (
     assert.match(identity, /class="site-identity__mark" aria-hidden="true"/, entry.output);
     assert.match(identity, /Principal AI Architect/, entry.output);
   }
-  assert.equal(identities, 25);
+  assert.equal(identities, 26);
 });
 
 test("exports every redesign route with production canonical metadata", async () => {
@@ -247,7 +248,8 @@ test("every exported page preserves only the intended static enhancement runtime
       for (const match of html.matchAll(/<script\b[^>]*>/gi)) {
         assert.ok(
           /type="application\/ld\+json"/i.test(match[0]) ||
-            staticRuntimePattern.test(match[0]),
+            staticRuntimePattern.test(match[0]) ||
+            (filename.startsWith("blog/") && /data-static-runtime="(journal|article-scroll)" src="\/\1\.js\?v=[a-f0-9]{64}"/.test(match[0])),
           `${filename} contains an unexpected runtime script: ${match[0]}`,
         );
       }

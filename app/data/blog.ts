@@ -1,4 +1,5 @@
 import type { PublicUrl } from "./portfolio-v2";
+import { zeroFindings } from "./zero-findings";
 
 export const blogTopics = [
   { id: "security", label: "Security", description: "Checks people can understand and act on." },
@@ -609,6 +610,7 @@ export const blogArticles: readonly BlogArticle[] = [
       { id: "jsii-bundle", label: "jsii: runtime bundle refinement", href: "https://github.com/aws/jsii/pull/5057" },
     ],
   },
+  zeroFindings,
 ];
 
 export const legacyEntryPoints = [

@@ -9,10 +9,10 @@ import { viewportAuditFailureReasons } from "../tools/viewport-audit-contract.mj
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 
-test("viewport audit derives all exported routes, including the blog index and nine articles", async () => {
+test("viewport audit derives all exported routes, including the blog index and ten articles", async () => {
   const catalog = await discoverExportCatalog(fileURLToPath(new URL("../pages-dist/", import.meta.url)));
   const routes = catalog.map((entry) => entry.route);
-  assert.equal(routes.length, 26);
+  assert.equal(routes.length, 27);
   assert.ok(routes.includes("/blog/"));
   assert.deepEqual(
     blogRoutes.filter((slug) => routes.includes(`/blog/${slug}/`)),

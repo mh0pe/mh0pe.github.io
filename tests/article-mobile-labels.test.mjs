@@ -12,7 +12,7 @@ const { motionStorySlugs, motionStories } = await tsImport(new URL("app/data/art
 const { articleMobileLabels } = await tsImport(new URL("app/data/article-mobile-labels.ts", root).href, import.meta.url);
 const { StoryStage } = await tsImport(new URL("app/components/blog/StoryStage.tsx", root).href, import.meta.url);
 
-test("all nine stories have an object-specific reading guide for every authored beat", () => {
+test("all ten stories have an object-specific reading guide for every authored beat", () => {
   assert.deepEqual(Object.keys(articleMobileLabels), [...motionStorySlugs]);
   for (const [story, guides] of Object.entries(articleMobileLabels)) {
     assert.equal(guides.length, motionStories[story].chapters.length, story);

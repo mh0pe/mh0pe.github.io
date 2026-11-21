@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { motionStories, type MotionStory } from "./article-motion";
 
-export type ArtFamily = "reports" | "editions" | "registration" | "annotations" | "folio" | "verification" | "cutaway" | "apertures" | "revisions";
+export type ArtFamily = "reports" | "editions" | "registration" | "annotations" | "folio" | "verification" | "cutaway" | "apertures" | "revisions" | "receipts";
 export type ArtMoment = "cover" | "focus" | "resolve";
 
 export interface ArticleArtDirection {
@@ -44,6 +44,7 @@ export const articleArt: Readonly<Record<string, ArticleArtDirection>> = {
   "typed-svg-dom": direction("typed-svg-dom", "cutaway"),
   "aws-labs-mcp": direction("aws-labs-mcp", "apertures"),
   "cloud-runtime": direction("cloud-runtime", "revisions"),
+  "zero-findings": direction("zero-findings", "receipts"),
 };
 
 export function artFor(slug: string): ArticleArtDirection {

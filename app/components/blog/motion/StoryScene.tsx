@@ -3,6 +3,7 @@ import { motionStories, type MotionStory } from "@/app/data/article-motion";
 import { foldedSheet } from "@/app/components/blog/motion/miura-geometry";
 import { between, chapterAt, storyState } from "@/app/components/blog/motion/story-timing";
 import { CloudRuntimeWorld, MCPWorld } from "@/app/components/blog/motion/CapabilityScenes";
+import { ScanReceiptWorld } from "@/app/components/blog/motion/ScanReceiptWorld";
 
 type Palette = typeof motionStories[MotionStory];
 type WorldProps = { p: Palette; frame: number; id: string; focus: number; resolve: number; arrival: number; opening: number };
@@ -262,6 +263,7 @@ const worlds: Record<MotionStory, (props: WorldProps) => ReactNode> = {
   "reproducible-security-checks": Instrument, "security-feedback-where-you-work": Margin,
   "handoffs-that-carry-the-work": Continuity, "integrity-bound-yarn-pnp-for-bazel": Interlock,
   "typed-svg-dom": Letterform, "aws-labs-mcp": MCPWorld, "cloud-runtime": CloudRuntimeWorld,
+  "zero-findings": ScanReceiptWorld,
 };
 
 // Pure frame geometry is shared by server-rendered stills, the scroll player,

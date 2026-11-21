@@ -74,13 +74,13 @@ test("every exported figure gives captions a valid figure relationship", async (
   assert.equal(collection.captions.length, 2, "Both collection figure captions remain present.");
   const documents = (await readdir(new URL("pages-dist/", root), { recursive: true }))
     .filter(path => path.endsWith(".html")).sort();
-  assert.equal(documents.length, 26, "Check every exported document, including the error page.");
+  assert.equal(documents.length, 27, "Check every exported document, including the error page.");
   for (const path of documents) captionRelationships(await read("pages-dist/" + path));
 });
 
 test("every essay has an individual art direction and two meaningfully placed visual beats", () => {
-  assert.equal(Object.keys(articleArt).length, 9);
-  assert.equal(new Set(Object.values(articleArt).map((direction) => direction.family)).size, 9);
+  assert.equal(Object.keys(articleArt).length, 10);
+  assert.equal(new Set(Object.values(articleArt).map((direction) => direction.family)).size, 10);
   for (const article of blogArticles) {
     const direction = artFor(article.slug);
     assert.equal(direction.beats.length, 2);
@@ -135,9 +135,9 @@ for (const article of blogArticles) {
   });
 }
 
-test("the collection previews share the article's identity without starting nine animations", async () => {
+test("the collection previews share the article's identity without starting ten animations", async () => {
   const html = await read("pages-dist/blog/index.html");
-  assert.equal((html.match(/data-journal-entry="true"/g) ?? []).length, 9);
+  assert.equal((html.match(/data-journal-entry="true"/g) ?? []).length, 10);
   assert.equal((html.match(/data-journal-figure="true"/g) ?? []).length, 1);
   const legend = html.match(/<ul class="journal-feature__legend"[^>]*>(.*?)<\/ul>/s)?.[1];
   assert.ok(legend);

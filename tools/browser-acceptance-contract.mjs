@@ -13,6 +13,7 @@ const EXPECTED_CHAPTERS_BY_STORY = new Map([
   ["typed-svg-dom", THREE_CHAPTERS],
   ["aws-labs-mcp", FOUR_CHAPTERS],
   ["cloud-runtime", FOUR_CHAPTERS],
+  ["zero-findings", FOUR_CHAPTERS],
 ]);
 
 function finite(value) {

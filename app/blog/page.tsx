@@ -3,14 +3,14 @@ import { ArtDrawing, EditorialBeat } from "../components/blog/EditorialArt";
 import { artFor, artStyle } from "../data/article-art";
 import { RouteFrame } from "../components/v2/RouteFrame";
 import { StructuredData } from "../components/v2/StructuredData";
-import { articlePath, blogArticles, blogTopics, legacyEntryPoints } from "../data/blog";
+import { articleBySlug, articlePath, blogArticles, blogTopics, legacyEntryPoints } from "../data/blog";
 import { routeMetadata } from "../data/route-metadata";
 import { socialImageData } from "../data/social";
 
 export const metadata = routeMetadata("/blog/", "Writing", "Illustrated essays by Madison Hope Steiner on security, AI workflows, developer tools, infrastructure, and browser engineering.");
 
 export default function BlogPage() {
-  const featured = blogArticles[0];
+  const featured = articleBySlug("zero-findings") ?? blogArticles[0];
   const featuredArt = artFor(featured.slug);
   const sharedArt = artFor(blogArticles[1].slug);
   const tags = [...new Set(blogArticles.flatMap((article) => article.tags))].sort();

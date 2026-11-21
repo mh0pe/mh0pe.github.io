@@ -7,5 +7,6 @@
   "integrity-bound-yarn-pnp-for-bazel",
   "typed-svg-dom",
   "aws-labs-mcp",
-  "cloud-runtime"
+  "cloud-runtime",
+  "zero-findings"
 ]

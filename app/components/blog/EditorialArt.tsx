@@ -7,11 +7,11 @@ const storyByFamily: Record<ArtFamily, MotionStory> = {
   reports: "workspace-security", editions: "one-definition-many-agent-tools",
   registration: "reproducible-security-checks", annotations: "security-feedback-where-you-work",
   folio: "handoffs-that-carry-the-work", verification: "integrity-bound-yarn-pnp-for-bazel",
-  cutaway: "typed-svg-dom", apertures: "aws-labs-mcp", revisions: "cloud-runtime",
+  cutaway: "typed-svg-dom", apertures: "aws-labs-mcp", revisions: "cloud-runtime", receipts: "zero-findings",
 };
 
 // Collection previews use an authored article pose, without loading a Player,
-// running another clock, or adding nine competing animations to the library.
+// or running another clock in the writing library.
 export function ArtDrawing({ direction, moment = "cover", id, compact = false }: {
   readonly direction: ArticleArtDirection; readonly moment?: ArtMoment; readonly id: string;
   readonly title?: string; readonly description?: string; readonly compact?: boolean;

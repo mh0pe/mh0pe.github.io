@@ -264,4 +264,34 @@ export const articleMobileLabels: Record<MotionStory, ChapterGuides> = {
       ],
     },
   ],
+  "zero-findings": [
+    {
+      orientation: "The two illustrative receipts show the same count. The count does not tell you which checks ran.",
+      parts: [
+        { label: "Scan A", location: "Left receipt", meaning: "0 findings reported." },
+        { label: "Scan B", location: "Right receipt", meaning: "0 findings reported." },
+      ],
+    },
+    {
+      orientation: "Look below the zeroes for what ran. The outlined gap is also labeled in words.",
+      parts: [
+        { label: "3 of 3 ran", location: "Scan A", meaning: "All planned checks ran, including infrastructure." },
+        { label: "2 of 3 ran", location: "Scan B", meaning: "The infrastructure check did not run." },
+      ],
+    },
+    {
+      orientation: "The dependency-data row is separate. Its age does not change which checks ran.",
+      parts: [
+        { label: "Within age limit", location: "Scan A", meaning: "The supported dependency data is current under the configured limit." },
+        { label: "Past age limit", location: "Scan B", meaning: "The dependency check ran with stale data. The infrastructure check is still missing." },
+      ],
+    },
+    {
+      orientation: "The final row names a next step, not a release approval. Both counts are still zero.",
+      parts: [
+        { label: "Review within scope", location: "Scan A", meaning: "Review the findings with the stated scope in mind." },
+        { label: "Follow up", location: "Scan B", meaning: "Resolve the gaps or make the narrower scope explicit." },
+      ],
+    },
+  ],
 };

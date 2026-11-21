@@ -1,7 +1,7 @@
 export const motionStorySlugs = [
   "workspace-security", "one-definition-many-agent-tools", "reproducible-security-checks",
   "security-feedback-where-you-work", "handoffs-that-carry-the-work",
-  "integrity-bound-yarn-pnp-for-bazel", "typed-svg-dom", "aws-labs-mcp", "cloud-runtime",
+  "integrity-bound-yarn-pnp-for-bazel", "typed-svg-dom", "aws-labs-mcp", "cloud-runtime", "zero-findings",
 ] as const;
 export type MotionStory = typeof motionStorySlugs[number];
 export type StoryMoment = "opening" | "middle" | "later" | "ending";
@@ -103,6 +103,15 @@ export const motionStories: Record<MotionStory, {
       { ...beat("middle", "iterate", ["cdk-hotswap"], [320, 225, 445]), reverseFloor: 225, title: "Use the shared development path.", caption: "QuickSight hotswap uses the shared Cloud Control handler for supported development updates, not the full deployment contract.", description: "The Iterate window shows a QuickSight development change inside a shared handler boundary. It is not marked as a deployed result." },
       { ...beat("later", "examples", ["cdk-examples"], [560, 450, 670]), reverseFloor: 450, title: "An example makes a checkable promise.", caption: "A documented package path can be compared with the package's actual exports.", description: "The Learn window aligns an illustrative example path with an exported path. Generic package / feature labels show the comparison; the linked work contains the actual paths." },
       { ...beat("ending", "runtime", ["jsii-cleanup", "jsii-types", "jsii-members", "jsii-bundle"], [820, 675, 900]), reverseFloor: 675, title: "Simplify inside. Preserve the contract.", caption: "Cleanup, lookups and packaging can improve while the external contract and diagnostic names remain deliberate.", description: "The Execute window opens its runtime internals inside the same external contract frame." },
+    ],
+  },
+  "zero-findings": {
+    name: "Two zeroes, two scan records", ink: "#223d39", paper: "#f2ecdc", material: "#b9d8c9", accent: "#edbd88",
+    chapters: [
+      { ...beat("opening", "same-count", ["ash-coverage"], [70, 0, 220]), reverseFloor: 0, title: "The same number.", caption: "These are illustrative records. Both scans report zero findings.", description: "Scan A and Scan B each show 0 findings. The count alone does not say what either scan covered." },
+      { ...beat("middle", "coverage", ["ash-coverage"], [320, 225, 445]), reverseFloor: 225, title: "Read the coverage.", caption: "A ran all three planned checks. B ran two; the infrastructure check never ran.", description: "The two receipts open beneath the unchanged zeroes. A shows 3 of 3 checks ran. B shows 2 of 3, with infrastructure marked Not run." },
+      { ...beat("later", "freshness", ["ash-freshness"], [560, 450, 670]), reverseFloor: 450, title: "Check the age of the data.", caption: "One of B's completed checks used dependency data past its age limit. That is different from the check that did not run.", description: "A separate data row shows A within its age limit and B past the limit. B still separately shows missing infrastructure coverage." },
+      { ...beat("ending", "decision", ["ash-380", "ash-coverage", "ash-freshness"], [820, 675, 900]), reverseFloor: 675, title: "Carry the difference into the decision.", caption: "Review A within the stated scope. For B, follow up on the gaps or explicitly narrow what you are deciding.", description: "A's receipt ends with Review within scope. B's ends with Follow up. Both retain their original zero findings and the reasons behind the next step." },
     ],
   },
 };

@@ -20,8 +20,8 @@ test('editorial system ships semantic themes and nonblocking motion', async () =
 
 test('writing covers are linked and the catalog is usable without animation', async () => {
   const html = await read('pages-dist/blog/index.html');
-  assert.equal((html.match(/class="journal-entry__art" href=/g) ?? []).length, 9);
-  assert.equal((html.match(/data-journal-entry="true"/g) ?? []).length, 9);
+  assert.equal((html.match(/class="journal-entry__art" href=/g) ?? []).length, 10);
+  assert.equal((html.match(/data-journal-entry="true"/g) ?? []).length, 10);
   assert.ok(html.includes('journal-masthead'));
   assert.doesNotMatch(html, /data-route-motif=/);
 });

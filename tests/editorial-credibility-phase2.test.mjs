@@ -144,6 +144,7 @@ test("every article takeaway names the decision or boundary discussed", () => {
     "typed-svg-dom": /geometry, text metrics, and browser access/,
     "aws-labs-mcp": /clear input and lifecycle controls/,
     "cloud-runtime": /check examples against the package/,
+    "zero-findings": /what ran.*what it knew.*decision/i,
   };
   assert.equal(blogArticles.length, Object.keys(anchors).length);
   for (const article of blogArticles) assert.match(article.takeaway, anchors[article.slug], article.slug);

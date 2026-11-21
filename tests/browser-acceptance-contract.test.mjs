@@ -14,7 +14,7 @@ test("browser acceptance requires a fitted real player, committed captions, scro
 });
 
 test("browser acceptance uses the four-chapter catalog for Cloud Runtime and AWS Labs MCP", () => {
-  for (const story of ["cloud-runtime", "aws-labs-mcp"]) {
+  for (const story of ["cloud-runtime", "aws-labs-mcp", "zero-findings"]) {
     const sample = structuredClone(fixtures.valid);
     sample.route = `/blog/${story}/`;
     sample.expectedChapters = ["opening", "middle", "later", "ending"];

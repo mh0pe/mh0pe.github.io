@@ -13,7 +13,10 @@
       "optical_scale": 0.92,
       "width": 304,
       "height": 182,
-      "scope": "Cloud infrastructure, application security, developer tooling, agent systems, and infrastructure as code reliability."
+      "scope": "Cloud infrastructure, application security, developer tooling, agent systems, and infrastructure as code reliability.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     },
     {
       "name": "Chainalysis",
@@ -24,7 +27,10 @@
       "optical_scale": 1.06,
       "width": 617,
       "height": 100,
-      "scope": "Blockchain data and compliance infrastructure for high-trust financial systems."
+      "scope": "Blockchain data and compliance infrastructure for high-trust financial systems.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     },
     {
       "name": "Cameo",
@@ -35,7 +41,10 @@
       "optical_scale": 0.92,
       "width": 825,
       "height": 207,
-      "scope": "Consumer marketplace systems connecting creators and audiences at scale."
+      "scope": "Consumer marketplace systems connecting creators and audiences at scale.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     },
     {
       "name": "Trōv",
@@ -46,7 +55,10 @@
       "optical_scale": 1.3,
       "width": 800,
       "height": 420,
-      "scope": "Digital insurance platforms shaped around configurable, data-driven coverage."
+      "scope": "Digital insurance platforms shaped around configurable, data-driven coverage.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     },
     {
       "name": "Rakuten AirMap, Inc.",
@@ -57,7 +69,10 @@
       "optical_scale": 0.94,
       "width": 620,
       "height": 363,
-      "scope": "Airspace and mobility platforms for unmanned aircraft ecosystems."
+      "scope": "Airspace and mobility platforms for unmanned aircraft ecosystems.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     },
     {
       "name": "F.T. Industries",
@@ -68,7 +83,10 @@
       "optical_scale": 1,
       "width": null,
       "height": null,
-      "scope": "Business systems engineering across operational workflows."
+      "scope": "Business systems engineering across operational workflows.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     },
     {
       "name": "cielo24",
@@ -79,7 +97,10 @@
       "optical_scale": 0.9,
       "width": 350,
       "height": 113,
-      "scope": "Media accessibility systems, including durable audit trails for non-standard data models."
+      "scope": "Media accessibility systems.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     },
     {
       "name": "Quiver Media",
@@ -90,7 +111,10 @@
       "optical_scale": 0.9,
       "width": 150,
       "height": 47,
-      "scope": "Digital media distribution and platform operations."
+      "scope": "Digital media distribution and platform operations.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     },
     {
       "name": "Tinder",
@@ -101,7 +125,10 @@
       "optical_scale": 1.06,
       "width": 500,
       "height": 94,
-      "scope": "High-scale consumer product systems and web experiences."
+      "scope": "High-scale consumer product systems and web experiences.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     },
     {
       "name": "Joint Business Solutions",
@@ -112,29 +139,37 @@
       "optical_scale": 0.84,
       "width": 120,
       "height": 120,
-      "scope": "Business software and systems integration."
+      "scope": "Business software and systems integration.",
+      "context_label": "Organizational context",
+      "scope_basis": "organization-context",
+      "personal_responsibility_evidence": "pending"
     }
   ],
   "organization_contexts": [
     {
       "label": "Global payments network",
-      "text": "Tokenized-asset platform architecture designed for enterprise trust, security, and governance."
+      "text": "I built tokenized-asset platform architecture for an enterprise payments network.",
+      "scope_basis": "self-reported-personal-responsibility"
     },
     {
       "label": "Major U.S. financial institution",
-      "text": "Platform integration and security engineering during a large acquisition in a regulated banking environment."
+      "text": "I supported acquisition-related platform delivery, regulatory remediation, and security engineering.",
+      "scope_basis": "self-reported-personal-responsibility"
     },
     {
       "label": "Global automotive and mobility manufacturer",
-      "text": "Data-lake foundations for enterprise mobility and manufacturing analytics."
+      "text": "I worked on data-lake foundations for a global automotive and mobility manufacturer.",
+      "scope_basis": "self-reported-personal-responsibility"
     },
     {
       "label": "International vehicle manufacturer",
-      "text": "Data-lake capabilities for large-scale operational and analytical workloads."
+      "text": "I worked on data-lake foundations for an international vehicle manufacturer.",
+      "scope_basis": "self-reported-personal-responsibility"
     },
     {
       "label": "Global investment manager",
-      "text": "Governed AWS account provisioning streamlined for secure, repeatable cloud adoption at enterprise scale."
+      "text": "I built out and streamlined the AWS account provisioning process for a global investment manager.",
+      "scope_basis": "self-reported-personal-responsibility"
     }
   ]
 }

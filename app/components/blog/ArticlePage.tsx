@@ -4,8 +4,11 @@ import { StructuredData } from "../v2/StructuredData";
 import { RouteFrame } from "../v2/RouteFrame";
 import { artFor, artStyle } from "../../data/article-art";
 import { StoryStage } from "@/app/components/blog/StoryStage";
-import { isMotionStory } from "@/app/data/article-motion";
+import { isMotionStory, motionStories } from "@/app/data/article-motion";
+import { StoryScene } from "@/app/components/blog/motion/StoryScene";
 import { socialImageData } from "@/app/data/social";
+import ArticleSourceTrail from "./ArticleSourceTrail";
+import { ArtDrawing } from "./EditorialArt";
 
 const site = "https://mh0pe.github.io";
 
@@ -14,6 +17,7 @@ export default function ArticlePage({ article }: { readonly article: BlogArticle
   const direction = artFor(article.slug);
   if (!isMotionStory(article.slug)) throw new Error("Missing motion story: " + article.slug);
   const story = article.slug;
+  const chapters = motionStories[story].chapters;
   const url = site + articlePath(article);
   return (
     <RouteFrame current="blog">
@@ -40,8 +44,9 @@ export default function ArticlePage({ article }: { readonly article: BlogArticle
         ],
       }} />
       <link rel="stylesheet" href="/living-feature.css?v=20261007-living-feature" precedence="living-feature" />
+      <link rel="stylesheet" href="/article-mobile-labels.css" precedence="article-mobile-labels" />
       <script data-static-runtime="article-scroll" src="/article-scroll.js?v=20261007-living-feature" defer />
-      <article className="journal article-page" data-motion-story={story}
+      <article className="journal article-page" data-motion-story={story} data-story-runtime="/article-motion.js" data-story-layout="inline"
         data-story-focus={direction.beats[0].section} data-story-resolve={direction.beats[1].section}
         data-topic={article.topic} data-art={direction.family} style={artStyle(direction)}>
         <header className="shell article-opening">
@@ -56,7 +61,10 @@ export default function ArticlePage({ article }: { readonly article: BlogArticle
                 {article.tags.map((tag) => <li key={tag}><a href={"/blog/?tag=" + encodeURIComponent(tag) + "#topic-" + article.topic}>{tag}</a></li>)}
               </ul>
             </div>
-            <StoryStage story={story} moment="opening" />
+            <figure className="article-opening__vignette">
+              <StoryScene story={story} frame={chapters[0].frame} id={story + "-cover"} accessible />
+              <figcaption>{motionStories[story].name}</figcaption>
+            </figure>
           </div>
         </header>
         <div className="shell article-layout">
@@ -77,23 +85,27 @@ export default function ArticlePage({ article }: { readonly article: BlogArticle
               <p>{article.overview}</p>
             </div>
             <div className="article-introduction">{article.intro.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
-            {article.sections.map((section) => (
+            {article.sections.map((section) => {
+              const visualBeats = chapters.filter(chapter => chapter.section === section.id);
+              const otherSources = section.sources?.filter(id => !visualBeats.some(chapter => chapter.sourceIds.includes(id)));
+              return (
               <section className="article-section" id={section.id} key={section.id} aria-labelledby={section.id + "-title"}>
                 <h2 id={section.id + "-title"}>{section.title}</h2>
-                {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                {direction.beats.filter((beat) => beat.section === section.id).map((beat) => <StoryStage key={beat.moment}
-                  story={story} moment={beat.moment === "focus" ? "middle" : "ending"} />)}
+                {section.paragraphs.map((paragraph, index) => <div className="article-section__beat" key={paragraph}>
+                  <p>{paragraph}</p>
+                  {visualBeats[index] ? <StoryStage story={story} moment={visualBeats[index].moment} sources={article.sources} /> : null}
+                </div>)}
                 {section.detail ? <details className="article-implementation"><summary>{section.detail.title}</summary>
                   <ol>{section.detail.steps.map((item) => <li key={item}>{item}</li>)}</ol><p>{section.detail.caption}</p>
                 </details> : null}
-                {section.sources ? <ul className="article-section__sources" aria-label={"Related code for " + section.title}>
-                  {section.sources.map((id) => {
+                {otherSources?.length ? <ul className="article-section__sources" aria-label={"Related code for " + section.title}>
+                  {otherSources.map((id) => {
                     const source = article.sources.find((entry) => entry.id === id)!;
                     return <li key={id}><a href={source.href} target="_blank" rel="noreferrer">{source.label} <span aria-hidden="true">↗</span><span className="visually-hidden">, opens in a new tab</span></a></li>;
                   })}
                 </ul> : null}
               </section>
-            ))}
+            ); })}
             <details className="article-implementation">
               <summary>For a closer technical look</summary>
               <ul>{article.implementationNotes.map((note) => <li key={note}>{note}</li>)}</ul>
@@ -103,9 +115,6 @@ export default function ArticlePage({ article }: { readonly article: BlogArticle
               <p>{article.takeaway}</p>
             </section>
           </div>
-          <aside className="article-visual-rail" aria-label="Visual companion to the article">
-            <StoryStage story={story} moment="middle" rail />
-          </aside>
         </div>
         <div className="shell article-reference-layout">
             <section className="article-sources article-reading" id="sources" aria-labelledby="sources-title">
@@ -114,6 +123,7 @@ export default function ArticlePage({ article }: { readonly article: BlogArticle
                 <li id={"source-" + source.id} key={source.id}>
                   <a href={source.href} target="_blank" rel="noreferrer">{source.label} <span aria-hidden="true">↗</span><span className="visually-hidden">, opens in a new tab</span></a>
                   {source.note ? <p>{source.note}</p> : null}
+                  {article.slug === "workspace-security" ? <ArticleSourceTrail sourceHref={source.href} label={source.label} /> : null}
                 </li>
               ))}</ul>
               {article.linkedinPost ? <a className="article-discussion" href={article.linkedinPost.href} target="_blank" rel="noreferrer">{article.linkedinPost.label} <span aria-hidden="true">↗</span><span className="visually-hidden">, opens in a new tab</span></a> : null}
@@ -123,9 +133,12 @@ export default function ArticlePage({ article }: { readonly article: BlogArticle
         <section className="shell journal-related" aria-labelledby="related-writing-title">
           <h2 id="related-writing-title">Another angle on the work.</h2>
           <div>
-            {relatedArticles(article).map((related) => <article key={related.slug} data-topic={related.topic}>
+            {relatedArticles(article).map((related) => <article className="journal-related__card" key={related.slug} data-topic={related.topic}>
+              <div className="journal-related__cover" style={artStyle(artFor(related.slug))}>
+                <ArtDrawing direction={artFor(related.slug)} id={"related-" + related.slug} compact />
+              </div>
               <p className="journal-eyebrow">{topicFor(related).label}</p>
-              <h3><a href={articlePath(related)}>{related.title} <span aria-hidden="true">↗</span></a></h3>
+              <h3><a className="journal-related__link" href={articlePath(related)}>{related.title} <span aria-hidden="true">↗</span></a></h3>
               <p>{related.deck}</p>
             </article>)}
           </div>

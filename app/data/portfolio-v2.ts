@@ -88,6 +88,46 @@ export const publicSources = {
     kind: "release",
     href: "https://github.com/awslabs/automated-security-helper/releases/tag/v3.7.0",
   },
+  ashRelease380: {
+    label: "Automated Security Helper v3.8.0 release notes",
+    kind: "release",
+    href: "https://github.com/awslabs/automated-security-helper/releases/tag/v3.8.0",
+  },
+  ashPr727: {
+    label: "ASH #727, task-led guides and generated references",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/727",
+  },
+  ashPr935: {
+    label: "ASH #935, staged-file checks",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/935",
+  },
+  ashPr936: {
+    label: "ASH #936, lighter command startup and benchmark",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/936",
+  },
+  ashPr951: {
+    label: "ASH #951, less work on the commit path",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/951",
+  },
+  ashPr965: {
+    label: "ASH #965, balanced test jobs based on measured durations",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/965",
+  },
+  ashPr969: {
+    label: "ASH #969, first-scan tutorial with runnable checks",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/969",
+  },
+  ashPr970: {
+    label: "ASH #970, repeatable scanner reference generation",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/970",
+  },
   ashPr331: {
     label: "ASH #331, integrations for 15 agent platforms",
     kind: "pull-request",
@@ -183,6 +223,11 @@ export const publicSources = {
     kind: "release",
     href: "https://github.com/aws-cloudformation/cloudformation-guard/releases/tag/3.2.1",
   },
+  guardRelease322: {
+    label: "CloudFormation Guard 3.2.2 release notes",
+    kind: "release",
+    href: "https://github.com/aws-cloudformation/cloudformation-guard/releases/tag/3.2.2",
+  },
   guardPr717: {
     label: "CloudFormation Guard #717, verdict integrity correction",
     kind: "pull-request",
@@ -224,14 +269,19 @@ export const publicSources = {
     href: "https://github.com/aws-cloudformation/aws-guard-rules-registry/pull/287",
   },
   nixRepository: {
-    label: "Nix source code",
+    label: "Nix upstream foundation",
     kind: "repository",
     href: "https://github.com/NixOS/nix",
   },
   nixFork: {
-    label: "Nix public Windows fork",
-    kind: "repository",
-    href: "https://github.com/awsmadi/nix",
+    label: "Nix Windows libstore implementation",
+    kind: "branch",
+    href: "https://github.com/awsmadi/nix/tree/feat/windows-builder-parity",
+  },
+  nixRecursiveImplementation: {
+    label: "Nix recursive Windows implementation",
+    kind: "branch",
+    href: "https://github.com/awsmadi/nix/tree/feat/windows-recursive-nix-master",
   },
   nixPr16347: {
     label: "Nix #16347, Windows derivation builder",
@@ -503,10 +553,130 @@ export const publicSources = {
     kind: "pull-request",
     href: "https://github.com/awslabs/automated-security-helper/pull/640",
   },
+  ashPr669: {
+    label: "ASH #669, consolidated install-validation coverage",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/669",
+  },
+  ashPr670: {
+    label: "ASH #670, explicit CI publication inventory",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/670",
+  },
+  ashPr678: {
+    label: "ASH #678, derived references and effective regression gates",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/678",
+  },
+  ashPr680: {
+    label: "ASH #680, references generated from registered interfaces",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/680",
+  },
+  ashPr689: {
+    label: "ASH #689, reference and reporter-inventory consistency",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/689",
+  },
+  ashPr691: {
+    label: "ASH #691, configuration intent through plugin execution",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/691",
+  },
   ashPr696: {
     label: "ASH #696, stale scanner-data handling",
     kind: "pull-request",
     href: "https://github.com/awslabs/automated-security-helper/pull/696",
+  },
+  ashPr707: {
+    label: "ASH #707, code-aware security exceptions",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/707",
+  },
+  ashPr710: {
+    label: "ASH #710, repeatable command inputs",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/710",
+  },
+  ashPr712: {
+    label: "ASH #712, shared configuration with explicit overrides",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/712",
+  },
+  ashPr717: {
+    label: "ASH #717, reviewable user-facing output",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/717",
+  },
+  ashPr737: {
+    label: "ASH #737, predictable scanner execution",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/737",
+  },
+  ashPr759: {
+    label: "ASH #759, explicit dependency-audit outcomes",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/759",
+  },
+  ashPr765: {
+    label: "ASH #765, Yarn advisory interpretation",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/765",
+  },
+  ashPr767: {
+    label: "ASH #767, pnpm advisory interpretation",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/767",
+  },
+  ashPr740: {
+    label: "ASH #740, verified tool distribution",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/740",
+  },
+  ashPr763: {
+    label: "ASH #763, verified agent-tool installation",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/763",
+  },
+  ashPr766: {
+    label: "ASH #766, configuration-aware dependency installation",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/766",
+  },
+  ashPr777: {
+    label: "ASH #777, version-aligned tool and license records",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/777",
+  },
+  ashPr757: {
+    label: "ASH #757, optional scanner isolation",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/757",
+  },
+  ashPr784: {
+    label: "ASH #784, operator-owned configuration policy",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/784",
+  },
+  ashPr786: {
+    label: "ASH #786, bounded Linux scanner access",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/786",
+  },
+  ashPr793: {
+    label: "ASH #793, least-privilege macOS scanning",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/793",
+  },
+  ashPr795: {
+    label: "ASH #795, scoped input reading and conversion",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/795",
+  },
+  ashPr804: {
+    label: "ASH #804, task-led documentation and checked examples",
+    kind: "pull-request",
+    href: "https://github.com/awslabs/automated-security-helper/pull/804",
   },
   ashPr661: {
     label: "ASH #661, workspace coverage and reporting",
@@ -822,7 +992,7 @@ export const organizationContexts = [
     id: "payments-network",
     label: "Global payments network",
     scope:
-      "A tokenized payments platform designed around enterprise trust, security, and governance.",
+      "I built tokenized-asset platform architecture for an enterprise payments network.",
     careerContextSourceId: "linkedinMadison",
     observedAt: "2026-07-23",
     basis: "self-reported-scope-with-public-profile-context",
@@ -831,7 +1001,7 @@ export const organizationContexts = [
     id: "financial-institution",
     label: "Major U.S. financial institution",
     scope:
-      "Platform integration and security engineering during a large acquisition in a regulated banking environment.",
+      "I supported acquisition-related platform delivery, regulatory remediation, and security engineering.",
     careerContextSourceId: "linkedinMadison",
     observedAt: "2026-07-23",
     basis: "self-reported-scope-with-public-profile-context",
@@ -840,7 +1010,7 @@ export const organizationContexts = [
     id: "mobility-manufacturer",
     label: "Global automotive and mobility manufacturer",
     scope:
-      "Shared data foundations for operational reporting across mobility and manufacturing.",
+      "I worked on data-lake foundations for a global automotive and mobility manufacturer.",
     careerContextSourceId: "linkedinMadison",
     observedAt: "2026-07-23",
     basis: "self-reported-scope-with-public-profile-context",
@@ -848,7 +1018,7 @@ export const organizationContexts = [
   {
     id: "vehicle-manufacturer",
     label: "International vehicle manufacturer",
-    scope: "Shared data foundations for large-scale operational reporting and analysis.",
+    scope: "I worked on data-lake foundations for an international vehicle manufacturer.",
     careerContextSourceId: "linkedinMadison",
     observedAt: "2026-07-23",
     basis: "self-reported-scope-with-public-profile-context",
@@ -857,7 +1027,7 @@ export const organizationContexts = [
     id: "investment-manager",
     label: "Global investment manager",
     scope:
-      "A faster, governed path for teams to receive secure AWS accounts at enterprise scale.",
+      "I built out and streamlined the AWS account provisioning process for a global investment manager.",
     careerContextSourceId: "linkedinMadison",
     observedAt: "2026-07-23",
     basis: "self-reported-scope-with-public-profile-context",
@@ -869,6 +1039,9 @@ export const organizationContextNote =
 
 export const employerIdentityNote =
   "Employer identification only. All trademarks remain the property of their respective owners and do not imply endorsement.";
+
+export const accountLinkedContributionNote =
+  "The account-linked total includes assistant-opened changes associated with mh0pe or awsmadi. Their recorded authors remain distinct.";
 
 export interface PublicRecordSnapshot {
   readonly publicOnly: true;
@@ -978,7 +1151,7 @@ export const outcomeSummaries = [
     proofHref: "/proof/#public-record",
     proofLabel: "Explore the contributions",
     evidenceNote:
-      "Account-directed contributions are retained separately and are not presented as GitHub-authored work.",
+      "Assistant-opened changes linked to my accounts are retained separately from pull requests authored as mh0pe or awsmadi.",
   },
 ] as const satisfies FourOutcomeSummaries;
 
@@ -1072,29 +1245,29 @@ export const automatedSecurityHelperFlagship = {
   audience:
     "Platform and security teams responsible for many projects, tools, and agent-driven workflows.",
   proofState:
-    "Workspace orchestration is available in ASH v3.7.0. Recent work on reporting, agent access, and repeatable scan environments is integrated upstream.",
+    "ASH v3.7.0 introduced workspace orchestration. Version 3.8.0 makes incomplete checks and stale scanner data visible. Later changes on main reduce work before commit and make the first scan easier to learn.",
   operatingResult:
-    "Teams can plan, scan, and report on a multi-project workspace as one governed system without losing project identity, target boundaries, failure state, or source traceability.",
+    "Teams can plan, scan, and report on a multi-project workspace as one governed system, with traceable project results and recorded failures.",
   responsibility:
     "I led the architecture and implementation of workspace orchestration and agent integrations, then strengthened execution boundaries, repeatability, result integrity, and distributed operation.",
-  contributionSummary: "Workspace orchestration and AI integrations, extended with precise security reporting, scoped agent access, and repeatable scan environments.",
+  contributionSummary: "Workspace orchestration and AI integrations, with shared security policy, scoped access, and clear, actionable results.",
   summary:
     "One governed workflow helps teams plan, run, and trace security checks across many projects.",
   recentWork: [
     {
-      title: "Know what a security report covers.",
-      summary: "Workspace policies enable their required scanners, and reports show skipped projects and policy-origin findings.",
-      sourceId: "ashPr661",
+      title: "Know when a scan is incomplete.",
+      summary: "ASH 3.8.0 keeps findings visible while telling teams when scanner coverage is incomplete or supported scanner data is stale.",
+      sourceId: "ashRelease380",
     },
     {
-      title: "Give agents deliberate boundaries.",
-      summary: "Remote tools use operator-approved paths and keep neighboring sessions out of reach.",
-      sourceId: "ashPr665",
+      title: "Keep security feedback close to the commit.",
+      summary: "I separated command startup from scanning and kept the commit hook from setting up scanners that had no applicable staged files.",
+      sourceId: "ashPr951",
     },
     {
-      title: "Reuse a verified base image.",
-      summary: "Container builds verify and reuse a previously downloaded base image instead of fetching it again.",
-      sourceId: "ashPr692",
+      title: "Make the first scan teachable and testable.",
+      summary: "The quickstart and its automated checks now use the same steps, so a working example can stay accurate as the tool changes.",
+      sourceId: "ashPr969",
     },
   ],
   claims: [
@@ -1157,14 +1330,14 @@ export const automatedSecurityHelperFlagship = {
     },
     {
       id: "ash-result-integrity",
-      outcome: "Security reports preserve coverage, package identity, and scan progress so teams can act on the right result.",
+      outcome: "Security reports keep package identity and coverage clear across npm, Yarn, and pnpm, distinguishing findings from checks that could not complete.",
       contribution: "Implemented",
       state: "Merged",
       availability: "Available on the upstream main branch.",
-      adoption: "Integrated through ASH #661, #673, #687, #690, and #699.",
-      maturity: "Targeted regression checks cover skipped projects, package-specific suppression, atomic result writes, and Windows read retries. Package-instance paths require npm v2+ lockfiles; ambiguous package copies remain unsuppressed.",
-      sourceIds: ["ashPr661", "ashPr673", "ashPr687", "ashPr690", "ashPr699"],
-      observedAt: "2026-10-01",
+      adoption: "Earlier reporting work is extended by ASH #737, #759, #765, and #767, merged into main on October 7 and 8, 2026.",
+      maturity: "The linked reviews document checks for skipped projects, atomic writes, Windows read retries, explicit process environments, and runtime offline decisions. npm, Yarn, and pnpm findings retain installed versions and advisory ranges; audit errors remain distinct from findings. Offline audits have separate warning or skip behavior, not a promise of current advisory coverage. Package-instance paths require npm v2+ lockfiles; ambiguous copies remain unsuppressed.",
+      sourceIds: ["ashPr661", "ashPr673", "ashPr687", "ashPr690", "ashPr699", "ashPr737", "ashPr759", "ashPr765", "ashPr767"],
+      observedAt: "2026-10-11",
       publicOnly: true,
     },
     {
@@ -1181,26 +1354,110 @@ export const automatedSecurityHelperFlagship = {
     },
     {
       id: "ash-repeatable-environments",
-      outcome: "Teams can reuse verified base images and bound the age of cached scanner intelligence.",
+      outcome: "Teams can reuse verified tools and base images, with installed versions connected to their source and license records.",
       contribution: "Implemented",
       state: "Merged",
       availability: "Available on the upstream main branch.",
-      adoption: "Integrated in ASH #692 and #693.",
-      maturity: "Container checks verify base-image contents and architecture across four build engines, not the completed ASH image. Grype database caches use a shared 120-hour freshness bound. This does not establish fail-closed handling of every stale offline database.",
-      sourceIds: ["ashPr692", "ashPr693"],
-      observedAt: "2026-10-01",
+      adoption: "ASH #669 and #670 merged September 29, 2026. The environment work in #692 and #693 is extended by #740, #763, #766, and #777, merged October 7 and 8.",
+      maturity: "The linked reviews document selected download and reusable-binary hash checks, with image tool versions tied to license records. Agent-tool checks include an offline validator, not a logged-in agent session. Hashes establish byte identity, not universal publisher attestation; one CLI pin uses a measured digest. Source-pointer licensing sufficiency remains a maintainer/legal decision. Base-image checks are not whole-image assurance. PR reviews report 113 validation combinations retained across 33 jobs, not measured time savings. An explicit artifact/cache publication inventory guards supported workflow sites, not every possible upload path.",
+      sourceIds: ["ashPr692", "ashPr693", "ashPr740", "ashPr763", "ashPr766", "ashPr777", "ashPr669", "ashPr670"],
+      observedAt: "2026-10-11",
       publicOnly: true,
     },
     {
       id: "ash-completeness-implementation",
-      outcome: "A public implementation makes incomplete scans explicit and preserves results when scanner intelligence is too old.",
+      outcome: "Teams can distinguish complete checks from incomplete coverage or outdated scanner information while retaining the findings.",
       contribution: "Implemented",
-      state: "Open",
-      availability: "Available in the linked public implementation branches.",
-      adoption: "ASH #640 and #696 provide the implementation and its review history.",
-      maturity: "The branches propose stricter completeness and database-age policies, including structured reasons and explicit operator overrides. These defaults are not yet adopted upstream; the linked reviews describe test coverage and remaining limits.",
-      sourceIds: ["ashPr640", "ashPr696"],
-      observedAt: "2026-10-01",
+      state: "Released",
+      availability: "Available in ASH v3.8.0.",
+      adoption: "ASH #640 and #696 are named in the v3.8.0 release notes.",
+      maturity: "Coverage and declared scanner-data age limits inform scan decisions, with structured reasons and explicit overrides. Valid rule CVSS scores inform severity; malformed GitLab findings are isolated, and container/Nix runs discard stale artifacts before execution unless reuse is requested. Coverage checks follow reported scanner status and target counts; they do not establish that every scanner or converter failure is detected. Age checks cover supported databases and rulesets, not every external input.",
+      sourceIds: ["ashPr640", "ashPr696", "ashRelease380"],
+      observedAt: "2026-11-21",
+      publicOnly: true,
+    },
+    {
+      id: "ash-shared-policy",
+      outcome: "Teams can reuse a security baseline and repeat a command without maintaining a second set of options.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available on the upstream main branch.",
+      adoption: "ASH #691 merged into main on October 1, 2026; #710 and #712 followed on October 5 and 6.",
+      maturity: "Configuration aliases and overrides reach configured plugin instances through their declared names. Inheritance uses local files with explicit precedence and confined paths; command templates derive from the commands' own parameters. This does not add remote policy retrieval or a new agent protocol.",
+      sourceIds: ["ashPr710", "ashPr712", "ashPr691"],
+      observedAt: "2026-10-11",
+      publicOnly: true,
+    },
+    {
+      id: "ash-code-aware-exceptions",
+      outcome: "Approved exceptions can remain attached to a named function or class as nearby code changes.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available on the upstream main branch.",
+      adoption: "ASH #707 merged into main on October 5, 2026.",
+      maturity: "Requires the optional symbol parsers and a supported language. Missing parsers, invalid syntax, unresolved symbols, and paths outside the scan root leave findings visible. The linked review records focused parser and scan tests.",
+      sourceIds: ["ashPr707"],
+      observedAt: "2026-10-11",
+      publicOnly: true,
+    },
+    {
+      id: "ash-output-contract",
+      outcome: "Changes to reports, command output, and agent responses become visible decisions in review.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available on the upstream main branch.",
+      adoption: "ASH #678, #680, and #689 merged into main on September 30, 2026; #717 followed on October 6.",
+      maturity: "The merged foundation derives CLI, MCP, and reporter references from registered implementations, with schema and freshness checks that reject drift. Operational caveats remain hand-authored. Checked output examples require an explanatory commit trailer when expected content changes; automated checks cannot silently regenerate them. Output-contract coverage excludes container and Nix exit paths and samples live progress at its final frame.",
+      sourceIds: ["ashPr717", "ashPr678", "ashPr680", "ashPr689"],
+      observedAt: "2026-10-11",
+      publicOnly: true,
+    },
+    {
+      id: "ash-scanner-isolation",
+      outcome: "Security scanners can run with bounded working areas and explicitly permitted resources.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available on the upstream main branch.",
+      adoption: "ASH #757, #786, and #793 merged into main on October 8 and 9, 2026.",
+      maturity: "Isolation is opt-in and defaults off, with no native Windows backend. Linux filtering supports x86-64 and ARM64; backend protections differ. Network-enabled scanners retain host TCP and UDP access. macOS uses deprecated sandbox-exec and does not reap child processes. Recorded comparison tests cover fixture behavior, including offline missing-tool states, not universal equivalence or a published release.",
+      sourceIds: ["ashPr757", "ashPr786", "ashPr793"],
+      observedAt: "2026-10-11",
+      publicOnly: true,
+    },
+    {
+      id: "ash-operator-policy",
+      outcome: "Project inputs and agent requests remain separate from the operator's authority to grant access.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available on the upstream main branch.",
+      adoption: "ASH #784 and #795 merged into main on October 9, 2026.",
+      maturity: "Controls cover specified configuration, plugin, tool, and input-reading paths. Independently walking scanners retain their own link behavior; some refused inputs are recorded as skipped rather than failures. Uploaded untrusted configuration is refused in execution modes where its policy cannot apply. Different-checkout handling belongs to separate work in #792.",
+      sourceIds: ["ashPr784", "ashPr795"],
+      observedAt: "2026-10-11",
+      publicOnly: true,
+    },
+    {
+      id: "ash-task-led-documentation",
+      outcome: "Task-led guides connect generated references, checked examples, and version-specific instructions.",
+      contribution: "Implemented",
+      state: "Released",
+      availability: "Task-led guides and generated references are available in ASH v3.8.0.",
+      adoption: "The documentation rewrite reached main through ASH #727. ASH #804 records the earlier proposal.",
+      maturity: "The current release includes the rewritten guides. Follow-up work on main derives the tutorial and its runnable tests from shared steps and generates the scanner reference independently of locally installed scanners. Those follow-ups came after v3.8.0.",
+      sourceIds: ["ashPr804", "ashPr727", "ashRelease380", "ashPr969", "ashPr970"],
+      observedAt: "2026-11-21",
+      publicOnly: true,
+    },
+    {
+      id: "ash-faster-feedback",
+      outcome: "Developers get security feedback closer to the commit without asking a hook to scan unchanged files.",
+      contribution: "Implemented",
+      state: "Merged",
+      availability: "Available on main after ASH v3.8.0.",
+      adoption: "ASH #935 added staged-file mode, #936 deferred heavy startup, and #951 skips setup only where no staged file applies.",
+      maturity: "The #936 review measured a same-host median of 1.428 to 0.192 seconds for the version command, not end-to-end scanning. The commit hook retains explicit reporting overrides. CI changes in #965 use measured module durations to balance test jobs without dropping tests; the review reports a replay, not a new CI wall-clock result.",
+      sourceIds: ["ashPr935", "ashPr936", "ashPr951", "ashPr965"],
+      observedAt: "2026-11-21",
       publicOnly: true,
     },
   ],
@@ -1251,7 +1508,7 @@ export const automatedSecurityHelperFlagship = {
       index: "04",
       title: "One control plane connects planning, execution, and results.",
       body:
-        "The implementation connects workspace planning, per-project execution, agent tooling, and reproducible scanner supply. Recent work carries that contract through coverage reporting, precise package exceptions, and progress that reflects completed work.",
+        "The implementation connects workspace planning, per-project execution, agent tooling, and reproducible scanner supply. Shared configuration keeps policy reusable, code-aware exceptions preserve intent, and reviewed output examples make interface changes explicit.",
       points: [
         "Plan validated workspaces and retain project identity through aggregate reports.",
         "Generate integrations for fifteen agent platforms and provide installable skills from one source of truth.",
@@ -1263,6 +1520,13 @@ export const automatedSecurityHelperFlagship = {
         "Show skipped projects without counting them as vulnerabilities, and match accepted risks to the exact package version and installation path.",
         "Write results atomically and distinguish usable results from incomplete writes or a still-running scanner.",
         "Scan hand-authored dependency declarations for secrets, and restrict which environment values project configuration can read into reports.",
+        "Carry configuration aliases and overrides into configured plugins, share local baselines, and derive command templates from their parameters.",
+        "Keep approved exceptions attached to named code, and require an explanation when expected reports or agent responses change.",
+        "Bound scanner access on Linux and macOS while keeping operator policy separate from project inputs.",
+        "Preserve package versions and advisory meaning across npm, Yarn, and pnpm, and distinguish execution failures from completed checks.",
+        "Verify selected tool downloads and reusable binaries, keeping installed versions aligned with source and license records.",
+        "Generate CLI, reporter, and agent references from code, and check the steps readers follow in the tutorial.",
+        "Defer work that a command does not need and scope commit checks to staged changes.",
       ],
       sourceIds: [
         "ashPr456",
@@ -1285,6 +1549,11 @@ export const automatedSecurityHelperFlagship = {
         "ashPr690",
         "ashPr699",
         "ashPr673",
+        "ashPr640", "ashPr696", "ashPr707", "ashPr710", "ashPr712", "ashPr717",
+        "ashPr757", "ashPr784", "ashPr786", "ashPr793", "ashPr795", "ashPr804",
+        "ashRelease380", "ashPr727", "ashPr935", "ashPr936", "ashPr951", "ashPr965", "ashPr969", "ashPr970",
+        "ashPr737", "ashPr759", "ashPr765", "ashPr767", "ashPr740", "ashPr763", "ashPr766", "ashPr777",
+        "ashPr669", "ashPr670", "ashPr678", "ashPr680", "ashPr689", "ashPr691",
       ],
       claimIds: [
         "ash-workspace-release",
@@ -1294,6 +1563,8 @@ export const automatedSecurityHelperFlagship = {
         "ash-result-integrity",
         "ash-scoped-agent-access",
         "ash-repeatable-environments",
+        "ash-completeness-implementation", "ash-shared-policy", "ash-code-aware-exceptions", "ash-output-contract",
+        "ash-scanner-isolation", "ash-operator-policy", "ash-task-led-documentation", "ash-faster-feedback",
       ],
     },
     {
@@ -1301,7 +1572,7 @@ export const automatedSecurityHelperFlagship = {
       index: "05",
       title: "From coordinating scans to making their results dependable.",
       body:
-        "ASH v3.7.0 introduced governed multi-project workspaces. Subsequent work added agent tools and distributed scanning. The latest contributions are integrated on the upstream main branch: reports preserve scan coverage, remote tools use explicit access grants, package exceptions target specific installations, and container builds reuse verified base images. These additions are separate from the earlier published release.",
+        "ASH v3.7.0 introduced governed multi-project workspaces. Version 3.8.0 makes scanner coverage and data freshness visible in the result and adds task-led guides. Following that release, work on main made small commands start with less work, narrowed commit checks to the files being changed, and put the tutorial steps under test.",
       sourceIds: [
         "ashRelease370",
         "ashPr456",
@@ -1325,6 +1596,11 @@ export const automatedSecurityHelperFlagship = {
         "ashPr687",
         "ashPr692",
         "ashPr693",
+        "ashPr640", "ashPr696", "ashPr707", "ashPr710", "ashPr712", "ashPr717",
+        "ashPr757", "ashPr784", "ashPr786", "ashPr793", "ashPr795", "ashPr804",
+        "ashRelease380", "ashPr727", "ashPr935", "ashPr936", "ashPr951", "ashPr965", "ashPr969", "ashPr970",
+        "ashPr737", "ashPr759", "ashPr765", "ashPr767", "ashPr740", "ashPr763", "ashPr766", "ashPr777",
+        "ashPr669", "ashPr670", "ashPr678", "ashPr680", "ashPr689", "ashPr691",
       ],
       claimIds: [
         "ash-workspace-release",
@@ -1334,6 +1610,8 @@ export const automatedSecurityHelperFlagship = {
         "ash-result-integrity",
         "ash-scoped-agent-access",
         "ash-repeatable-environments",
+        "ash-completeness-implementation", "ash-shared-policy", "ash-code-aware-exceptions", "ash-output-contract",
+        "ash-scanner-isolation", "ash-operator-policy", "ash-task-led-documentation", "ash-faster-feedback",
       ],
     },
     {
@@ -1341,7 +1619,7 @@ export const automatedSecurityHelperFlagship = {
       index: "06",
       title: "Follow the system from release to source.",
       body:
-        "The release shows where workspace mode can be used today. The linked pull requests explain how planning, isolation, scanner supply, reporting, and distributed execution fit together. The project and its documentation place those choices in the broader operating model.",
+        "The releases show where workspace orchestration and scan coverage checks can be used today. Follow the linked reviews to see how startup was measured, how the hook avoids unnecessary setup, and how the tutorial now checks its own steps.",
       sourceIds: [
         "ashRelease370",
         "ashPr456",
@@ -1369,6 +1647,11 @@ export const automatedSecurityHelperFlagship = {
         "ashPr692",
         "ashPr693",
         "ashPr699",
+        "ashPr640", "ashPr696", "ashPr707", "ashPr710", "ashPr712", "ashPr717",
+        "ashPr757", "ashPr784", "ashPr786", "ashPr793", "ashPr795", "ashPr804",
+        "ashRelease380", "ashPr727", "ashPr935", "ashPr936", "ashPr951", "ashPr965", "ashPr969", "ashPr970",
+        "ashPr737", "ashPr759", "ashPr765", "ashPr767", "ashPr740", "ashPr763", "ashPr766", "ashPr777",
+        "ashPr669", "ashPr670", "ashPr678", "ashPr680", "ashPr689", "ashPr691",
       ],
       claimIds: [
         "ash-workspace-release",
@@ -1378,6 +1661,8 @@ export const automatedSecurityHelperFlagship = {
         "ash-result-integrity",
         "ash-scoped-agent-access",
         "ash-repeatable-environments",
+        "ash-completeness-implementation", "ash-shared-policy", "ash-code-aware-exceptions", "ash-output-contract",
+        "ash-scanner-isolation", "ash-operator-policy", "ash-task-led-documentation", "ash-faster-feedback",
       ],
     },
   ],
@@ -1397,7 +1682,7 @@ export const cloudFormationGuardCaseStudy = {
   audience:
     "Cloud platform and security teams that rely on policy checks to make safe infrastructure decisions.",
   proofState:
-    "The core verdict correction is available in Guard 3.2.1. Wider integrity checks are available in the linked public branches.",
+    "Guard 3.2.1 corrected verdict reporting. Guard 3.2.2 preserves surrounding text during replacements and pairs rules with their intended tests.",
   operatingResult:
     "Policy verdicts keep their intended meaning from evaluation through reporting, testing, and published rule packs.",
   responsibility:
@@ -1420,15 +1705,27 @@ export const cloudFormationGuardCaseStudy = {
     },
     {
       id: "guard-semantic-audit",
-      outcome: "Policy authors can express ranges, preserve text during replacements, and connect each test to the intended rule.",
+      outcome: "Policy authors can try more consistent range membership and numeric comparisons in the linked implementations.",
       contribution: "Implemented",
       state: "Open",
       availability: "Available in linked public pull-request branches.",
       adoption:
-        "Public implementations extend Guard #720 and #727 with focused changes in #747 through #750, alongside Rules Registry #287.",
+        "Guard #747 and #748 carry focused implementations. Earlier reviews #720 and #727 and Rules Registry #287 document the wider program.",
       maturity: "Executable implementations with targeted fixtures and regression tests.",
-      sourceIds: ["guardPr720", "guardPr727", "guardPr747", "guardPr748", "guardPr749", "guardPr750", "guardRulesPr287"],
-      observedAt: "2026-09-19",
+      sourceIds: ["guardPr747", "guardPr748", "guardPr720", "guardPr727", "guardRulesPr287"],
+      observedAt: "2026-11-21",
+      publicOnly: true,
+    },
+    {
+      id: "guard-replacement-test-matching",
+      outcome: "Pattern replacements keep the surrounding text, and tests run against the intended rule file even when filenames share a prefix.",
+      contribution: "Implemented",
+      state: "Released",
+      availability: "Available in CloudFormation Guard 3.2.2.",
+      adoption: "Guard #749 and #750 are credited in the 3.2.2 release notes.",
+      maturity: "Focused regression tests cover replacement boundaries and the most specific matching rule filename.",
+      sourceIds: ["guardRelease322", "guardPr749", "guardPr750"],
+      observedAt: "2026-11-21",
       publicOnly: true,
     },
   ],
@@ -1484,18 +1781,18 @@ export const cloudFormationGuardCaseStudy = {
       index: "05",
       title: "The work spans a released fix and a broader integrity path.",
       body:
-        "Guard 3.2.1 includes the evaluator and reporter correction. The public implementation now also covers range membership, number comparisons, text replacement, and precise test-to-rule matching. These focused changes sit alongside the broader work on evaluation outcomes and assembled rule packs.",
-      sourceIds: ["guardRelease321", "guardPr717", "guardPr720", "guardPr727", "guardRulesPr287"],
-      claimIds: ["guard-verdict-release", "guard-semantic-audit"],
+        "Guard 3.2.1 includes the evaluator and reporter correction. Guard 3.2.2 makes two everyday tasks more predictable: replacing part of a string and pairing a policy file with its tests. The linked public implementations also explore range and numeric behavior.",
+      sourceIds: ["guardRelease321", "guardRelease322", "guardPr717", "guardPr749", "guardPr750", "guardPr747", "guardPr748"],
+      claimIds: ["guard-verdict-release", "guard-replacement-test-matching", "guard-semantic-audit"],
     },
     {
       name: "Proof",
       index: "06",
       title: "Trace the verdict through code, fixtures, and release notes.",
       body:
-        "Guard 3.2.1 contains the released correction. The linked pull requests connect the wider semantic work to exact files, fixtures, and technical discussion, so readers can follow each result from policy input to operator-facing verdict.",
-      sourceIds: ["guardRelease321", "guardPr717", "guardPr720", "guardPr727", "guardRulesPr287"],
-      claimIds: ["guard-verdict-release", "guard-semantic-audit"],
+        "The release notes credit the individual changes. The linked reviews and regression tests show how a rule’s meaning is preserved, from input to verdict.",
+      sourceIds: ["guardRelease321", "guardRelease322", "guardPr717", "guardPr749", "guardPr750", "guardPr747", "guardPr748", "guardRulesPr287"],
+      claimIds: ["guard-verdict-release", "guard-replacement-test-matching", "guard-semantic-audit"],
     },
   ],
 } as const satisfies CaseStudy;
@@ -1505,8 +1802,8 @@ export const nixWindowsCaseStudy = {
   family: "durability",
   eyebrow: "Reproducible builds on Windows",
   title: "Nix on Windows",
-  repository: "NixOS/nix",
-  repositorySourceId: "nixRepository",
+  repository: "awsmadi/nix",
+  repositorySourceId: "nixFork",
   period: "Public contribution activity · 2026",
   cardHeadline: "Windows support in testable steps.",
   plainResult:
@@ -1544,7 +1841,7 @@ export const nixWindowsCaseStudy = {
       adoption:
         "Implemented in Nix #16411 and #16414 and available from the linked public fork.",
       maturity: "Validated through a separate Windows checking path.",
-      sourceIds: ["nixPr16411", "nixPr16414", "nixValidationPr1", "nixFork"],
+      sourceIds: ["nixPr16411", "nixPr16414", "nixValidationPr1", "nixFork", "nixRecursiveImplementation"],
       observedAt: "2026-09-03",
       publicOnly: true,
     },
@@ -1628,7 +1925,7 @@ export const nixWindowsCaseStudy = {
       title: "Windows now has an upstream foundation and a usable wider runtime.",
       body:
         "The Windows derivation builder, complete cross-build coverage, and portable process-handle inheritance are integrated upstream. Public branches extend that foundation with libstore checks, richer output semantics, recursive operation, and lossless filenames. An independent validation harness checks the resulting build path.",
-      sourceIds: ["nixPr16347", "nixPr16368", "nixPr16411", "nixPr16414", "nixPr16449", "nixPr16451", "nixFork"],
+      sourceIds: ["nixPr16347", "nixPr16368", "nixPr16411", "nixPr16414", "nixPr16449", "nixPr16451", "nixFork", "nixRecursiveImplementation"],
       claimIds: ["nix-builder-merged", "nix-runtime-open", "nix-portable-boundaries", "nix-portable-inheritance"],
     },
     {
@@ -1636,8 +1933,8 @@ export const nixWindowsCaseStudy = {
       index: "06",
       title: "Inspect the builder, runtime, and independent result checks.",
       body:
-        "The linked pull requests connect each Windows capability to its implementation and tests. The public fork brings the full runtime path together, while the separate validation harness checks the build results through an independent code path.",
-      sourceIds: ["nixPr16347", "nixPr16368", "nixPr16411", "nixPr16414", "nixPr16449", "nixPr16451", "nixShutdownCommit", "nixSocketCommit", "nixValidationPr1", "nixFork"],
+        "The linked pull requests connect each Windows capability to its implementation and tests. The Windows libstore and recursive-operation links lead to their specific implementations. Nix's upstream foundation and the independent validation harness are linked separately.",
+      sourceIds: ["nixRepository", "nixPr16347", "nixPr16368", "nixPr16411", "nixPr16414", "nixPr16449", "nixPr16451", "nixShutdownCommit", "nixSocketCommit", "nixValidationPr1", "nixFork", "nixRecursiveImplementation"],
       claimIds: ["nix-builder-merged", "nix-runtime-open", "nix-portable-boundaries", "nix-portable-inheritance"],
     },
   ],

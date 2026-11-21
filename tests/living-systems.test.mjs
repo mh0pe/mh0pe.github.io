@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import test from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { tsImport } from "tsx/esm/api";
+import postcss from "postcss";
+import selectorParser from "postcss-selector-parser";
 
 const root = new URL("../", import.meta.url);
 const load = (path) => tsImport(new URL(path, root).href, import.meta.url);
@@ -18,12 +21,41 @@ const html = (await read("pages-dist/index.html")).replaceAll("<!-- -->", "");
 
 test("route-only art direction follows the existing theme in delivered CSS order", () => {
   const styles = [...html.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)].map((match) => match[1].split("?")[0]);
-  assert.deepEqual(styles, ["/route-styles/home.css", "/living-systems.css", "/living-architecture.css", "/landing-story.css"]);
+  assert.deepEqual(styles, ["/route-styles/home.css", "/living-architecture.css", "/landing-story.css", "/editorial-art.css"]);
+});
+
+test("the homepage has no remaining dependency on legacy living-system styles", async () => {
+  const classes = new Set([...html.matchAll(/class="([^"]*)"/g)].flatMap(match => match[1].split(/\s+/)));
+  classes.add("theme-ready");
+  const impossible = branch => branch.nodes.some(node => (
+    node.type === "class" ? !classes.has(node.value) :
+      node.type === "pseudo" && [":is", ":where"].includes(node.value) && node.nodes.every(impossible)
+  ));
+  const legacy = postcss.parse(await read("public/living-systems.css"));
+  const keyframes = [];
+  legacy.walkAtRules(rule => {
+    assert.ok(["media", "supports", "keyframes"].includes(rule.name), `Review global dependency: @${rule.name}`);
+    if (rule.name === "keyframes") keyframes.push(rule.params);
+  });
+  legacy.walkRules(rule => {
+    if (rule.parent.type === "atrule" && rule.parent.name === "keyframes") return;
+    for (const branch of selectorParser().astSync(rule.selector).nodes) {
+      assert.ok(impossible(branch), `Legacy selector might apply: ${branch}`);
+    }
+  });
+  const remaining = (await Promise.all([
+    "public/route-styles/home.css", "public/living-architecture.css", "public/landing-story.css", "public/editorial-art.css",
+    "public/theme.js", "public/interactions.js",
+  ].map(read))).join("\n") + html;
+  for (const name of keyframes) assert.ok(!remaining.includes(name), `Legacy keyframe still used: ${name}`);
+  // Revisit this exclusion if the native-only homepage starts creating nodes
+  // or introducing runtime classes rather than changing existing attributes.
+  assert.doesNotMatch(await read("public/interactions.js"), /createElement|classList\.(?:add|toggle|replace)|\.className\s*=/);
 });
 
 test("large contribution art preserves all eight selections and their exact edges", () => {
   assert.equal(livingClusters.length, 8);
-  assert.equal(livingClusters.reduce((n, cluster) => n + cluster.connections.length, 0), 58);
+  assert.equal(livingClusters.reduce((n, cluster) => n + cluster.connections.length, 0), 59);
   for (const cluster of livingClusters) {
     assert.deepEqual(cluster.connections.map((edge) => edge.id), cluster.project.edges.map((edge) => edge.id));
     assert.equal((cluster.nodes.match(/M/g) ?? []).length, cluster.project.nodes.length);
@@ -65,10 +97,10 @@ test("Satin Flow derivative is bounded, smooth, deterministic and server-only", 
 
 test("candidate retains immediate content, source trails and original page budgets", () => {
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
-  assert.match(html, /Bringing (?:<em>)?Hope(?:<\/em>)? to distributed systems/);
+  assert.match(html, /Bringing (?:<em(?: class="landing-hope")?>)?Hope(?:<\/em>)? to distributed systems/);
   assert.equal((html.match(/<strong>My contribution<\/strong>/g) ?? []).length, 4);
   assert.equal((html.match(/class="landing-project"/g) ?? []).length, 4);
-  assert.equal((html.match(/<summary>Explore the contribution<\/summary>/g) ?? []).length, 4);
+  assert.equal((html.match(/<summary>Explore the changes and source history<\/summary>/g) ?? []).length, 4);
   assert.match(html, /href="\/work\/automated-security-helper\/"/);
   assert.match(html, /LinkedIn/);
   assert.doesNotMatch(html, /<canvas|Loading the source trail|<iframe|data-contribution-player/);
@@ -105,7 +137,9 @@ test("review fixes preserve one-step source access and a bounded decorative laye
     assert.ok(story.indexOf("<h3") < story.indexOf("<figure"));
     assert.match(story, /class="source-records__details" open=""/);
     assert.match(story, /Read the reviewed change/);
-    assert.match(story, /See the working code/);
+    assert.match(story, /Open the code/);
+    assert.ok(story.indexOf("Read the project story") < story.indexOf("<details"), "the story is visible without opening a disclosure");
+    assert.ok(story.indexOf("Open the code") < story.indexOf("<details"), "the implementation is visible without opening a disclosure");
   }
   const css = await read("public/living-systems.css");
   assert.match(css, /\.living-feature__sources \.lineage-field__fallback \{ display: block; \}/);
@@ -125,7 +159,8 @@ test("homepage-only styling adds no scroll simulation or hidden-content entrance
   assert.match(css, /\[data-art-static\]/);
   assert.match(css, /--mobile-x/);
   assert.match(css, /min-height: 44px/);
-  assert.match(html, /living-systems\.css\?v=20261001-philosophy/);
-  assert.match(html, /living-architecture\.css\?v=20261003-palette/);
-  assert.match(html, /landing-story\.css\?v=20261007-journal-targets/);
+  for (const stylesheet of ["living-architecture.css", "landing-story.css"]) {
+    const version = createHash("sha256").update(await read("pages-dist/" + stylesheet)).digest("hex");
+    assert.ok(html.includes(`href="/${stylesheet}?v=${version}"`));
+  }
 });

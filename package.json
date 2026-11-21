@@ -7,11 +7,12 @@
   },
   "scripts": {
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
-    "build": "node tools/render-social-cards.mjs && node tools/build-article-motion.mjs && node tools/build-route-styles.mjs && WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
+    "build": "npm run attribution:transport && node tools/render-social-cards.mjs && node tools/build-article-motion.mjs && node tools/build-route-styles.mjs && WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
+    "attribution:transport": "node --import tsx tools/build-attribution-transport.mjs",
     "social:render": "node tools/render-social-cards.mjs",
     "build:pages": "npm run build && npm run export:pages",
     "compact:graphs": "node tools/build-compact-project-graphs.mjs",
-    "export:pages": "node tools/export-github-pages.mjs",
+    "export:pages": "node --import tsx tools/export-github-pages.mjs",
     "refresh:graphs": "node tools/build-project-graphs.mjs",
     "refresh:player-records": "node tools/refresh-project-player-records.mjs",
     "refresh:credential-badges": "node tools/refresh-credential-badges.mjs",
@@ -29,13 +30,13 @@
     "@remotion/player": "4.0.520",
     "d3-force": "^3.0.0",
     "motion": "^12.42.2",
-    "next": "16.3.6",
+    "next": "16.4.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "three": "^0.185.1"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.62.1",
+    "@cloudflare/vite-plugin": "1.63.1",
     "@fontsource-variable/instrument-sans": "^5.3.0",
     "@remotion/cli": "4.0.520",
     "@tailwindcss/postcss": "4.2.1",
@@ -57,15 +58,15 @@
     "tsx": "4.23.13",
     "typescript": "5.9.3",
     "vinext": "0.0.50",
-    "vite": "8.1.5",
-    "wrangler": "4.143.1"
+    "vite": "8.1.6",
+    "wrangler": "4.149.0"
   },
   "overrides": {
     "vinext@0.0.50": {
       "image-size": "2.0.3"
     },
     "next": {
-      "sharp": "0.35.4"
+      "sharp": "0.35.5"
     },
     "postcss": {
       ".": "8.5.23",
@@ -77,7 +78,8 @@
     "browserslist@4": "4.28.7",
     "fast-uri@3": "3.1.8",
     "fflate@0.7": "0.7.5",
-    "js-yaml@4": "4.3.2"
+    "js-yaml@4": "4.3.2",
+    "source-map-js": "1.2.2"
   },
   "type": "module",
   "description": "The public systems portfolio of Principal AI Architect Madison Hope Steiner, grounded in the GitHub histories of mh0pe and awsmadi.",

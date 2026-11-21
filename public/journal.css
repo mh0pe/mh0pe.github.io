@@ -24,10 +24,11 @@
 .journal-feature__legend { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .6rem 1rem; padding: 0; margin: .5rem 0; list-style: none; }
 .journal-feature__legend li { display: flex; align-items: center; gap: .5rem; font-size: .85rem; }
 .journal-read { display: inline-flex; align-items: center; gap: .75rem; min-height: 44px; font-weight: 550; }
-.journal-library { border-top: 1px solid var(--hope-hairline); padding-block: 3rem 4rem; }
+.hope-brand .journal-library[id] { border-top: 1px solid var(--hope-hairline); padding-block: 3rem 4rem; scroll-margin-top: 7rem; }
 .hope-brand .journal-library__heading h2 { font-size: clamp(2rem,3.2vw,3.25rem); line-height: 1.1; margin-bottom: 1rem; }
 .journal-topics { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1.75rem 1.25rem; }
 .journal-topics a { display: inline-flex; align-items: center; min-height: 44px; padding: .55rem 1rem; border: 1px solid var(--hope-hairline); border-radius: 999px; text-decoration: none; font-size: .95rem; }
+.hope-brand .journal-topics a { transition: none; }
 .journal-topics a:is(:hover,[aria-current]) { background: var(--hope-carbon); color: var(--hope-porcelain); border-color: var(--hope-carbon); }
 .journal-filter { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1rem; }
 .journal-filter label { font-size: .95rem; }

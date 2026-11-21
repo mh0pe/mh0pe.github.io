@@ -5,7 +5,15 @@ import postcss from "postcss";
 export const sharedStylesheets = [
   "portfolio-v2.css",
   "portfolio-v3.css",
+  "journey-polish.css",
   "interactions.css",
+  "editorial-system.css",
+];
+
+export const supplementalStylesheets = [
+  "living-systems.css", "living-architecture.css", "landing-story.css",
+  "editorial-art.css", "journal.css", "living-feature.css",
+  "article-mobile-labels.css", "credentials.css",
 ];
 
 // Compact formatting, not CSS meaning: retain selectors, declaration values,
@@ -37,7 +45,7 @@ export function compactStylesheet(source, filename) {
 }
 
 export async function compactExportedStylesheets(directory) {
-  for (const filename of sharedStylesheets) {
+  for (const filename of [...sharedStylesheets, ...supplementalStylesheets]) {
     const target = resolve(directory, filename);
     const source = await readFile(target, "utf8");
     const compact = compactStylesheet(source, filename);

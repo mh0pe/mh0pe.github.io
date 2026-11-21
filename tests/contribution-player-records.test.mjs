@@ -47,7 +47,21 @@ test("compact player catalog reverses to every complete public record", () => {
     },
     { changes: 0, commits: 0, files: 0 },
   );
-  assert.deepEqual(totals, { changes: 49, commits: 812, files: 1753 });
+  assert.deepEqual(totals, { changes: 73, commits: 1369, files: 3010 });
+  const workspace = canonicalRecords.find((record) => record.id === "ash-workspace");
+  assert.ok(workspace);
+  assert.equal(canonicalRecords.length, 9);
+  assert.equal(workspace.changes.length, 3);
+  assert.deepEqual(workspace.changes.map((change) => change.number).sort((a, b) => a - b), [460, 462, 478]);
+  const workspaceCommits = workspace.changes.flatMap((change) => change.commits);
+  assert.equal(workspaceCommits.length, 33, "PR memberships retain overlapping commits.");
+  assert.equal(new Set(workspaceCommits.map((commit) => commit.sha)).size, 26, "Shared commits are not distinct authored changes.");
+  assert.equal(workspace.changes.reduce((count, change) => count + change.files.length, 0), 93);
+  assert.deepEqual(
+    { changes: totals.changes - 3, commits: totals.commits - workspaceCommits.length, files: totals.files - 93 },
+    { changes: 70, commits: 1336, files: 2917 },
+    "The refreshed eight groups retain every complete current record.",
+  );
 });
 
 test("compact player catalog preserves deleted-file base references", () => {

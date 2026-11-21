@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import postcss from "postcss";
-import { compactStylesheet, sharedStylesheets } from "../tools/export-stylesheets.mjs";
+import { compactStylesheet, sharedStylesheets, supplementalStylesheets } from "../tools/export-stylesheets.mjs";
 
 function meaning(source) {
   const visit = (node) => {
@@ -53,6 +53,17 @@ test("compaction retains licensing, resource references, fallbacks, and signific
   assert.match(compact, /--empty: ;/);
 });
 
+test("supplemental formatting compaction preserves every declaration, state and motion rule", async () => {
+  for (const filename of supplementalStylesheets) {
+    const source = await readFile(new URL(`../public/${filename}`, import.meta.url), "utf8");
+    const exported = await readFile(new URL(`../pages-dist/${filename}`, import.meta.url), "utf8");
+    assert.equal(exported, compactStylesheet(source, filename));
+    assert.deepEqual(meaning(exported), meaning(source), filename);
+    assert.equal(compactStylesheet(exported, filename), exported);
+    assert.ok(Buffer.byteLength(exported) < Buffer.byteLength(source), filename);
+  }
+});
+
 test("malformed CSS fails closed instead of silently dropping styles", () => {
   assert.throws(() => compactStylesheet(".broken { color: red", "broken.css"), /Unclosed block/);
 });
@@ -73,7 +84,10 @@ test("the actual export contains the compact styles in unchanged cascade order",
     const exported = await readFile(new URL(`../pages-dist/${filename}`, import.meta.url), "utf8");
     assert.equal(exported, compactStylesheet(source, filename));
   }
-  const html = await readFile(new URL("../pages-dist/work/index.html", import.meta.url), "utf8");
+  const html = await readFile(new URL("../pages-dist/404.html", import.meta.url), "utf8");
   const positions = sharedStylesheets.map((filename) => html.indexOf(`href="/${filename}?`));
-  assert.ok(positions[0] >= 0 && positions[0] < positions[1] && positions[1] < positions[2]);
+  assert.ok(positions.every((position, index) => position >= 0 && (index === 0 || positions[index - 1] < position)));
+  // Other routes retain the cascade inside their single route bundle.
+  const work = await readFile(new URL("../pages-dist/work/index.html", import.meta.url), "utf8");
+  assert.match(work, /href="\/route-styles\/work\.css\?v=[a-f0-9]{64}"/);
 });

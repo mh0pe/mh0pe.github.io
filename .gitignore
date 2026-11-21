@@ -41,11 +41,16 @@ next-env.d.ts
 *.tsbuildinfo
 /dist/
 /pages-dist/
+/.pages-dist-stage-*/
+/.pages-dist-previous-*/
+/app/data/.project-player-records-stage-*/
+/app/data/.project-generation-stage-*/
 /public/route-styles/
 /public/article-motion.js
 /.wrangler/
 /build/local-preview/
 /outputs/
+/review/social/
 /work/
 
 # Local source material superseded by the production SVG/logo assets.

@@ -247,7 +247,7 @@ test("paper-surface status colors remain AA-readable in both themes", async () =
   assert.match(css, /data-theme="dark"[\s\S]*?\.route-section--paper \.status-stamp\[data-state="merged"\]/);
 });
 
-test("supporting routes render distinct, inert visual motifs", async () => {
+test("supporting routes keep their identity without unexplained decorative graphs", async () => {
   const routes = [
     ["work/index.html", "work"],
     ["capabilities/index.html", "capabilities"],
@@ -263,12 +263,8 @@ test("supporting routes render distinct, inert visual motifs", async () => {
   for (const [artifact, motif] of routes) {
     const html = await readFile(new URL(artifact, outputUrl), "utf8");
     assert.match(html, new RegExp(`data-route="${motif}"`));
-    assert.match(
-      html,
-      new RegExp(
-        `class="route-motif route-motif--${motif}" data-route-motif="${motif}" aria-hidden="true"`,
-      ),
-    );
+    assert.doesNotMatch(html, /data-route-motif=|class="route-thread"/);
+    assert.ok(html.includes('id="main-content"'));
   }
 
   const source = await readFile(

@@ -106,9 +106,21 @@ test("renders 25 source-linked credentials without lifecycle claims", async () =
   for (const item of records) {
     const escapedName = item.name.replaceAll("&", "&amp;");
     assert.ok(
-      html.includes(`aria-label="Verify ${escapedName} on Credly, opens in a new tab"`),
+      html.includes(`aria-label="Verify on Credly: ${escapedName}, opens in a new tab"`),
       `${item.name} standalone verification label`,
     );
+  }
+});
+
+test("credential verification names retain their visible label for voice control", async () => {
+  const html = await readFile(new URL("pages-dist/credentials/index.html", root), "utf8");
+  const links = [...html.matchAll(/<a class="credential-card__verify"[^>]*aria-label="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
+  assert.equal(links.length, 25);
+  for (const [, name, body] of links) {
+    const visible = body.replace(/<span\b[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/span>/g, "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+    assert.equal(visible, "Verify on Credly");
+    assert.ok(name.startsWith(visible + ": "), "The accessible name starts with the complete visible label");
+    assert.ok(name.endsWith(", opens in a new tab"));
   }
 });
 
@@ -118,6 +130,24 @@ test("keeps credential metadata readable and the smallest accent AA-safe", async
   assert.match(css, /data-theme="dark"[\s\S]*?--credential-accent:\s*#d7b866/);
   assert.match(css, /\.credential-card__record code\s*\{[\s\S]*?font-size:\s*0\.7rem/);
   assert.match(css, /\.credential-card__verify\s*\{[\s\S]*?font-size:\s*0\.78rem/);
+});
+
+test("renders preoptimized badges without misleading responsive image candidates", async () => {
+  for (const pathname of ["/", "/credentials"]) {
+    const response = await render(pathname);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    const badges = [...html.matchAll(/<img\b[^>]*src="\/credentials\/[^>]*>/g)];
+    assert.equal(badges.length, 25, pathname);
+    for (const [badge] of badges) {
+      assert.doesNotMatch(badge, /\bsrcset=/i, `${pathname}: one optimized file has no responsive variants`);
+      assert.match(badge, /\bloading="lazy"/);
+      assert.match(badge, /\bdecoding="async"/);
+      assert.match(badge, /\bwidth="(?:128|240)"/);
+      assert.match(badge, /\bheight="(?:128|240)"/);
+      assert.match(badge, /\balt=""/);
+    }
+  }
 });
 
 test("keeps the badge refresh manifest aligned with the public catalog", async () => {

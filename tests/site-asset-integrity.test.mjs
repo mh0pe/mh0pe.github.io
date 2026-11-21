@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 import sharp from "sharp";
 import { createPagesServer } from "../tools/serve-pages.mjs";
-import { compactStylesheet, sharedStylesheets } from "../tools/export-stylesheets.mjs";
+import { compactStylesheet, sharedStylesheets, supplementalStylesheets } from "../tools/export-stylesheets.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = resolve(root, "pages-dist");
@@ -115,13 +115,13 @@ test("exported public assets match source bytes with declared stylesheet compact
     try { sourceBytes = await readFile(source); }
     catch (error) { if (error.code === "ENOENT") continue; throw error; }
     let expectedBytes = sourceBytes;
-    if (sharedStylesheets.includes(assetPath)) {
+    if ([...sharedStylesheets, ...supplementalStylesheets].includes(assetPath)) {
       expectedBytes = Buffer.from(compactStylesheet(sourceBytes.toString("utf8"), assetPath));
       compacted += 1;
     }
     assert.ok((await readFile(path)).equals(expectedBytes), `Stale exported asset: ${assetPath}`);
     compared += 1;
   }
-  assert.equal(compacted, sharedStylesheets.length, "compare every compacted stylesheet");
+  assert.equal(compacted, sharedStylesheets.length + supplementalStylesheets.length, "compare every compacted stylesheet");
   assert.ok(compared >= 50, `only ${compared} public assets compared`);
 });

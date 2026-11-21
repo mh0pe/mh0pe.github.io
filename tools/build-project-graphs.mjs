@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
@@ -15,9 +16,24 @@ import {
   assertContributionGraphV2,
   CONTRIBUTION_GRAPH_SCHEMA_VERSION,
 } from "../app/data/contribution-graph-contract.mjs";
-import { writeCompactGraphCatalog } from "./build-compact-project-graphs.mjs";
+import { packContributionGraphCatalog, unpackContributionGraph } from "../app/data/contribution-graph-compact.mjs";
+import { promoteStagedPaths } from "./promote-staged-paths.mjs";
 import { writeProjectPlayerRecords } from "./build-project-player-records.mjs";
-import { expandAgentAttributionData } from "../app/data/agent-attribution-contract.mjs";
+import {
+  assertAttributionJoin,
+  assertPortfolioCommit,
+  assertPortfolioPullRequest,
+  assertPublicRepositories,
+  assertPublicSource,
+  attributionBySha,
+  isAccountDirectedCopilotPullRequest,
+  readPublicPullRequestExport,
+  fetchPublicCommitDetail,
+  fetchPublicPullRequestCommits,
+  assertPullRequestContentComplete,
+  assertFullHistoryRefreshTarget,
+  assertGraphSelectionPreserved,
+} from "./public-contribution-guards.mjs";
 
 const execFileAsync = promisify(execFile);
 const siteRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -31,7 +47,6 @@ const historyRoot = resolve(
 );
 const outputRoot = resolve(siteRoot, "app/data/project-graphs");
 const attributionPath = resolve(siteRoot, "app/data/agent-attribution.json");
-const portfolioAccounts = new Set(["mh0pe", "awsmadi"]);
 const maxCommitsPerEvidence = 6;
 const maxFilesPerEvidence = 10;
 const maxCommitDetailConcurrency = 5;
@@ -594,14 +609,6 @@ function evidenceFileLimit(evidence) {
   return evidence.sampling?.maxFiles ?? maxFilesPerEvidence;
 }
 
-async function readJsonLines(path) {
-  const source = await readFile(path, "utf8");
-  return source
-    .split(/\r?\n/)
-    .filter(Boolean)
-    .map((line) => JSON.parse(line));
-}
-
 async function ghJson(
   endpoint,
   { paged = false, flattenPages = true, cache = true } = {},
@@ -623,22 +630,7 @@ async function ghJson(
 }
 
 async function ghCommitDetail(repository, sha) {
-  const pages = await ghJson(
-    `repos/${repository}/commits/${sha}?per_page=100`,
-    { paged: true, flattenPages: false, cache: false },
-  );
-  const firstPage = pages[0];
-  if (!firstPage || typeof firstPage !== "object") {
-    throw new Error(
-      `GitHub returned no commit detail for ${repository}@${sha}.`,
-    );
-  }
-  return {
-    ...firstPage,
-    files: pages.flatMap((page) =>
-      Array.isArray(page.files) ? page.files : [],
-    ),
-  };
+  return fetchPublicCommitDetail(repository, sha, ghJson);
 }
 
 async function withRetry(operation, attempts = 3) {
@@ -1002,67 +994,6 @@ function pullRequestIntegrationStatus(pullRequest) {
   return pullRequest.state === "open" ? "open" : "closed-unmerged";
 }
 
-function isAccountDirectedCopilotPullRequest(pullRequest, publicExportRecord) {
-  const liveAuthor = (
-    pullRequest?.user?.login ??
-    pullRequest?.author ??
-    ""
-  ).toLowerCase();
-  const exportedAuthor = (publicExportRecord?.author ?? "").toLowerCase();
-  const attributedAccounts =
-    publicExportRecord?.search_attributed_accounts ?? [];
-  if (
-    liveAuthor !== "copilot" ||
-    exportedAuthor !== "copilot" ||
-    attributedAccounts.length !== 1 ||
-    !portfolioAccounts.has(attributedAccounts[0])
-  ) {
-    return false;
-  }
-
-  const attributedAccount = attributedAccounts[0];
-  const searchDiscoveries = (publicExportRecord.discoveries ?? []).filter(
-    (discovery) => discovery.kind === "search_author_query",
-  );
-  const relatedAccounts =
-    publicExportRecord.classification?.related_accounts ?? [];
-  const exportedHeadRepository = publicExportRecord.head?.repository;
-  const liveHeadRepository =
-    pullRequest.head?.repo?.full_name ?? pullRequest.head?.repository;
-
-  return (
-    searchDiscoveries.length === 1 &&
-    searchDiscoveries[0].account === attributedAccount &&
-    publicExportRecord.search_author_matches_detail === false &&
-    publicExportRecord.classification?.authored_by_account === false &&
-    publicExportRecord.classification?.head_repository_owned_by_account ===
-      true &&
-    relatedAccounts.length === 1 &&
-    relatedAccounts[0] === attributedAccount &&
-    exportedHeadRepository === liveHeadRepository &&
-    exportedHeadRepository?.split("/")[0] === attributedAccount &&
-    publicExportRecord.head?.repository_deleted === false &&
-    publicExportRecord.head?.repository_unavailable === false
-  );
-}
-
-function assertPortfolioPullRequest(evidence, pullRequest, publicExportRecord) {
-  if (!pullRequest || !publicExportRecord) {
-    throw new Error(`Missing public export record for ${evidence.href}.`);
-  }
-  const liveAuthor = pullRequest.user?.login ?? pullRequest.author;
-  const humanAuthored = portfolioAccounts.has(liveAuthor);
-  const copilotSubmittedOnBehalf = isAccountDirectedCopilotPullRequest(
-    pullRequest,
-    publicExportRecord,
-  );
-  if (!humanAuthored && !copilotSubmittedOnBehalf) {
-    throw new Error(
-      `${evidence.href} is not attributed to mh0pe or awsmadi in the public export.`,
-    );
-  }
-}
-
 function immutableDirectoryHref(repository, referenceSha, directory) {
   const encodedDirectory = directory
     .split("/")
@@ -1071,18 +1002,13 @@ function immutableDirectoryHref(repository, referenceSha, directory) {
   return `https://github.com/${repository}/tree/${referenceSha}/${encodedDirectory}`;
 }
 
-async function hydrateEvidence(evidence, prByUrl) {
+async function hydrateEvidence(evidence, prByUrl, { fetchJson = ghJson, fetchCommitDetail = ghCommitDetail } = {}) {
+  if (evidence.kind !== "commit" && !prByUrl.has(evidence.href)) throw new Error(`Missing public export record for ${evidence.href}.`);
+  await assertPublicRepositories([evidence.repository], fetchJson);
   if (evidence.kind === "commit") {
-    const detail = await ghCommitDetail(evidence.repository, evidence.sha);
-    if (
-      ![detail.author?.login, detail.committer?.login].some((account) =>
-        portfolioAccounts.has(account),
-      )
-    ) {
-      throw new Error(
-        `${evidence.href} is not attributed to mh0pe or awsmadi by GitHub.`,
-      );
-    }
+    const detail = await fetchCommitDetail(evidence.repository, evidence.sha);
+    assert.equal(detail.sha, evidence.sha, "GitHub commit detail does not match the requested SHA.");
+    assertPortfolioCommit(evidence, detail);
     const exactCommit = exactCommitSummary(detail, {
       repository: evidence.repository,
       sha: evidence.sha,
@@ -1108,20 +1034,21 @@ async function hydrateEvidence(evidence, prByUrl) {
   }
 
   const publicExportRecord = prByUrl.get(evidence.href);
-  const [pullRequest, files, commits] = await Promise.all([
-    ghJson(`repos/${evidence.repository}/pulls/${evidence.number}`, {
-      cache: false,
-    }),
-    ghJson(
+  const pullRequest = await fetchJson(`repos/${evidence.repository}/pulls/${evidence.number}`, { cache: false });
+  assert.equal(pullRequest.html_url, evidence.href, "GitHub pull-request detail does not match the requested URL.");
+  assert.equal(pullRequest.base?.repo?.full_name, evidence.repository, "GitHub pull-request base does not match the selected repository.");
+  assertPortfolioPullRequest(evidence, pullRequest, publicExportRecord);
+  const headRepository = pullRequest.head?.repo?.full_name;
+  assert.ok(headRepository, `Missing live public head repository for ${evidence.href}.`);
+  await assertPublicRepositories([headRepository], fetchJson);
+  const [files, commits] = await Promise.all([
+    fetchJson(
       `repos/${evidence.repository}/pulls/${evidence.number}/files?per_page=100`,
       { paged: true, cache: false },
     ),
-    ghJson(
-      `repos/${evidence.repository}/pulls/${evidence.number}/commits?per_page=100`,
-      { paged: true, cache: false },
-    ),
+    fetchPublicPullRequestCommits(evidence.repository, evidence.number, pullRequest, fetchJson),
   ]);
-  assertPortfolioPullRequest(evidence, pullRequest, publicExportRecord);
+  assertPullRequestContentComplete(pullRequest, commits, files);
   const dates = commits
     .flatMap((entry) => [
       entry.commit?.author?.date,
@@ -1205,13 +1132,74 @@ function exactDetailCoverage(evidence) {
   };
 }
 
+function boundedGraphSamples(evidences) {
+  const ordered = [...evidences].sort((a, b) => (a.date ?? "").localeCompare(b.date ?? "") || a.id.localeCompare(b.id));
+  const candidates = new Map(ordered.map(evidence => {
+    const commits = evidence.sampledCommits ?? sampleEvenly(evidence.commits, evidenceCommitLimit(evidence));
+    return [evidence.id, { commits, files: selectRepresentativeFiles(evidence, commits) }];
+  }));
+  let samples = new Map(ordered.map(evidence => [evidence.id, { commits: sampleEvenly(candidates.get(evidence.id).commits, 1), files: [] }]));
+  // Charge the same unique identities as the renderer, including shared paths.
+  const fits = selection => {
+    const nodes = new Set(), edges = new Set();
+    const edge = (kind, source, target, evidenceId = "") => edges.add(`${kind}:${source}:${target}:${evidenceId}`);
+    for (const evidence of ordered) {
+      const repository = `repository:${evidence.repository}`, source = `evidence:${evidence.id}`;
+      nodes.add(repository); nodes.add(source); edge("documents-change", repository, source, evidence.id);
+      const selected = selection.get(evidence.id), files = new Set(selected.files.map(file => file.filename));
+      for (const commit of selected.commits) {
+        const id = `commit:${evidence.id}:${commit.sha}`;
+        nodes.add(id); edge("includes-commit", source, id, evidence.id);
+        for (const file of commit.exactFiles ?? []) if (files.has(file.filename)) edge("commit-touches-file", id, `file:${evidence.repository}:${file.filename}`, evidence.id);
+      }
+      for (const file of selected.files) {
+        let parent = repository;
+        for (const directory of directoryChain(file.filename)) {
+          const id = `directory:${evidence.repository}:${directory}`;
+          nodes.add(id); edge(parent === repository ? "contains-directory" : "contains-subdirectory", parent, id); parent = id;
+        }
+        const id = `file:${evidence.repository}:${file.filename}`;
+        nodes.add(id); edge("contains-file", parent, id); edge("touches-file", source, id, evidence.id);
+      }
+    }
+    return nodes.size <= maxGraphNodes && edges.size <= maxGraphEdges;
+  };
+  assert.ok(fits(samples), "The mandatory contribution backbone exceeds the graph budget.");
+  const offer = (id, selection) => {
+    const trial = new Map(samples); trial.set(id, selection);
+    if (fits(trial)) samples = trial;
+  };
+  const rounds = Math.max(...[...candidates.values()].map(value => Math.max(value.commits.length, value.files.length)), 0);
+  for (let round = 0; round < rounds; round++) for (const evidence of ordered) {
+    const id = evidence.id, available = candidates.get(id);
+    const file = available.files[round];
+    if (file) offer(id, { ...samples.get(id), files: [...samples.get(id).files, file] });
+    const current = samples.get(id);
+    if (current.commits.length < available.commits.length) {
+      offer(id, { ...current, commits: sampleEvenly(available.commits, current.commits.length + 1) });
+    }
+  }
+  return samples;
+}
+
 function buildGraph(spec, evidences, agentBySha, prByUrl, agents) {
+  const complete = buildGraphWithSamples(spec, evidences, agentBySha, prByUrl, agents);
+  if (complete.nodes.length <= maxGraphNodes && complete.edges.length <= maxGraphEdges) return complete;
+  const graph = buildGraphWithSamples(spec, evidences, agentBySha, prByUrl, agents, boundedGraphSamples(evidences));
+  assert.ok(graph.nodes.length <= maxGraphNodes && graph.edges.length <= maxGraphEdges, "Graph sample accounting differs from the rendered graph.");
+  return graph;
+}
+
+function buildGraphWithSamples(spec, evidences, agentBySha, prByUrl, agents, visualSamples = null) {
   const orderedEvidences = [...evidences].sort(
     (left, right) =>
       (left.date ?? "").localeCompare(right.date ?? "") ||
       left.id.localeCompare(right.id),
   );
-  const detailCoverage = orderedEvidences.map(exactDetailCoverage).reduce(
+  const coverageFor = evidence => visualSamples
+    ? exactDetailCoverage({ sampledCommits: visualSamples.get(evidence.id).commits })
+    : exactDetailCoverage(evidence);
+  const detailCoverage = orderedEvidences.map(coverageFor).reduce(
     (totals, coverage) => ({
       requested: totals.requested + coverage.requested,
       resolved: totals.resolved + coverage.resolved,
@@ -1284,6 +1272,7 @@ function buildGraph(spec, evidences, agentBySha, prByUrl, agents) {
     });
 
     const selectedCommits =
+      visualSamples?.get(evidence.id).commits ??
       evidence.sampledCommits ??
       sampleEvenly(evidence.commits, evidenceCommitLimit(evidence));
     const commitNodeIdBySha = new Map();
@@ -1314,7 +1303,7 @@ function buildGraph(spec, evidences, agentBySha, prByUrl, agents) {
       });
     }
 
-    const topFiles = selectRepresentativeFiles(evidence, selectedCommits);
+    const topFiles = visualSamples?.get(evidence.id).files ?? selectRepresentativeFiles(evidence, selectedCommits);
     const fileNodeIdByPath = new Map();
     for (const file of topFiles) {
       const directories = directoryChain(file.filename);
@@ -1398,7 +1387,7 @@ function buildGraph(spec, evidences, agentBySha, prByUrl, agents) {
       }
     }
     graph.exactEdgesByEvidence.push(exactEdgesByCommit);
-    const detailCoverageForEvidence = exactDetailCoverage(evidence);
+    const detailCoverageForEvidence = coverageFor(evidence);
     const displayableRelationCount = exactEdgesByCommit.reduce(
       (total, relations) => total + relations.length,
       0,
@@ -1546,21 +1535,7 @@ async function assertEvidenceRepositoriesArePublic(prByUrl) {
       }
     }
   }
-  const records = await mapLimit(
-    [...repositories].sort(),
-    5,
-    async (repository) => ({
-      repository,
-      metadata: await ghJson(`repos/${repository}`, { cache: false }),
-    }),
-  );
-  for (const { repository, metadata } of records) {
-    if (metadata.private !== false || metadata.visibility !== "public") {
-      throw new Error(
-        `${repository} is not verified public; refusing to generate portfolio data.`,
-      );
-    }
-  }
+  await assertPublicRepositories(repositories, ghJson);
 }
 
 function assertPublicSafeGraph(graph) {
@@ -1608,35 +1583,64 @@ function assertPublicSafeGraph(graph) {
   }
 }
 
-async function main() {
-  const [pullRequests, attribution, historyManifest] = await Promise.all([
-    readJsonLines(resolve(historyRoot, "pull_requests.jsonl")),
-    readFile(attributionPath, "utf8")
-      .then(JSON.parse)
-      .then(expandAgentAttributionData),
-    readFile(resolve(historyRoot, "manifest.json"), "utf8").then(JSON.parse),
+export async function loadProjectGraphInputs({ historyDirectory = historyRoot, attributionFile = attributionPath } = {}) {
+  const [publicExport, input] = await Promise.all([
+    readPublicPullRequestExport(historyDirectory),
+    readFile(attributionFile, "utf8").then(JSON.parse),
   ]);
-  if (
-    historyManifest.public_only !== true ||
-    historyManifest.status !== "complete" ||
-    !Number.isFinite(Date.parse(historyManifest.completed_at))
-  ) {
-    throw new Error("Public history export is incomplete or invalid.");
+  const attribution = assertPublicSource({ attribution: input, historyManifest: publicExport.historyManifest });
+  return { ...publicExport, attribution };
+}
+
+export async function writeProjectGraphGeneration({ graphs, manifest, playerInput, outputDirectory = dirname(outputRoot), operations = {} }) {
+  assert.deepEqual(graphs.map((graph) => graph.id), manifest.graphIds);
+  assert.equal(manifest.publicOnly, true);
+  for (const id of manifest.graphIds) assert.match(id, /^[a-z][a-z0-9-]*$/);
+  for (const key of ["sourceExport", "sourceExportCompletedAt", "sourceExportRunId"]) assert.equal(playerInput[key], manifest[key], `Graph/player ${key} mismatch.`);
+  assert.deepEqual(playerInput.specs.map((spec) => spec.id), manifest.graphIds);
+  graphs.forEach(assertPublicSafeGraph);
+  const compact = packContributionGraphCatalog(graphs);
+  for (const graph of graphs) assert.deepEqual(unpackContributionGraph(compact, graph.id), graph);
+  const io = { mkdir, mkdtemp, readFile, writeFile, ...operations };
+  await io.mkdir(outputDirectory, { recursive: true });
+  const staging = await io.mkdtemp(resolve(outputDirectory, ".project-generation-stage-"));
+  const graphDirectory = resolve(staging, "project-graphs");
+  await io.mkdir(graphDirectory);
+  const writes = await Promise.allSettled([
+    io.writeFile(resolve(graphDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`),
+    ...graphs.map((graph) => io.writeFile(resolve(graphDirectory, `${graph.id}.json`), `${JSON.stringify(graph)}\n`)),
+    io.writeFile(resolve(staging, "project-graphs.compact.json"), `${JSON.stringify(compact)}\n`),
+  ]);
+  const failures = writes.filter((result) => result.status === "rejected");
+  if (failures.length) throw new AggregateError(failures.map((result) => result.reason), "Graph generation staging failed; previous output retained.");
+  const playerRecords = await writeProjectPlayerRecords({ ...playerInput, outputDirectory: staging, operations });
+  assert.deepEqual(JSON.parse(await io.readFile(resolve(graphDirectory, "manifest.json"), "utf8")), manifest);
+  const stagedCompact = JSON.parse(await io.readFile(resolve(staging, "project-graphs.compact.json"), "utf8"));
+  for (const graph of graphs) {
+    const staged = JSON.parse(await io.readFile(resolve(graphDirectory, `${graph.id}.json`), "utf8"));
+    assertPublicSafeGraph(staged);
+    assert.deepEqual(staged, graph);
+    assert.deepEqual(unpackContributionGraph(stagedCompact, graph.id), graph);
   }
-  if (attribution.snapshot?.publicOnly !== true) {
-    throw new Error("Agent attribution input must be public-only.");
-  }
-  if (
-    attribution.snapshot.sourceExportGeneratedAt !==
-    historyManifest.completed_at
-  ) {
-    throw new Error(
-      "Agent attribution does not match the selected public history export.",
-    );
-  }
-  const agentBySha = new Map(
-    attribution.commits.map((entry) => [entry.sha, entry.agentId]),
-  );
+  // The player writer has completed its canonical/compact readback within this
+  // private generation. No accepted graph or player path has changed yet.
+  await promoteStagedPaths(staging, outputDirectory, [
+    { name: "project-graphs", directory: true },
+    { name: "project-graphs.compact.json", directory: false },
+    { name: "project-player-records", directory: true },
+    { name: "project-player-records.compact.json", directory: false },
+  ], operations);
+  return { ...playerRecords, retainedGenerationDirectory: staging };
+}
+
+async function main() {
+  let targetManifest;
+  try { targetManifest = JSON.parse(await readFile(resolve(outputRoot, "manifest.json"), "utf8")); }
+  catch (error) { if (error.code !== "ENOENT") throw error; }
+  assertFullHistoryRefreshTarget(targetManifest);
+  assertGraphSelectionPreserved(targetManifest, graphSpecs);
+  const { pullRequests, attribution, historyManifest, sourceExport } = await loadProjectGraphInputs();
+  const agentBySha = attributionBySha(attribution);
   const agentCatalog = new Map(
     attribution.agents.map((agent) => [agent.id, agent]),
   );
@@ -1652,6 +1656,7 @@ async function main() {
     evidence: await hydrateEvidence(item.evidence, prByUrl),
   }));
   const hydrated = await hydrateSampledCommitDetails(aggregateHydrated);
+  assertAttributionJoin(hydrated, agentBySha);
   const incompleteHydration = hydrated.filter(
     ({ evidence }) => evidence.exactCommitDetailCoverage.unavailable > 0,
   );
@@ -1672,12 +1677,11 @@ async function main() {
     grouped.set(item.graphId, values);
   }
 
-  await mkdir(outputRoot, { recursive: true });
   const manifest = {
     schemaVersion: CONTRIBUTION_GRAPH_SCHEMA_VERSION,
     publicOnly: true,
     generatedAt: new Date().toISOString(),
-    sourceExport: historyRoot.split("/").at(-1),
+    sourceExport,
     sourceExportCompletedAt: historyManifest.completed_at,
     sourceExportRunId: historyManifest.run_id,
     graphIds: graphSpecs.map((spec) => spec.id),
@@ -1693,27 +1697,14 @@ async function main() {
     assertPublicSafeGraph(graph);
     return graph;
   });
-  const playerRecords = await writeProjectPlayerRecords({
+  const playerRecords = await writeProjectGraphGeneration({ graphs, manifest, playerInput: {
     specs: graphSpecs,
     hydrated,
     agentBySha,
-    sourceExport: historyRoot.split("/").at(-1),
+    sourceExport,
     sourceExportCompletedAt: historyManifest.completed_at,
     sourceExportRunId: historyManifest.run_id,
-  });
-  await Promise.all([
-    writeFile(
-      resolve(outputRoot, "manifest.json"),
-      `${JSON.stringify(manifest, null, 2)}\n`,
-    ),
-    ...graphs.map(async (graph) => {
-      await writeFile(
-        resolve(outputRoot, `${graph.id}.json`),
-        `${JSON.stringify(graph)}\n`,
-      );
-    }),
-    writeCompactGraphCatalog(graphs),
-  ]);
+  } });
 
   const totals = graphs.map((graph) => ({
     id: graph.id,
@@ -1735,6 +1726,9 @@ if (
 
 export {
   buildGraph,
+  buildAgentSummary,
+  graphSpecs,
   hydrateSampledCommitDetails,
+  hydrateEvidence,
   isAccountDirectedCopilotPullRequest,
 };

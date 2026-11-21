@@ -4,7 +4,6 @@ import {
   type CSSProperties,
   type ChangeEvent,
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
@@ -19,7 +18,6 @@ import {
   attributionRepositories,
   filtersEqual,
   modelIdsForCommit,
-  parseAttributionSearch,
   readAgentAttributionData,
   serializeAttributionSearch,
   type AttributionAgentSummary,
@@ -28,8 +26,10 @@ import {
   type AttributionMetric,
   type AttributionScope,
   type AttributionSurface,
+  type AgentAttributionData,
 } from "./attribution-model";
-import agentAttribution from "../data/agent-attribution.json";
+import transport from "../data/attribution-transport.json";
+import { loadAttributionArchive, parseArchiveSearch } from "../data/attribution-archive.mjs";
 import BklitModelBar from "./v3/BklitModelBar";
 
 export type {
@@ -65,7 +65,45 @@ const markerGlyphs: Readonly<Record<string, string>> = {
   star: "✦",
   triangle: "▲",
 };
-const agentAttributionData = readAgentAttributionData(agentAttribution);
+const initialData = { ...transport.catalog, schemaVersion: 2, commits: transport.defaultView.commits } as unknown as AgentAttributionData;
+const initialModels = transport.models as unknown as ReturnType<typeof attributionModels>;
+
+function associationOrigin(basis?: string) {
+  switch (basis) {
+    case "r":
+      return {
+        code: "r",
+        label: "Commit marker",
+        explanation: "The model is named in a recorded commit marker.",
+      };
+    case "h":
+      return {
+        code: "h",
+        label: "Model-use history",
+        explanation: "The model follows my stated awsmadi model-use history for the commit date.",
+      };
+    case "t":
+      return {
+        code: "t",
+        label: "Tool record",
+        explanation: "The commit record identifies a tool rather than a specific model.",
+      };
+    default:
+      return undefined;
+  }
+}
+
+function AssociationOrigin({
+  origin,
+}: {
+  readonly origin: ReturnType<typeof associationOrigin>;
+}) {
+  return origin ? (
+    <span data-association-basis={origin.code} title={origin.explanation}>
+      {" · "}{origin.label}
+    </span>
+  ) : null;
+}
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
@@ -143,19 +181,23 @@ function SegmentedControl<T extends string>({
   );
 }
 
-function EvidenceItem({
+export function EvidenceItem({
   commit,
   modelLabel,
   scope,
   compact = false,
+  basis,
 }: {
   readonly commit: AttributionCommit;
   readonly modelLabel: string;
   readonly scope: AttributionScope;
   readonly compact?: boolean;
+  readonly basis?: string;
 }) {
   const additions =
     scope === "code" ? commit.additions.code : commit.additions.allText;
+  const origin = associationOrigin(basis);
+  const associationLabel = origin?.code === "t" ? "Tool association" : "Model association";
   const deliverySurface = commit.surfaces.includes("pr")
     ? "Change sent for review"
     : commit.surfaces.includes("fork-only")
@@ -173,7 +215,8 @@ function EvidenceItem({
           <Arrow />
         </a>
         <span>
-          Model association: {modelLabel} · {integerFormatter.format(additions)}{" "}
+          {associationLabel}: {modelLabel}<AssociationOrigin origin={origin} />
+          {" · "}{integerFormatter.format(additions)}{" "}
           {scope === "code" ? "code" : "text"} additions ·{" "}
           <time dateTime={commit.date}>
             {dateFormatter.format(new Date(commit.date))}
@@ -207,7 +250,8 @@ function EvidenceItem({
         </time>
       </div>
       <p className="attribution-evidence-meta">
-        Model association: {modelLabel} · {integerFormatter.format(additions)}{" "}
+        {associationLabel}: {modelLabel}<AssociationOrigin origin={origin} />
+        {" · "}{integerFormatter.format(additions)}{" "}
         {scope === "code" ? "code" : "text"} additions · {deliverySurface}
       </p>
       <div className="attribution-evidence-links">
@@ -289,32 +333,40 @@ type AttributionExplorerProps = {
 export default function AttributionExplorer({
   sectionCode = "03 / Model composition",
 }: AttributionExplorerProps = {}) {
-  const data = agentAttributionData;
-  const [filters, setFilters] = useState<AttributionFilters>(
+  const [archive, setArchive] = useState<{ data: AgentAttributionData; basisBySha: Map<string, string> } | null>(null);
+  const [loadState, setLoadState] = useState<"idle" | "error" | "ready">("idle");
+  const [retry, setRetry] = useState(0);
+  const requestEpoch = useRef(0);
+  const data = archive?.data ?? initialData;
+  const [requestedFilters, setFilters] = useState<AttributionFilters>(
     DEFAULT_ATTRIBUTION_FILTERS,
   );
+  const filters = archive ? requestedFilters : DEFAULT_ATTRIBUTION_FILTERS;
+  const needsArchive = !filtersEqual(requestedFilters, DEFAULT_ATTRIBUTION_FILTERS);
   const urlReady = useRef(false);
   const [interactive, setInteractive] = useState(false);
   const recordRef = useRef<HTMLDetailsElement | null>(null);
-  const chartId = useId();
-  const evidenceId = useId();
-  const summaryId = useId();
-  const repositoryId = useId();
-  const agentId = useId();
+  // This single explorer has the same identity across the framework-rendered
+  // document and the independently hydrated Pages export.
+  const chartId = "agent-collaboration-chart";
+  const evidenceId = "agent-collaboration-evidence";
+  const summaryId = "agent-collaboration-summary";
+  const repositoryId = "agent-collaboration-repository";
+  const agentId = "agent-collaboration-model";
 
-  const repositories = useMemo(() => attributionRepositories(data), [data]);
-  const selectableAgents = useMemo(() => attributionAgents(data), [data]);
+  const repositories = useMemo(() => archive ? attributionRepositories(data) : transport.repositories, [archive, data]);
+  const selectableAgents = useMemo(() => archive ? attributionAgents(data) : initialModels, [archive, data]);
   const rows = useMemo(
-    () => aggregateAttribution(data, filters).filter((row) => row.value > 0),
-    [data, filters],
+    () => archive ? aggregateAttribution(data, filters).filter((row) => row.value > 0) : transport.defaultView.rows as unknown as AttributionAgentSummary[],
+    [archive, data, filters],
   );
   const evidence = useMemo(
-    () => attributionEvidence(data, filters),
-    [data, filters],
+    () => archive ? attributionEvidence(data, filters) : initialData.commits,
+    [archive, data, filters],
   );
   const agents = useMemo(
-    () => new Map(attributionModels(data).map((agent) => [agent.id, agent])),
-    [data],
+    () => new Map(selectableAgents.map((agent) => [agent.id, agent])),
+    [selectableAgents],
   );
   const visibleCommits = useMemo(
     () =>
@@ -326,8 +378,8 @@ export default function AttributionExplorer({
     [data, evidence, filters.agent],
   );
   const repositoryCount = useMemo(
-    () => new Set(evidence.flatMap((commit) => commit.repositories)).size,
-    [evidence],
+    () => archive ? new Set(evidence.flatMap((commit) => commit.repositories)).size : transport.defaultView.repositoryCount,
+    [archive, evidence],
   );
   const focusedAgentLabel =
     filters.agent === "all"
@@ -335,15 +387,31 @@ export default function AttributionExplorer({
       : (agents.get(filters.agent)?.label ?? filters.agent);
   const summary = filterSummary(
     filters,
-    visibleCommits.length,
+    archive ? visibleCommits.length : transport.defaultView.evidenceCount,
     repositoryCount,
     focusedAgentLabel,
   );
 
   useEffect(() => {
+    if (!needsArchive || archive) return;
+    const controller = new AbortController();
+    const epoch = ++requestEpoch.current;
+    loadAttributionArchive(transport, { signal: controller.signal }).then((result) => {
+      if (controller.signal.aborted || epoch !== requestEpoch.current) return;
+      setArchive({ data: readAgentAttributionData(result.data), basisBySha: result.basisBySha });
+      setLoadState("ready");
+    }).catch(() => {
+      if (!controller.signal.aborted && epoch === requestEpoch.current) setLoadState("error");
+    });
+    return () => { controller.abort(); requestEpoch.current += 1; };
+  }, [needsArchive, archive, retry]);
+
+  useEffect(() => {
     let active = true;
     const readLocation = () => {
-      const nextFilters = parseAttributionSearch(window.location.search, data);
+      setLoadState("idle");
+      setRetry(value => value + 1);
+      const nextFilters = parseArchiveSearch(window.location.search, transport) as AttributionFilters;
       const search = serializeAttributionSearch(nextFilters);
       const nextUrl = `${window.location.pathname}${search}${window.location.hash}`;
       const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -377,26 +445,27 @@ export default function AttributionExplorer({
       active = false;
       window.removeEventListener("popstate", readLocation);
     };
-  }, [data]);
+  }, []);
 
   useEffect(() => {
     if (!urlReady.current) {
       return;
     }
 
-    const search = serializeAttributionSearch(filters);
+    const search = serializeAttributionSearch(requestedFilters);
     const nextUrl = `${window.location.pathname}${search}${window.location.hash}`;
     const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
     if (nextUrl !== currentUrl) {
       window.history.replaceState(window.history.state, "", nextUrl);
     }
-  }, [filters]);
+  }, [requestedFilters]);
 
   function updateFilter<Key extends keyof AttributionFilters>(
     key: Key,
     value: AttributionFilters[Key],
   ) {
+    if (loadState === "error") { setLoadState("idle"); setRetry(current => current + 1); }
     setFilters((current) => ({ ...current, [key]: value }));
   }
 
@@ -409,10 +478,10 @@ export default function AttributionExplorer({
   }
 
   function focusAgent(nextAgentId: string) {
-    updateFilter("agent", filters.agent === nextAgentId ? "all" : nextAgentId);
+    updateFilter("agent", requestedFilters.agent === nextAgentId ? "all" : nextAgentId);
   }
 
-  const hasActiveFilters = !filtersEqual(filters, DEFAULT_ATTRIBUTION_FILTERS);
+  const hasActiveFilters = needsArchive;
   const representativeEvidence = visibleCommits.slice(0, 3);
   const remainingEvidence = visibleCommits.slice(representativeEvidence.length);
   const inlineCommitEvidence = remainingEvidence.slice(
@@ -420,11 +489,18 @@ export default function AttributionExplorer({
     INLINE_COMMIT_EVIDENCE_LIMIT,
   );
   const selectedMetricTotal = rows.reduce((total, row) => total + row.value, 0);
+  const additionalEvidenceCount = archive ? remainingEvidence.length : Math.max(0, transport.defaultView.evidenceCount - representativeEvidence.length);
+  function basisFor(commit: AttributionCommit) {
+    if (archive) return archive.basisBySha.get(commit.sha);
+    const index = transport.defaultView.commits.findIndex(row => row.sha === commit.sha);
+    return index < 0 ? undefined : transport.defaultView.basis[index];
+  }
 
   return (
     <section
       className="section attribution-section"
       id="agent-collaboration"
+      data-attribution-generation={transport.canonicalSha256}
       aria-labelledby="agent-collaboration-title"
       data-constellation-cluster="agents"
     >
@@ -436,8 +512,13 @@ export default function AttributionExplorer({
               Where model collaboration appears in the work.
             </h2>
             <p>
-              Filter the view, compare the work, and follow any result to its
-              linked code change.
+              Explore selected public changes by project and model, then follow
+              the links to the work.
+            </p>
+            <p>
+              Model associations use recorded commit markers or are inferred
+              from my stated model-use history. Line counts show change volume,
+              not individual model output or project impact.
             </p>
           </div>
         </div>
@@ -454,6 +535,14 @@ export default function AttributionExplorer({
                   ? "Choose a project or model to explore its part in the work."
                   : "The full view is shown below. Filters require interactive controls to load."}
               </p>
+              {needsArchive && !archive ? (
+                <div role="status" aria-live="polite" aria-atomic="true">
+                  <p>{loadState === "error"
+                    ? "The selected view could not load. The complete default view is still shown below."
+                    : "Loading the full history for your selection. The complete default view is still shown below."}</p>
+                  {loadState === "error" ? <button type="button" onClick={() => { setLoadState("idle"); setRetry(value => value + 1); }}>Retry selected view</button> : null}
+                </div>
+              ) : null}
               <form
                 className="attribution-filters"
                 aria-label="Filter model collaboration"
@@ -464,7 +553,7 @@ export default function AttributionExplorer({
                   <select
                     id={repositoryId}
                     disabled={!interactive}
-                    value={filters.repository}
+                    value={requestedFilters.repository}
                     onChange={handleRepositoryChange}
                     aria-controls={`${chartId} ${evidenceId}`}
                   >
@@ -480,7 +569,7 @@ export default function AttributionExplorer({
                 <SegmentedControl<AttributionSurface>
                   disabled={!interactive}
                   legend="Work type"
-                  value={filters.surface}
+                  value={requestedFilters.surface}
                   onChange={(surface) => updateFilter("surface", surface)}
                   controls={`${chartId} ${evidenceId}`}
                   options={[
@@ -493,7 +582,7 @@ export default function AttributionExplorer({
                 <SegmentedControl<AttributionScope>
                   disabled={!interactive}
                   legend="What to measure"
-                  value={filters.scope}
+                  value={requestedFilters.scope}
                   onChange={(scope) => updateFilter("scope", scope)}
                   controls={`${chartId} ${evidenceId}`}
                   options={[
@@ -505,7 +594,7 @@ export default function AttributionExplorer({
                 <SegmentedControl<AttributionMetric>
                   disabled={!interactive}
                   legend="Count by"
-                  value={filters.metric}
+                  value={requestedFilters.metric}
                   onChange={(metric) => updateFilter("metric", metric)}
                   controls={chartId}
                   options={[
@@ -519,7 +608,7 @@ export default function AttributionExplorer({
                   <select
                     id={agentId}
                     disabled={!interactive}
-                    value={filters.agent}
+                    value={requestedFilters.agent}
                     onChange={handleAgentChange}
                     aria-controls={evidenceId}
                   >
@@ -535,7 +624,7 @@ export default function AttributionExplorer({
                 <button
                   className="attribution-clear"
                   type="button"
-                  onClick={() => setFilters(DEFAULT_ATTRIBUTION_FILTERS)}
+                  onClick={() => { setLoadState("idle"); setFilters(DEFAULT_ATTRIBUTION_FILTERS); }}
                   disabled={!interactive || !hasActiveFilters}
                 >
                   Clear filters
@@ -565,6 +654,7 @@ export default function AttributionExplorer({
                   <ol className="attribution-traces">
                     {rows.map((row) => {
                       const isSelected = filters.agent === row.agent.id;
+                      const descriptionId = `${chartId}-${row.agent.id}-description`;
                       const traceStyle = {
                         "--agent-accent": row.agent.tone,
                       } as CSSProperties;
@@ -585,17 +675,20 @@ export default function AttributionExplorer({
                             aria-pressed={isSelected}
                             aria-controls={evidenceId}
                             onClick={() => focusAgent(row.agent.id)}
-                            aria-label={`${
-                              isSelected
-                                ? `Clear ${row.agent.label} evidence focus`
-                                : `Focus evidence on ${row.agent.label}`
-                            }: ${metricValue(
-                              row,
-                              filters.metric,
-                            )}, ${percentageFormatter.format(
-                              row.percentage,
-                            )} percent of the current result`}
+                            aria-describedby={descriptionId}
                           >
+                            <span id={descriptionId} hidden>
+                              {`${
+                                isSelected
+                                  ? `Clear ${row.agent.label} evidence focus`
+                                  : `Focus evidence on ${row.agent.label}`
+                              }: ${metricValue(
+                                row,
+                                filters.metric,
+                              )}, ${percentageFormatter.format(
+                                row.percentage,
+                              )} percent of the current result`}
+                            </span>
                             <span className="attribution-trace-label">
                               <AgentMarker marker={row.agent.marker} />
                               <strong>{row.agent.label}</strong>
@@ -661,7 +754,7 @@ export default function AttributionExplorer({
                       : "Merge commits are included."}
                   </li>
                   <li>
-                    Multi-model commits preserve every recorded model and share
+                    Multi-model commits preserve every associated model and share
                     visual weight so each commit still counts once.
                   </li>
                   <li>
@@ -673,7 +766,7 @@ export default function AttributionExplorer({
                   <details className="attribution-identity-disclosure">
                     <summary>Model attribution mapping</summary>
                     <dl>
-                      {attributionModels(data).map((model) => (
+                      {selectableAgents.map((model) => (
                         <div key={model.id}>
                           <dt>{model.label}</dt>
                           <dd>{model.provider}</dd>
@@ -718,6 +811,7 @@ export default function AttributionExplorer({
                     <li key={commit.sha}>
                       <EvidenceItem
                         commit={commit}
+                        basis={basisFor(commit)}
                         modelLabel={modelIdsForCommit(data, commit)
                           .map((id) => agents.get(id)?.label ?? id)
                           .join(" + ")}
@@ -742,15 +836,16 @@ export default function AttributionExplorer({
                   </summary>
                   <p className="attribution-evidence-limit">
                     Showing a bounded sample from {integerFormatter.format(
-                      remainingEvidence.length,
-                    )} additional matches. The chart uses the complete public
-                    record; filters recalculate this list.
+                    additionalEvidenceCount,
+                    )} additional matches. The chart includes every change in
+                    this view; filters recalculate this list.
                   </p>
                   <ol>
                     {inlineCommitEvidence.map((commit) => (
                       <li key={commit.sha}>
                         <EvidenceItem
                           commit={commit}
+                          basis={basisFor(commit)}
                           modelLabel={modelIdsForCommit(data, commit)
                             .map((id) => agents.get(id)?.label ?? id)
                             .join(" + ")}

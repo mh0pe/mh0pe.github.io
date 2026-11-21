@@ -1,0 +1,561 @@
+/* Primitive palette -> semantic roles -> editorial components. */
+:root {
+  --edition-paper-50: #faf7f0;
+  --edition-paper-100: #eee8dd;
+  --edition-ink-900: #182239;
+  --edition-ink-700: #536078;
+  --edition-blue-600: #3549bf;
+  --edition-apricot-300: #f4b87b;
+  --edition-surface: var(--edition-paper-50);
+  --edition-surface-raised: #fffdf8;
+  --edition-surface-soft: var(--edition-paper-100);
+  --edition-text: var(--edition-ink-900);
+  --edition-muted: var(--edition-ink-700);
+  --edition-action: var(--edition-blue-600);
+  --edition-highlight: var(--edition-apricot-300);
+  --edition-line: color-mix(in srgb, var(--edition-text) 20%, transparent);
+  --edition-space-section: clamp(3rem, 6vw, 6rem);
+  --edition-duration-fast: 180ms;
+  --edition-duration-enter: 540ms;
+  --edition-ease: cubic-bezier(.16,1,.3,1);
+  --edition-cover-radius: .35rem;
+  --edition-footer-muted: #b6c2d8;
+}
+html[data-theme="dark"] {
+  --edition-surface: #111827;
+  --edition-surface-raised: #1b263b;
+  --edition-surface-soft: #202d44;
+  --edition-text: #f7f5f0;
+  --edition-muted: #b5c0d4;
+  --edition-action: #b8c5ff;
+}
+.hope-brand {
+  --hope-porcelain: var(--edition-surface);
+  --hope-carbon: var(--edition-text);
+  --hope-ink-muted: var(--edition-muted);
+  background: var(--edition-surface);
+}
+html[data-theme="dark"] .hope-brand {
+  background: var(--edition-surface);
+}
+.hope-brand .site-header {
+  top: 0;
+  padding-block: .75rem;
+}
+.hope-brand .site-header__inner {
+  border-radius: .5rem;
+  box-shadow: 0 5px 18px rgb(24 34 57 / 5%);
+  border-color: var(--edition-line);
+}
+.hope-brand .site-identity {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.hope-brand .site-identity__name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.hope-brand .landing-opening {
+  padding-block: clamp(3rem,6vw,6rem);
+  gap: clamp(2rem,4vw,5rem);
+}
+.hope-brand .landing-opening h1 {
+  color: var(--edition-text);
+  font-size: clamp(3.5rem,6.3vw,7.1rem);
+  max-width: 12ch;
+  line-height: 1.015;
+  letter-spacing: -.045em;
+}
+.hope-brand .landing-hope {
+  display: inline-block;
+  position: relative;
+  font-weight: inherit;
+  color: var(--edition-action);
+  isolation: isolate;
+}
+.landing-hope::after {
+  content: "";
+  position: absolute;
+  height: .1em;
+  inset: auto -.025em .05em;
+  background: var(--edition-highlight);
+  z-index: -1;
+  transform: rotate(-3deg);
+  transform-origin: left;
+}
+.hope-brand .landing-opening .architecture-hero {
+  border-left: 1px solid var(--edition-line);
+  padding-left: clamp(1rem,3vw,3rem);
+}
+.hope-brand .landing-work {
+  border-radius: 0;
+  border-top: 1px solid var(--edition-line);
+  background: var(--edition-surface-soft);
+}
+.hope-brand .landing-project__visual {
+  padding: 1.5rem;
+  background: var(--edition-surface);
+  border-radius: var(--edition-cover-radius);
+}
+.hope-brand .landing-section-heading {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  column-gap: 3rem;
+  align-items: end;
+}
+.hope-brand .landing-section-heading > .landing-label {
+  grid-column: 1 / -1;
+}
+.hope-brand .landing-section-heading > p:last-child {
+  max-width: 36ch;
+  justify-self: end;
+  padding-bottom: .75rem;
+}
+.hope-brand .landing-writing {
+  grid-template-columns: minmax(0,1fr);
+  gap: 2.5rem;
+}
+.hope-brand .landing-writing > header {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 0 4rem;
+  align-items: center;
+}
+.hope-brand .landing-writing > header > .landing-label {
+  grid-column: 1 / -1;
+}
+.hope-brand .landing-writing > header > .landing-link {
+  grid-column: 2;
+}
+.hope-brand .landing-writing__entries {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 2rem;
+}
+.hope-brand .landing-writing__entries article {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.hope-brand .landing-writing__art {
+  width: 100%;
+}
+.hope-brand .landing-writing__art .article-art__drawing {
+  aspect-ratio: 8/5;
+  width: 100%;
+  object-fit: contain;
+}
+.hope-brand .landing-writing h3 {
+  font-size: clamp(1.7rem,2.3vw,2.4rem);
+}
+.hope-brand .route-intro {
+  padding-block: var(--edition-space-section);
+  border-bottom: 1px solid var(--edition-line);
+  background: var(--edition-surface);
+}
+.hope-brand .route-intro::after {
+  display: none;
+}
+.hope-brand .route-intro__grid {
+  grid-template-columns: minmax(8rem,1fr) minmax(0,4fr);
+  gap: 2rem 3rem;
+}
+.hope-brand .route-intro__grid--with-visual {
+  grid-template-columns: minmax(8rem,1fr) minmax(0,3fr) minmax(0,2fr);
+}
+.hope-brand .route-intro h1 {
+  max-width: 19ch;
+  font-size: clamp(3rem,6vw,6.5rem);
+  line-height: 1.04;
+  overflow-wrap: anywhere;
+}
+.hope-brand .route-folio {
+  align-self: start;
+  padding-top: .5rem;
+}
+.hope-brand .route-folio .section-code {
+  color: var(--edition-action);
+  font: 600 .85rem/1.5 var(--hope-sans);
+  text-transform: none;
+  letter-spacing: .02em;
+}
+.route-folio__rule {
+  display: block;
+  width: 3rem;
+  height: .5rem;
+  margin-top: 1.5rem;
+  background: var(--edition-highlight);
+}
+.hope-brand .route-intro__summary {
+  max-width: 48ch;
+  font-size: clamp(1.1rem,1.6vw,1.4rem);
+  line-height: 1.65;
+}
+.hope-brand .route-jump a {
+  border-radius: .3rem;
+}
+.hope-brand .work-index > li {
+  padding-block: 2.5rem;
+}
+.hope-brand .work-index > li > article {
+  align-items: center;
+  gap: clamp(2rem,4vw,4rem);
+}
+.work-index__cover {
+  min-width: 0;
+  padding: clamp(1rem,2vw,2rem);
+  background: var(--edition-surface-soft);
+  border-radius: var(--edition-cover-radius);
+}
+.work-index__history {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--edition-line);
+}
+.work-index__history > summary {
+  display: list-item;
+  cursor: pointer;
+  padding-block: 1rem;
+  min-height: 48px;
+  font: 550 .95rem/1.5 var(--hope-sans);
+}
+.hope-brand .journal-masthead {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .5rem 2rem;
+  padding-block: 1.25rem;
+  margin-top: 1rem;
+  border-block: 1px solid var(--edition-line);
+  font-size: .85rem;
+  letter-spacing: .04em;
+}
+.hope-brand .journal-opening {
+  grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr);
+  gap: clamp(2rem,5vw,6rem);
+  padding-block: 3rem 5rem;
+}
+.hope-brand .journal-opening h1 {
+  color: var(--edition-text);
+  font-size: clamp(3.7rem,7.2vw,8rem);
+}
+.hope-brand .journal-feature {
+  border: 0;
+  border-radius: var(--edition-cover-radius);
+  padding: clamp(1.5rem,3vw,3rem);
+  background: var(--edition-surface-soft);
+}
+.hope-brand .journal-feature__diagram .article-art__drawing {
+  max-height: 300px;
+}
+.hope-brand .journal-topic {
+  grid-template-columns: minmax(0,1fr);
+  gap: 1.75rem;
+}
+.hope-brand .journal-topic > header {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 2rem;
+  align-items: end;
+}
+.hope-brand .journal-topic > header p {
+  max-width: 48ch;
+}
+.hope-brand .journal-entries {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 2.5rem;
+}
+.hope-brand .journal-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.25rem;
+  padding-block: 0 1.5rem;
+}
+.hope-brand .journal-entry + .journal-entry {
+  border-top: 0;
+}
+.hope-brand .journal-entry__art {
+  display: block;
+  min-height: 44px;
+  width: 100%;
+  margin: 0;
+  padding: 1rem;
+  border-radius: var(--edition-cover-radius);
+  border: 1px solid var(--edition-line);
+  background: var(--art-paper);
+  color: var(--art-ink);
+  text-decoration: none;
+  overflow: hidden;
+}
+.hope-brand .journal-entry__art .article-art__drawing {
+  display: block;
+  width: 100%;
+  aspect-ratio: 8/5;
+  max-height: 300px;
+  border-radius: 0;
+}
+.journal-entry__cover-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid currentColor;
+  padding-block: .75rem .25rem;
+  font: 550 .85rem/1.4 var(--hope-sans);
+}
+.hope-brand .journal-entry__art:is(:hover,:focus-visible) {
+  color: var(--art-ink);
+}
+.journal-entry__cover-label > span {
+  font-size: 1.3rem;
+}
+.hope-brand .journal-entry h3 {
+  font-size: clamp(2rem,3vw,3rem);
+  max-width: 27ch;
+}
+.hope-brand .journal-entry__copy > p:not(.journal-eyebrow) {
+  max-width: 49ch;
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+.hope-brand .journal-topics a {
+  border-radius: .3rem;
+}
+.hope-brand .journal-library__heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem 3rem;
+  align-items: end;
+}
+.hope-brand .journal-library__heading > p {
+  max-width: 32ch;
+}
+.hope-brand .article-page .article-opening {
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--edition-line);
+}
+.hope-brand .article-page .article-opening__grid {
+  grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr);
+  gap: clamp(2rem,4vw,5rem);
+}
+.hope-brand .article-page .article-opening__vignette {
+  max-width: none;
+  padding: clamp(.75rem,2vw,1.5rem);
+  border: 1px solid var(--edition-line);
+  background: var(--edition-surface-raised);
+  box-shadow: .55rem .55rem 0 var(--edition-surface-soft);
+}
+.hope-brand .article-page .article-opening__vignette figcaption {
+  color: var(--edition-muted);
+}
+.hope-brand .article-page .article-opening h1 {
+  font-size: clamp(3rem,4.8vw,5.8rem);
+}
+.hope-brand .article-page .article-layout {
+  padding-top: 3rem;
+}
+.hope-brand .journal-related__cover {
+  display: block;
+  min-height: 44px;
+  padding: 1rem;
+  background: var(--art-paper);
+  border-radius: var(--edition-cover-radius);
+  margin-bottom: 1.5rem;
+}
+.journal-related__cover .article-art__drawing {
+  width: 100%;
+  max-height: 260px;
+}
+.journal-related__card {
+  position: relative;
+}
+.journal-related__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--edition-cover-radius);
+}
+.journal-related__link:focus-visible::after {
+  outline: 2px solid currentColor;
+  outline-offset: 5px;
+}
+.hope-brand .site-footer__catalog {
+  padding-block: var(--edition-space-section);
+  border-bottom: 1px solid var(--edition-line);
+}
+.hope-brand .site-footer__catalog h2 {
+  font-size: clamp(2.5rem,4vw,4rem);
+  line-height: 1.1;
+  max-width: 22ch;
+  margin: .75rem 0 2.5rem;
+}
+.site-footer__catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 0 2rem;
+}
+.hope-brand .site-footer__catalog-grid > a {
+  display: flex;
+  align-items: start;
+  min-width: 0;
+  gap: .9rem;
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--hope-hairline);
+  text-decoration: none;
+}
+.site-footer__catalog-number {
+  font-size: .8rem;
+  padding-top: .4rem;
+  color: var(--edition-footer-muted);
+}
+.site-footer__catalog-grid > a > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.site-footer__catalog-grid strong {
+  display: block;
+  font: 500 1.65rem/1.2 var(--hope-display);
+}
+.site-footer__catalog-grid small {
+  display: block;
+  max-width: 28ch;
+  font-size: .9rem;
+  line-height: 1.6;
+  margin-top: .6rem;
+  color: var(--edition-footer-muted);
+}
+.site-footer__catalog-grid svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: .4rem;
+}
+.hope-brand .site-footer__catalog-grid a:hover strong {
+  text-decoration: underline;
+  text-underline-offset: .15em;
+}
+.hope-brand .site-footer__signature {
+  padding-block: var(--edition-space-section);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .landing-hope::after {
+  animation: edition-ink var(--edition-duration-enter) var(--edition-ease) both;
+}
+  @keyframes edition-ink {
+  from {
+  transform: rotate(-3deg) scaleX(.15);
+} to {
+  transform: rotate(-3deg) scaleX(1);
+} }
+  .journal-entry__art .article-art__drawing, .journal-related__cover .article-art__drawing {
+  transition: transform var(--edition-duration-fast) var(--edition-ease);
+}
+  .journal-entry__art:is(:hover,:focus-visible) .article-art__drawing, .journal-related__card:is(:hover,:focus-within) .article-art__drawing {
+  transform: translateY(-3px);
+}
+}
+@media (max-width: 1000px) {
+  .hope-brand .landing-writing__entries {
+  grid-template-columns: repeat(2,minmax(0,1fr));
+}
+  .hope-brand .route-intro__grid, .hope-brand .route-intro__grid--with-visual {
+  grid-template-columns: minmax(0,1fr);
+  gap: 1.5rem;
+}
+  .route-folio__rule {
+  margin-top: .75rem;
+}
+  .hope-brand .article-page .article-opening__grid {
+  grid-template-columns: minmax(0,1fr);
+}
+  .hope-brand .article-page .article-opening__vignette {
+  width: min(100%,40rem);
+}
+  .site-footer__catalog-grid {
+  grid-template-columns: repeat(2,minmax(0,1fr));
+}
+}
+@media (max-width: 700px) {
+  .hope-brand .landing-opening, .hope-brand .journal-opening {
+  grid-template-columns: minmax(0,1fr);
+  gap: 2rem;
+  padding-block: 2rem 3rem;
+}
+  .hope-brand .landing-opening h1 {
+  font-size: clamp(3.4rem,12vw,5.5rem);
+  max-width: 14ch;
+}
+  .hope-brand .landing-opening .architecture-hero {
+  border-left: 0;
+  border-top: 1px solid var(--edition-line);
+  padding: 1.5rem 0 0;
+}
+  .hope-brand .landing-section-heading, .hope-brand .landing-writing > header, .hope-brand .journal-topic > header {
+  display: block;
+}
+  .hope-brand .landing-section-heading > p:last-child {
+  justify-self: start;
+}
+  .hope-brand .landing-project__visual {
+  padding: .75rem;
+}
+  .hope-brand .landing-writing__entries, .hope-brand .journal-entries {
+  grid-template-columns: minmax(0,1fr);
+}
+  .hope-brand .journal-library__heading {
+  display: block;
+}
+  .hope-brand .journal-opening h1 {
+  font-size: clamp(3.8rem,14vw,6rem);
+}
+  .hope-brand .journal-entry__art {
+  width: 100%;
+  padding: .75rem;
+}
+  .hope-brand .journal-entry h3 {
+  font-size: 2.15rem;
+}
+  .hope-brand .route-intro h1 {
+  font-size: clamp(2.8rem,10vw,4.5rem);
+  max-width: 20ch;
+}
+  .hope-brand .article-page .article-opening h1 {
+  font-size: clamp(2.7rem,10.2vw,4.4rem);
+}
+  .hope-brand .article-page .article-opening__vignette {
+  box-shadow: .3rem .3rem 0 var(--edition-surface-soft);
+}
+  .site-footer__catalog-grid {
+  gap: 0 1.25rem;
+}
+  .site-footer__catalog-number {
+  display: none;
+}
+  .site-footer__catalog-grid strong {
+  font-size: 1.4rem;
+}
+  .site-footer__catalog-grid small {
+  font-size: .85rem;
+}
+}
+@media (max-width: 380px) {
+  .site-footer__catalog-grid {
+  grid-template-columns: minmax(0,1fr);
+} }
+@media (prefers-reduced-motion: reduce) {
+  .landing-hope::after {
+  animation: none;
+}
+  .journal-entry__art .article-art__drawing, .journal-related__cover .article-art__drawing {
+  transition: none;
+  transform: none;
+}
+}
+@media (forced-colors: active) {
+  .landing-hope::after, .route-folio__rule {
+  background: CanvasText;
+}
+  .hope-brand .journal-entry__art, .hope-brand .article-page .article-opening__vignette {
+  border-color: CanvasText;
+  box-shadow: none;
+}
+}

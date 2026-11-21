@@ -274,9 +274,14 @@ export function unpackContributionPlayerRecordCatalog(catalog) {
 }
 
 export function unpackContributionPlayerRecords(catalog, expectedId) {
-  const graph = unpackContributionPlayerRecordCatalog(catalog).find(
-    (candidate) => candidate.id === expectedId,
+  invariant(
+    catalog?.v === COMPACT_CONTRIBUTION_PLAYER_RECORDS_VERSION &&
+      Array.isArray(catalog.g),
+    "Unsupported compact contribution player record catalog.",
   );
-  invariant(graph, `Compact player records do not contain ${expectedId}.`);
-  return graph;
+  const packed = catalog.g.find(
+    (candidate) => Array.isArray(candidate) && candidate[0] === expectedId,
+  );
+  invariant(packed, `Compact player records do not contain ${expectedId}.`);
+  return unpackContributionPlayerRecordCatalog({ v: catalog.v, g: [packed] })[0];
 }

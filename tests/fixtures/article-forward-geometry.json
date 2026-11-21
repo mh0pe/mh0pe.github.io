@@ -1,0 +1,238 @@
+{
+  "sourceTreeSha256": "eaaeca221a864b132015cbe50b3c8e8e5a7d71c9cd12bfb28ee385c6f42bdb5e",
+  "method": "SHA-256 of frame + NUL + exact accessible StoryScene markup + NUL for each integer frame, inclusive. Generated only from verified accepted parent.",
+  "chapters": [
+    {
+      "story": "workspace-security",
+      "moment": "opening",
+      "from": 70,
+      "to": 250,
+      "frames": 181,
+      "sha256": "32effe2e7cd7a0c246880d388539b10bc6def7eb608b55d3e6e9b4d066040dc5"
+    },
+    {
+      "story": "workspace-security",
+      "moment": "middle",
+      "from": 430,
+      "to": 600,
+      "frames": 171,
+      "sha256": "3cd8bfb15cd93a6840c5fbd8d04d90e2b2bf9c563e029527a1b0ebd8ccfd811c"
+    },
+    {
+      "story": "workspace-security",
+      "moment": "ending",
+      "from": 820,
+      "to": 900,
+      "frames": 81,
+      "sha256": "04a4945227518579e70fbb595afa40fc9ba464f0cc97e86794319139d0ca252b"
+    },
+    {
+      "story": "one-definition-many-agent-tools",
+      "moment": "opening",
+      "from": 70,
+      "to": 250,
+      "frames": 181,
+      "sha256": "13c40f1563436001ca2c25e5736ccf4ab5ff5b6a667820aef0e162cb9253a703"
+    },
+    {
+      "story": "one-definition-many-agent-tools",
+      "moment": "middle",
+      "from": 430,
+      "to": 600,
+      "frames": 171,
+      "sha256": "3b62735eee0706a2eea6c1076e1d7eca222022fc38d30d896611a119d4db6ae4"
+    },
+    {
+      "story": "one-definition-many-agent-tools",
+      "moment": "ending",
+      "from": 820,
+      "to": 900,
+      "frames": 81,
+      "sha256": "afbaef38feca3373dcf8b5997ae8767a7936334884dedc898fc02104d75dbb59"
+    },
+    {
+      "story": "reproducible-security-checks",
+      "moment": "opening",
+      "from": 70,
+      "to": 250,
+      "frames": 181,
+      "sha256": "fd535b0cb58ab5a5e7f2d1d335a52183746704ec43c9d6e93e36c5a7dc4bc8ad"
+    },
+    {
+      "story": "reproducible-security-checks",
+      "moment": "middle",
+      "from": 430,
+      "to": 600,
+      "frames": 171,
+      "sha256": "084bce75f633ebe615fd3bc24fccf506db5d9f48c2b9a5b08c36384f44d585e7"
+    },
+    {
+      "story": "reproducible-security-checks",
+      "moment": "ending",
+      "from": 820,
+      "to": 900,
+      "frames": 81,
+      "sha256": "7c3ed7cd50358d0c0de00593b87922c071a504d54b02ddf2e13ba19c05a5d36f"
+    },
+    {
+      "story": "security-feedback-where-you-work",
+      "moment": "opening",
+      "from": 70,
+      "to": 250,
+      "frames": 181,
+      "sha256": "7ee131eb141f0a77e6103e29426f7b22a8788901efbd8d929e9d6b9848054647"
+    },
+    {
+      "story": "security-feedback-where-you-work",
+      "moment": "middle",
+      "from": 430,
+      "to": 600,
+      "frames": 171,
+      "sha256": "76a54ba3022e62d8d992d160729f2cbbf9ac8f2f18cfbdec2f4e70660a7ed617"
+    },
+    {
+      "story": "security-feedback-where-you-work",
+      "moment": "ending",
+      "from": 820,
+      "to": 900,
+      "frames": 81,
+      "sha256": "219a9eb37174fe42c20d4e2cb36d63e8c10ef64c594d4e749f2fc9b714e5244f"
+    },
+    {
+      "story": "handoffs-that-carry-the-work",
+      "moment": "opening",
+      "from": 70,
+      "to": 250,
+      "frames": 181,
+      "sha256": "23c878d3c43aeecbfbb70166945447bfc6830c36b4bb8c3d7b02d5d7917a2f8d"
+    },
+    {
+      "story": "handoffs-that-carry-the-work",
+      "moment": "middle",
+      "from": 430,
+      "to": 600,
+      "frames": 171,
+      "sha256": "62b0625d58c54716edc52bbef9a6bcd81ec01f5e7bb26047ace4e5bad1dec8f2"
+    },
+    {
+      "story": "handoffs-that-carry-the-work",
+      "moment": "ending",
+      "from": 820,
+      "to": 900,
+      "frames": 81,
+      "sha256": "5392be5d9b2aa2179e91d46c311a73520879f372d325ef69728b2b8036df3db6"
+    },
+    {
+      "story": "integrity-bound-yarn-pnp-for-bazel",
+      "moment": "opening",
+      "from": 70,
+      "to": 250,
+      "frames": 181,
+      "sha256": "12829ec7f0db6a02468277b2c572fc3864fe60a694892c00a122fe740711ebc1"
+    },
+    {
+      "story": "integrity-bound-yarn-pnp-for-bazel",
+      "moment": "middle",
+      "from": 430,
+      "to": 600,
+      "frames": 171,
+      "sha256": "a0d5b1aeeb9832b5515a5049a8f7254372f237e30ab519ace4ed485ad7234a82"
+    },
+    {
+      "story": "integrity-bound-yarn-pnp-for-bazel",
+      "moment": "ending",
+      "from": 820,
+      "to": 900,
+      "frames": 81,
+      "sha256": "f46a9959cda6ce9e5ae65c7396ecf35e7f84930ace7dac6c78fff8d6cd0bf65a"
+    },
+    {
+      "story": "typed-svg-dom",
+      "moment": "opening",
+      "from": 70,
+      "to": 250,
+      "frames": 181,
+      "sha256": "fbe327d3909f83ffd2b4e30f95188c039d0dc4d40d2b6b5cec4ee6757923b25f"
+    },
+    {
+      "story": "typed-svg-dom",
+      "moment": "middle",
+      "from": 430,
+      "to": 600,
+      "frames": 171,
+      "sha256": "1d462665a1f4cbbed7ae923a4dfb4571d86115d578499bead8b80256f07f4d42"
+    },
+    {
+      "story": "typed-svg-dom",
+      "moment": "ending",
+      "from": 820,
+      "to": 900,
+      "frames": 81,
+      "sha256": "733afc86e8333c78281211569aac8b67b338509d9e631f1a7da4e351985c8314"
+    },
+    {
+      "story": "aws-labs-mcp",
+      "moment": "opening",
+      "from": 70,
+      "to": 220,
+      "frames": 151,
+      "sha256": "6dbfbb3d3361d13facbdaa06d5e7ee304785dc71cab9b5b14a4d2522d18fbaf0"
+    },
+    {
+      "story": "aws-labs-mcp",
+      "moment": "middle",
+      "from": 320,
+      "to": 445,
+      "frames": 126,
+      "sha256": "90250f2274eeba2f2e776ef2cd6fa25aea6ca1cb8e75bbb59b1a52e70e85216b"
+    },
+    {
+      "story": "aws-labs-mcp",
+      "moment": "later",
+      "from": 560,
+      "to": 670,
+      "frames": 111,
+      "sha256": "528173539bcf9d29897e7e59c7cf83817626bcf30c74f5bae99b10c9bd26bbf5"
+    },
+    {
+      "story": "aws-labs-mcp",
+      "moment": "ending",
+      "from": 820,
+      "to": 900,
+      "frames": 81,
+      "sha256": "8431b789757c529d8d7db290b17e6b3743acaec614a297e124d13a02fb966972"
+    },
+    {
+      "story": "cloud-runtime",
+      "moment": "opening",
+      "from": 70,
+      "to": 220,
+      "frames": 151,
+      "sha256": "9ae14d60a6247dc3d233bcf02105777301d0ab0c09aff230ce790f909ad8f45b"
+    },
+    {
+      "story": "cloud-runtime",
+      "moment": "middle",
+      "from": 320,
+      "to": 445,
+      "frames": 126,
+      "sha256": "ebcb6c922a34d335864cb0c8479c35f8e3915bd3b2fb90ee041ac277411cc1bf"
+    },
+    {
+      "story": "cloud-runtime",
+      "moment": "later",
+      "from": 560,
+      "to": 670,
+      "frames": 111,
+      "sha256": "f1e39a702327862ff807feecd858fa330c3f558cf0351e0b86dff1f277411209"
+    },
+    {
+      "story": "cloud-runtime",
+      "moment": "ending",
+      "from": 820,
+      "to": 900,
+      "frames": 81,
+      "sha256": "716df499c76552fc1feb61b1a3eb85153491a9b706c8ad2089bf7b99ddef84cd"
+    }
+  ]
+}

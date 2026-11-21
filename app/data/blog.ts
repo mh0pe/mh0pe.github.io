@@ -63,7 +63,7 @@ export const blogArticles: readonly BlogArticle[] = [
     overview: "Bring the results together. Keep the meaning of each result with the project that produced it.",
     intro: [
       "A team rarely works on just one piece of software. An application, a service, and the infrastructure around them may live in different places, use different checks, and have different owners. A shared security report is useful only if those distinctions survive the trip into it.",
-      "My workspace work in Automated Security Helper starts from that idea. ASH can resolve the projects in a workspace, run them with their own context, and bring the results together. The architectural work is in preserving what each result means, not simply collecting more findings.",
+      "My workspace work in Automated Security Helper starts from that idea. The workspace implementation resolves the projects, runs them with their own context, and brings the results together. The architectural work is in preserving what each result means, not simply collecting more findings.",
     ],
     diagram: {
       kind: "workspace",
@@ -92,7 +92,7 @@ export const blogArticles: readonly BlogArticle[] = [
           "The central execution contract is deliberately simple: a project's findings and verdict should match the result of scanning that project on its own, unless an explicit workspace policy changes the decision. I used a separate orchestrator, configuration, and output tree for each project rather than making every scanner understand a new global workspace.",
           "This matters beyond the scan engine. A project-relative path is meaningful inside that project. When it appears in a combined report, the reader also needs to know which project owns it. Keeping the project and its path together makes the result easier for both a person and another tool to act on.",
         ],
-        sources: ["ash-execution"],
+        sources: ["ash-execution", "ash-reporting"],
       },
       {
         id: "carry-ownership", title: "Aggregation is a product decision.",
@@ -103,8 +103,9 @@ export const blogArticles: readonly BlogArticle[] = [
         sources: ["ash-reporting"],
       },
     ],
-    takeaway: "When combining work from many teams, preserve the smallest context that lets a person make the right next decision.",
+    takeaway: "Combine the security view while keeping each finding tied to the project and configuration that produced it.",
     implementationNotes: [
+      "The linked reviews cover the planning, execution, and reporting implementation merged into ASH's workspace feature branch.",
       "Projects have stable keys separate from their display names, so folders with the same basename remain distinct.",
       "Per-project output retains the shape of a single-project scan, allowing existing consumers to adopt workspace mode incrementally.",
       "Workspace policy is an explicit layer. It is not inferred from an editor's unrelated settings block.",
@@ -112,7 +113,7 @@ export const blogArticles: readonly BlogArticle[] = [
     sources: [
       { id: "ash-plan", label: "ASH: inspectable workspace planning", href: "https://github.com/awslabs/automated-security-helper/pull/460" },
       { id: "ash-execution", label: "ASH: independently scoped project execution", href: "https://github.com/awslabs/automated-security-helper/pull/462" },
-      { id: "ash-reporting", label: "ASH: project-aware reporting and workspace policy", href: "https://github.com/awslabs/automated-security-helper/pull/478", note: "The review records the reporting design and the sequencing of policy integration." },
+      { id: "ash-reporting", label: "ASH: project-aware reporting and workspace policy", href: "https://github.com/awslabs/automated-security-helper/pull/478", note: "PRs #460, #462, and #478 merged into feat/workspace-mode-phase0-path-space. These reviews identify the feature-branch implementation, not a default-branch release." },
     ],
     relatedCase: { label: "The full Automated Security Helper project story", href: "/work/automated-security-helper/" },
   },
@@ -161,7 +162,7 @@ export const blogArticles: readonly BlogArticle[] = [
         ],
       },
     ],
-    takeaway: "A shared definition earns its value when it makes change easier to review across every environment it serves.",
+    takeaway: "Keep the shared definition in one place, then validate each generated integration against the tool that will use it.",
     implementationNotes: [
       "The implementation uses a Pydantic model, a backend class per agent, and a command-line build interface.",
       "Formats and agent backends are separate concerns, so a packaging format can be reused without making platforms identical.",
@@ -218,7 +219,7 @@ export const blogArticles: readonly BlogArticle[] = [
         ],
       },
     ],
-    takeaway: "Treat the execution environment as part of the explanation, not as an invisible prerequisite.",
+    takeaway: "Pin the scanner tools, then distinguish changes in code, rules, and live vulnerability information when comparing results.",
     implementationNotes: [
       "The flake defines Linux and macOS outputs for x86-64 and ARM. The contribution records which platforms were locally exercised and which belong to the CI matrix.",
       "The recorded end-to-end run had nine of ten scanners participating; the ASH-managed cdk-nag environment is a separate concern.",
@@ -230,14 +231,14 @@ export const blogArticles: readonly BlogArticle[] = [
   {
     slug: "security-feedback-where-you-work",
     title: "Put security feedback where the work happens.",
-    deck: "A look at the native packaging and editor-integration designs in ASH's public capability branch.",
+    deck: "How familiar installation and editor feedback can bring the same ASH security checks into a developer's day.",
     topic: "developer-tools",
     tags: ["Developer experience", "Editor feedback", "Release engineering"],
     project: "Automated Security Helper",
     overview: "Make installation fit the platform, keep one scanning contract, and bring the findings back to the editor.",
     intro: [
       "A useful engineering capability needs a useful path into somebody's day. For security tooling, that path includes installation, execution, and the place a person reads the result. Improving one part while making another unfamiliar can move the friction rather than remove it.",
-      "The native packaging and VS Code work in ASH's public capability branch connects those steps. Operating-system packages provide a familiar installation shape. The editor invokes the existing ASH command and reads the reports it produces. The integration is deliberately a bridge to the scanner, not another copy of it.",
+      "The native packaging and VS Code work in ASH connects those steps. Operating-system packages provide a familiar installation shape. The editor invokes the existing ASH command and reads the reports it produces. The integration is deliberately a bridge to the scanner, not another copy of it.",
     ],
     diagram: {
       kind: "flow", title: "A familiar way in. The same work underneath.",
@@ -262,6 +263,11 @@ export const blogArticles: readonly BlogArticle[] = [
         id: "editor", title: "Let the editor consume the scanner's result.",
         paragraphs: [
           "The VS Code integration runs ASH over the open workspace and turns its SARIF report into entries in the Problems panel. It ships no copy of ASH, scanner, or rules. That keeps the integration's job understandable: find the configured executable, run it, and interpret the result.",
+        ], sources: ["ash-vscode"],
+      },
+      {
+        id: "outcomes", title: "Keep different results distinct.",
+        paragraphs: [
           "It also keeps different outcomes distinct. A scan with no findings, an incomplete scan, a cancelled run, and an unavailable report are not interchangeable editor states. The implementation preserves that distinction while letting a person cancel work and return to it later.",
         ], sources: ["ash-vscode"],
       },
@@ -273,7 +279,7 @@ export const blogArticles: readonly BlogArticle[] = [
         ], sources: ["ash-vscode"],
       },
     ],
-    takeaway: "Developer experience is strongest when a familiar interface preserves the meaning of the system underneath it.",
+    takeaway: "Bring the scanner's findings into the editor without treating an incomplete, cancelled, or missing report as a clean scan.",
     implementationNotes: [
       "The package and editor source links identify the exact v4-capabilities implementation discussed here. Distribution through registries and marketplaces is a separate release step.",
       "Native builders cover multiple Linux and Windows package formats; the documentation identifies the verification and submission boundaries for each.",
@@ -282,7 +288,7 @@ export const blogArticles: readonly BlogArticle[] = [
     sources: [
       { id: "ash-packaging", label: "ASH: native package design and artifact gates", href: (ashV4Source + "/packaging/README.md") as PublicUrl },
       { id: "ash-vscode", label: "ASH: VS Code integration and execution contract", href: (ashV4Source + "/editors/vscode/README.md") as PublicUrl },
-      { id: "ash-capability-branch", label: "ASH: public v4 capability source", href: "https://github.com/awslabs/automated-security-helper/tree/v4-capabilities" },
+      { id: "ash-capability-branch", label: "ASH: packaging and editor integration source", href: ("https://github.com/awslabs/automated-security-helper/tree/" + ashV4Commit) as PublicUrl },
     ],
     relatedCase: { label: "The broader Automated Security Helper work", href: "/work/automated-security-helper/" },
   },
@@ -332,7 +338,7 @@ export const blogArticles: readonly BlogArticle[] = [
         ], sources: ["base-memory", "carl-decisions"],
       },
     ],
-    takeaway: "Continuity is a design choice: preserve enough meaning that the next session can act, and enough history that a person can review the choice.",
+    takeaway: "Carry the reason for a decision, the current state, and the next step into the next session. Review proposed lessons before reusing them.",
     implementationNotes: [
       "State consistency, decision recall, planning, and ideation are separate responsibilities across the four frameworks.",
       "CARL's plugin startup creates missing project configuration without replacing an existing configuration found in the supported search scope.",
@@ -392,7 +398,7 @@ export const blogArticles: readonly BlogArticle[] = [
         ], sources: ["pnp-implementation"],
       },
     ],
-    takeaway: "Integrity is about the agreement between inputs as well as the contents of each input.",
+    takeaway: "Check that the resolver files match the declared dependencies and locations before allowing the build to load them.",
     implementationNotes: [
       "The public implementation includes pnp_js_binary, pnp_js_test, and pnp_verify_test wrappers.",
       "The final review distinguishes direct validation from earlier Bazel runs and does not claim the full final-head Yarn 4 Bazel gate passed.",
@@ -452,7 +458,7 @@ export const blogArticles: readonly BlogArticle[] = [
         ],
       },
     ],
-    takeaway: "The shape of a contribution can make a complex capability easier for other people to understand, review, and extend.",
+    takeaway: "Build and review SVG support in dependency order, keeping geometry, text metrics, and browser access as distinct responsibilities.",
     implementationNotes: [
       "The layers are logically ordered: prototypes, scalars, collections, geometry, structure, resources, and text.",
       "The geometry and text reviews document their repository and relevant Web Platform Test checks, including the scope of the fallback text backend.",
@@ -499,8 +505,13 @@ export const blogArticles: readonly BlogArticle[] = [
         id: "documents", title: "Keep the useful parts of a document.",
         paragraphs: [
           "A presentation or report can communicate through layout, diagrams, and images as much as through text. The document-loader contribution adds slide and page extraction as images, along with a configurable file-size limit. That gives an application another way to work with the content while keeping the input limit an operator choice.",
+        ], sources: ["mcp-documents"],
+      },
+      {
+        id: "images", title: "Choose the images before creating output.",
+        paragraphs: [
           "The public asset-extraction implementation goes further by separating inspection from extraction. An application can first discover embedded images and their properties, then choose which assets to write. That two-step shape makes the work easier to inspect before creating output.",
-        ], sources: ["mcp-documents", "mcp-assets"],
+        ], sources: ["mcp-assets"],
         detail: { title: "Inspect before extracting.", steps: ["Discover document assets", "Choose the useful images", "Write bounded output"], caption: "Discovery and output creation are distinct decisions in the asset-extraction implementation." },
       },
       {
@@ -518,7 +529,7 @@ export const blogArticles: readonly BlogArticle[] = [
         ], sources: ["mcp-browser"],
       },
     ],
-    takeaway: "A tool becomes easier to trust when its capability and its boundary are both easy to describe.",
+    takeaway: "Expose document loading, image extraction, connections, and browser sessions as separate tools, each with clear input and lifecycle controls.",
     implementationNotes: [
       "Slide-image extraction is integrated in AWS Labs MCP. The document-asset, transport, and browser-session reviews describe the corresponding public implementations.",
       "The transport review records server-specific exceptions; it is not evidence of uniform remote support across every server.",
@@ -558,9 +569,14 @@ export const blogArticles: readonly BlogArticle[] = [
         id: "preview", title: "Show the change in the language of the author.",
         paragraphs: [
           "CloudFormation's Fn::ForEach lets a template describe a family of resources through a loop. My diff contribution makes those loop additions, removals, collections, and property changes visible in the CDK change preview. The preview remains about the template's intent rather than pretending it has already evaluated every deploy-time value.",
+        ], sources: ["cdk-diff"],
+        detail: { title: "Feedback supports a deliberate next step.", steps: ["Describe the intended change", "Inspect the preview", "Choose the appropriate deployment path"], caption: "A preview shows the intended change; it is not the completed deployment itself." },
+      },
+      {
+        id: "iterate", title: "Reuse the shared path for development updates.",
+        paragraphs: [
           "The QuickSight hotswap contribution follows another useful pattern: use the platform's shared infrastructure when it fits. It registers the supported QuickSight resource types with the existing Cloud Control handler instead of maintaining a separate set of service-specific update paths. Hotswap remains a development workflow, not a replacement for the full deployment contract.",
-        ], sources: ["cdk-diff", "cdk-hotswap"],
-        detail: { title: "Feedback supports a deliberate next step.", steps: ["Describe the intended change", "Inspect the preview", "Choose the appropriate deployment path"], caption: "A preview and a development shortcut have different jobs; neither is the completed deployment itself." },
+        ], sources: ["cdk-hotswap"],
       },
       {
         id: "examples", title: "Let an example make a checkable promise.",
@@ -577,7 +593,7 @@ export const blogArticles: readonly BlogArticle[] = [
         ], sources: ["jsii-cleanup", "jsii-types", "jsii-members", "jsii-bundle"],
       },
     ],
-    takeaway: "The feedback a platform gives its users deserves the same care as the capability it executes.",
+    takeaway: "Preview intended changes, keep development shortcuts distinct from deployment, and check examples against the package developers will actually use.",
     implementationNotes: [
       "The diff formatter preserves dynamic collections as dynamic, rather than inventing a resource count.",
       "The documentation check is scoped to fenced code examples so repository paths and type names are not mistaken for package imports.",

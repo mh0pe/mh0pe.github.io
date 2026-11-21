@@ -184,6 +184,7 @@ export interface AttributionAgentSummary {
 export const MULTIPLE_MODELS_ID = "multiple-recorded-models";
 
 const modelTones: Readonly<Record<string, string>> = {
+  "claude-opus-5-5": "#f2a7c5",
   "claude-opus-5": "#d6b4ff",
   "claude-opus-4-8": "#bca8ff",
   "claude-opus-4-7": "#9e90ff",

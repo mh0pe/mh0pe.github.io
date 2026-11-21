@@ -1,0 +1,41 @@
+/* The committed scene chapter selects its matching, ordinary HTML reading guide.
+   Tiny SVG lettering stays in the desktop illustration, not the mobile key. */
+.article-story__mobile-guides,
+.article-story__mobile-guide { display: none; }
+
+@media (max-width: 700px) {
+  .article-story__mobile-guides { display: block; padding-block: 1rem; color: var(--hope-carbon); }
+  .article-story[data-story-chapter="0"] [data-mobile-story-chapter="0"],
+  .article-story[data-story-chapter="1"] [data-mobile-story-chapter="1"],
+  .article-story[data-story-chapter="2"] [data-mobile-story-chapter="2"],
+  .article-story[data-story-chapter="3"] [data-mobile-story-chapter="3"] { display: block; }
+  .article-story__mobile-orientation { margin: 0 0 .85rem; max-width: 65ch; font-size: .94rem; line-height: 1.6; text-wrap: pretty; }
+  .article-story__mobile-parts { display: grid; grid-template-columns: minmax(0,1fr); gap: .65rem; margin: 0; }
+  .article-story__mobile-parts > div { min-width: 0; border-inline-start: 2px solid var(--journal-accent, var(--hope-carbon)); padding-inline-start: .7rem; overflow-wrap: anywhere; }
+  .article-story__mobile-parts dt { margin: 0; font-size: .9rem; line-height: 1.5; font-weight: 600; }
+  .article-story__mobile-parts dt > span { display: block; margin-bottom: .12rem; font-size: .78rem; line-height: 1.5; font-weight: 400; color: var(--hope-ink-muted); }
+  .article-story__mobile-parts dd { margin: .15rem 0 0; font-size: .88rem; line-height: 1.55; color: var(--hope-ink-muted); }
+  .article-story__mobile-parts--compact { gap: .45rem; }
+  .article-story__mobile-parts--compact > div { display: grid; grid-template-columns: 7rem minmax(0,1fr); gap: .5rem; border: 0; padding: 0; }
+  .article-story__mobile-parts--compact dt,
+  .article-story__mobile-parts--compact dd { margin: 0; font-size: .9375rem; line-height: 1.45; }
+}
+
+@media (min-width: 460px) and (max-width: 700px) {
+  .article-story__mobile-parts:not(.article-story__mobile-parts--compact) { grid-template-columns: repeat(2,minmax(0,1fr)); gap: .9rem 1.2rem; }
+}
+
+@media (max-width: 359px) {
+  .article-story__mobile-parts--compact > div { grid-template-columns: 6rem minmax(0,1fr); }
+}
+
+@media (forced-colors: active) {
+  .article-story__mobile-guides,
+  .article-story__mobile-parts dt > span,
+  .article-story__mobile-parts dd { color: CanvasText; }
+  .article-story__mobile-parts > div { border-color: CanvasText; }
+}
+
+@media print {
+  .article-story__mobile-guides { display: none; }
+}

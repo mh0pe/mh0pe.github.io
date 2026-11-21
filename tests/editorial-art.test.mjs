@@ -68,7 +68,7 @@ test("caption relationships reject nested, orphan, middle and duplicate captions
 test("every exported figure gives captions a valid figure relationship", async () => {
   for (const article of blogArticles) {
     const result = captionRelationships(await read("pages-dist/blog/" + article.slug + "/index.html"));
-    assert.equal(result.captions.length, 4, article.slug + " retains the three story moments and desktop companion caption.");
+    assert.equal(result.captions.length, motionStories[article.slug].chapters.length + 1, article.slug + " retains its compact cover and every paragraph-adjacent beat.");
   }
   const collection = captionRelationships(await read("pages-dist/blog/index.html"));
   assert.equal(collection.captions.length, 2, "Both collection figure captions remain present.");
@@ -114,14 +114,16 @@ test("each print palette keeps text ink readable on all three illustrated materi
 });
 
 for (const article of blogArticles) {
-  test(article.slug + " exports three useful story moments and a bounded visual companion", async () => {
+  test(article.slug + " exports every useful story beat adjacent to the prose", async () => {
     const html = await read("pages-dist/blog/" + article.slug + "/index.html");
     const direction = artFor(article.slug);
-    assert.equal((html.match(/data-story-stage=/g) ?? []).length, 4);
-    assert.equal((html.match(/class="article-story__drawing"/g) ?? []).length, 4);
-    for (const moment of ["opening", "middle", "ending", "rail"]) assert.ok(html.includes(`data-story-stage="${moment}"`));
+    const chapters = motionStories[article.slug].chapters;
+    assert.equal((html.match(/data-story-stage=/g) ?? []).length, chapters.length);
+    assert.equal((html.match(/class="article-story__drawing"/g) ?? []).length, chapters.length + 1);
+    for (const { moment } of chapters) assert.ok(html.includes(`data-story-stage="${moment}"`));
+    assert.doesNotMatch(html, /data-story-stage="rail"/);
     assert.ok(html.includes(`data-art="${direction.family}"`));
-    assert.equal((html.match(/data-story-quiet="true" hidden=""/g) ?? []).length, 4);
+    assert.equal((html.match(/data-story-quiet="true" hidden=""/g) ?? []).length, chapters.length);
     for (const scene of motionStories[article.slug].chapters) {
       assert.ok(html.includes(scene.title.replaceAll("&", "&amp;").replaceAll("'", "&#x27;")));
       assert.ok(html.includes(scene.description.replaceAll("'", "&#x27;")) || html.includes(scene.description));
@@ -129,7 +131,7 @@ for (const article of blogArticles) {
     assert.ok(html.includes('/editorial-art.css?'));
     assert.doesNotMatch(html, /<canvas|<video|<iframe|type="module"|vite-rsc|__next_f/);
     assert.doesNotMatch(html, /<details open=""/);
-    assert.ok(html.indexOf('data-story-stage="opening"') < html.indexOf('class="shell article-layout"'));
+    assert.ok(html.indexOf('data-story-stage="opening"') > html.indexOf('class="shell article-layout"'));
   });
 }
 

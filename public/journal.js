@@ -58,6 +58,7 @@
   const journal = document.querySelector("[data-journal]");
   if (!journal) return;
   const topicLinks = [...journal.querySelectorAll("[data-journal-topic]")];
+  const resetLinks = [...journal.querySelectorAll("[data-journal-reset]")];
   const groups = [...journal.querySelectorAll("[data-journal-group]")];
   const tagControl = journal.querySelector("[data-journal-tag]");
   const tagValues = new Set([...tagControl.options].map((option) => option.value));
@@ -66,6 +67,16 @@
   const empty = journal.querySelector("[data-journal-empty]");
   let topic = "all";
   let tag = "";
+
+  function destination(nextTopic, nextTag, fragment) {
+    const url = new URL(location.href);
+    if (nextTopic === "all") url.searchParams.delete("topic");
+    else url.searchParams.set("topic", nextTopic);
+    if (!nextTag) url.searchParams.delete("tag");
+    else url.searchParams.set("tag", nextTag);
+    url.hash = fragment;
+    return url.pathname + url.search + url.hash;
+  }
 
   function filter() {
     let count = 0;
@@ -80,9 +91,12 @@
       count += groupCount;
     }
     for (const link of topicLinks) {
+      const nextTopic = link.dataset.journalTopic;
+      link.setAttribute("href", destination(nextTopic, tag, nextTopic === "all" ? "articles" : "topic-" + nextTopic));
       if (link.dataset.journalTopic === topic) link.setAttribute("aria-current", "location");
       else link.removeAttribute("aria-current");
     }
+    for (const link of resetLinks) link.setAttribute("href", destination("all", "", "articles"));
     tagControl.value = tag;
     empty.hidden = count !== 0;
     status.textContent = count + (count === 1 ? " essay" : " essays") + (tag ? " with a focus on " + tag.toLowerCase() : topic !== "all" ? " in " + topicLinks.find((link) => link.dataset.journalTopic === topic).textContent.toLowerCase() : " to explore");
@@ -98,13 +112,7 @@
   }
 
   function writeLocation(fragment) {
-    const url = new URL(location.href);
-    if (topic === "all") url.searchParams.delete("topic");
-    else url.searchParams.set("topic", topic);
-    if (!tag) url.searchParams.delete("tag");
-    else url.searchParams.set("tag", tag);
-    url.hash = fragment;
-    history.pushState(null, "", url.pathname + url.search + url.hash);
+    history.pushState(null, "", destination(topic, tag, fragment));
     filter();
   }
 
@@ -122,13 +130,14 @@
     tag = tagControl.value;
     writeLocation("articles");
   });
-  for (const reset of journal.querySelectorAll("[data-journal-reset]")) {
+  for (const reset of resetLinks) {
     reset.addEventListener("click", (event) => {
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       topic = "all";
       tag = "";
       writeLocation("articles");
+      document.getElementById("articles")?.scrollIntoView({ behavior: "auto", block: "start" });
       if (reset.dataset.journalReset === "empty") {
         topicLinks.find((link) => link.dataset.journalTopic === "all")?.focus();
       }

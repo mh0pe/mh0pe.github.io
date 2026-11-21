@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import postcss from "postcss";
@@ -26,9 +27,16 @@ test("route filtering retains whole selector lists and uncertain nested conditio
   assert.ok(css.indexOf("color:blue}") < css.lastIndexOf("color:red}"));
 });
 
-for (const route of ["home", "models", "method"]) {
-  test(`${route} bundle includes every rendered component and preserves its CSS sequence`, async () => {
-    const html = await read(`pages-dist/${route === "home" ? "index.html" : `${route}/index.html`}`);
+const routes = [
+  ["home", ""], ["models", "models/"], ["method", "method/"], ["credentials", "credentials/"],
+  ["work", "work/"], ["about", "about/"], ["about", "career/"], ["proof", "proof/"], ["proof", "evidence/"],
+  ["decisions", "decisions/"], ["capabilities", "capabilities/"],
+  ...["automated-security-helper", "cloudformation-guard", "nix-windows", "agent-systems"]
+    .map(slug => ["case-study", `work/${slug}/`]),
+];
+for (const [route, url] of routes) {
+  test(`${url || "/"} bundle includes every rendered component and preserves its CSS sequence`, async () => {
+    const html = await read(`pages-dist/${url}index.html`);
     for (const match of html.matchAll(/class="([^"]*)"/g)) {
       for (const name of match[1].split(/\s+/).filter(Boolean)) {
         assert.ok(includesRouteClass(route, name), `Add ${name} to the ${route} style contract before using it`);
@@ -37,9 +45,10 @@ for (const route of ["home", "models", "method"]) {
     const generated = await read(`pages-dist/route-styles/${route}.css`);
     const sourceBundles = await Promise.all(sharedStylesheets.map(async filename => routeStylesheet(await read(`public/${filename}`), route, filename)));
     assert.equal(generated, sourceBundles.join("\n"));
-    assert.ok(Buffer.byteLength(generated) < 65_000);
-    assert.match(html, new RegExp(`href="/route-styles/${route}\\.css\\?v=20261003-loading"`));
-    assert.doesNotMatch(html, /<link[^>]+href="\/(?:portfolio-v2|portfolio-v3|interactions)\.css/);
+    assert.ok(Buffer.byteLength(generated) < (route === "case-study" ? 70_000 : 65_000));
+    const version = createHash("sha256").update(generated).digest("hex");
+    assert.ok(html.includes(`href="/route-styles/${route}.css?v=${version}"`));
+    for (const shared of sharedStylesheets) assert.ok(!html.includes(`href="/${shared}?`));
     assert.ok(html.indexOf(`/route-styles/${route}.css`) < html.indexOf("</head>"), "blocking styles are discovered in the head");
     const parsed = postcss.parse(generated);
     assert.ok(parsed.nodes.length > 0);
@@ -61,18 +70,39 @@ test("the recovery page discovers its complete styles in the head without burden
   const html = await read("pages-dist/404.html");
   const head = html.slice(0, html.indexOf("</head>"));
   const positions = sharedStylesheets.map(name => head.indexOf(`href="/${name}?`));
-  assert.ok(positions[0] >= 0 && positions[0] < positions[1] && positions[1] < positions[2]);
+  assert.ok(positions.every((position, index) => position >= 0 && (index === 0 || positions[index - 1] < position)));
   assert.doesNotMatch(html, /data-recovery-styles/);
 });
 
-test("hydration module hints leave priority to visible styles and fonts", async () => {
+test("Models hydrates just the explorer and leaves styles and fonts on the critical path", async () => {
   const html = await read("pages-dist/models/index.html");
   const hints = [...html.matchAll(/<link\b[^>]*>/g)].map(match => match[0]);
   const modules = hints.filter(tag => tag.includes('rel="modulepreload"'));
-  assert.ok(modules.length > 0, "interactive modules still preload");
-  for (const tag of modules) assert.ok(tag.includes('fetchpriority="low"'));
+  assert.deepEqual(modules, [], "the static document does not preload framework modules");
   for (const tag of hints.filter(tag => tag.includes('as="font"') || tag.includes('rel="stylesheet"'))) {
     assert.ok(!tag.includes('fetchpriority="low"'), "visible fonts and styles are not demoted");
   }
-  assert.match(html, /import\(["']\/assets\/index-/);
+  const bytes = await read("pages-dist/model-explorer.js");
+  const version = createHash("sha256").update(bytes).digest("hex");
+  assert.match(html, new RegExp('<script data-static-runtime="model-explorer" src="/model-explorer\\.js\\?v=' + version + '" defer>'));
+  assert.doesNotMatch(html, /__VINEXT_RSC_|import\(["']\/assets\/index-/);
+  const framework = await read("build/local-preview/models-vinext.html");
+  const mount = /<div class="proof-models" data-model-explorer-root[^>]*>[\s\S]*?<\/main>/;
+  assert.ok(mount.test(framework));
+  assert.equal(html.match(mount)?.[0], framework.match(mount)?.[0], "the island uses unchanged server-rendered explorer HTML");
+});
+
+test("new route bundles retain open, focus, dark theme and motion selectors", async () => {
+  const selectors = {
+    work: [".work-index__history > summary", ".source-records__details"],
+    "case-study": [".case-path__list > li[data-active]", ".claim-ledger__context[open]"],
+    proof: [".vocabulary-disclosure[open]"],
+    about: ['[data-theme="dark"] .hope-brand .career-ledger__mark', "[data-motion-entered] .about-portrait__trace-current"],
+    capabilities: ["details[open]", ".capability-atlas__node[data-active]"],
+    decisions: [".decision-pages__proofs"],
+  };
+  for (const [route, required] of Object.entries(selectors)) {
+    const css = await read(`pages-dist/route-styles/${route}.css`);
+    for (const selector of required) assert.ok(css.replace(/\s+/g, "").includes(selector.replace(/\s+/g, "")), `${route}: ${selector}`);
+  }
 });

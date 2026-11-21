@@ -39,14 +39,16 @@ test("recent ASH work links to implementation without inventing a release", asyn
   for (const id of ["ash-result-integrity", "ash-scoped-agent-access", "ash-repeatable-environments"]) {
     const claim = ash.claims.find((entry) => entry.id === id);
     assert.equal(claim.state, "Merged");
-    assert.equal(claim.observedAt, "2026-10-01");
+    assert.equal(claim.observedAt, id === "ash-scoped-agent-access" ? "2026-10-01" : "2026-10-11");
     assert.ok(page.includes(`id="claim-${id}"`));
     assert.ok(claim.sourceIds.every((sourceId) => publicSources[sourceId].kind === "pull-request"));
     for (const name of ["Implementation", "State", "Proof"]) {
       assert.ok(ash.stages.find((stage) => stage.name === name).claimIds.includes(id));
     }
   }
-  assert.equal(ash.claims.find((entry) => entry.id === "ash-completeness-implementation").state, "Open");
+  const coverage = ash.claims.find((entry) => entry.id === "ash-completeness-implementation");
+  assert.equal(coverage.state, "Released");
+  assert.ok(coverage.sourceIds.includes("ashRelease380"));
   assert.match(ash.claims.find((entry) => entry.id === "ash-scoped-agent-access").maturity, /not authenticate callers/);
 });
 

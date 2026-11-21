@@ -21,7 +21,7 @@ export default function ModelsPage() {
           <a href="/proof/">How to read the public work</a>
         </nav>
       </RouteIntro>
-      <div className="proof-models">
+      <div className="proof-models" data-model-explorer-root>
         <AttributionExplorer sectionCode="01 / Model composition" />
       </div>
     </RouteFrame>

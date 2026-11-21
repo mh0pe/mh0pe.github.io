@@ -122,11 +122,11 @@ test("pins authorship counts and keeps model provenance outside impact claims", 
       observed: publicRecordSnapshot.observedAt,
     },
     {
-      authored: 174,
-      attributed: 181,
+      authored: 263,
+      attributed: 270,
       mergedRepositories: 19,
       allSubmittedRepositories: 44,
-      observed: "2026-09-19",
+      observed: "2026-10-11",
     },
   );
   assert.equal(publicSources.publicHistorySnapshot.kind, "snapshot");

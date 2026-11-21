@@ -3,7 +3,7 @@ import { articleBySlug } from "./blog";
 
 export const socialOrigin = "https://mh0pe.github.io";
 export type SocialPage = {
-  path: string; image: string; title: string; lines: string[]; label: string; art: string; alt: string;
+  path: string; image: string; title: string; lines: string[]; label: string; art: string; alt: string; description?: string;
 };
 
 export function socialPage(pathname: string): SocialPage {
@@ -30,5 +30,5 @@ export function socialImageData(pathname: string) {
 export function socialDescription(pathname: string, fallback: string) {
   const page = socialPage(pathname);
   const slug = page.path.match(/^\/blog\/([^/]+)\/$/)?.[1];
-  return slug ? articleBySlug(slug)?.deck ?? fallback : fallback;
+  return page.description ?? (slug ? articleBySlug(slug)?.deck ?? fallback : fallback);
 }

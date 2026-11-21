@@ -2,6 +2,7 @@ import { SourceLink } from "../components/v2/Evidence";
 import { RouteFrame, RouteIntro } from "../components/v2/RouteFrame";
 import {
   proofVocabulary,
+  accountLinkedContributionNote,
   publicRecordSnapshot,
   statusVocabulary,
 } from "../data/portfolio-v2";
@@ -41,13 +42,13 @@ export default function ProofPage() {
             </details>
           </div>
           <dl>
-            <div><dt>Authored changes accepted into main projects</dt><dd>{publicRecordSnapshot.authoredMergedPullRequests}</dd></div>
-            <div><dt>Accepted changes with GitHub contribution credit</dt><dd>{publicRecordSnapshot.attributedMergedPullRequests}</dd></div>
+            <div><dt>Merged changes I authored</dt><dd>{publicRecordSnapshot.authoredMergedPullRequests}</dd></div>
+            <div><dt>Accepted changes linked to my accounts</dt><dd>{publicRecordSnapshot.attributedMergedPullRequests}</dd></div>
             <div><dt>Projects that accepted contributions</dt><dd>{publicRecordSnapshot.mergedPullRequestTargetRepositories}</dd></div>
             <div><dt>Projects where changes were proposed</dt><dd>{publicRecordSnapshot.allSubmittedPullRequestTargetRepositories}</dd></div>
             <div className="proof-record__note">
               <dt>Why the counts differ</dt>
-              <dd>The larger total follows GitHub&apos;s contribution credit, which can include accepted work beyond directly authored changes.</dd>
+              <dd>{accountLinkedContributionNote}</dd>
             </div>
           </dl>
         </div>

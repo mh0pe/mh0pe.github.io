@@ -61,7 +61,9 @@ export default function NotFound() {
       <div hidden data-recovery-styles dangerouslySetInnerHTML={{ __html:
         '<link rel="stylesheet" href="/portfolio-v2.css?v=20261003-palette">' +
         '<link rel="stylesheet" href="/portfolio-v3.css?v=20261003-palette-contrast">' +
-        '<link rel="stylesheet" href="/interactions.css?v=20261003-palette">',
+        '<link rel="stylesheet" href="/journey-polish.css?v=20261010-journey">' +
+        '<link rel="stylesheet" href="/interactions.css?v=20261003-palette">' +
+        '<link rel="stylesheet" href="/editorial-system.css?v=20261022-editorial">',
       }} />
       <div className="not-found__shell">
         <div className="not-found__utility">

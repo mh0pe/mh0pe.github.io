@@ -1,23 +1,24 @@
 import assert from "node:assert/strict";
-import { mkdir, writeFile } from "node:fs/promises";
+import { lstat, mkdir, mkdtemp, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   packContributionPlayerRecordCatalog,
   unpackContributionPlayerRecordCatalog,
 } from "../app/data/contribution-player-records-compact.mjs";
+import { assertAttributionJoin } from "./public-contribution-guards.mjs";
+import { promoteStagedPaths } from "./promote-staged-paths.mjs";
 
 const siteRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const canonicalRoot = resolve(siteRoot, "app/data/project-player-records");
-const compactPath = resolve(
-  siteRoot,
-  "app/data/project-player-records.compact.json",
-);
+const defaultOutputDirectory = resolve(siteRoot, "app/data");
+const forbiddenPublicText = /(?:[\w.+-]+@[\w.-]+\.[a-z]{2,}|\/Users\/|\/Volumes\/|\/home\/|file:\/\/|[A-Z]:\\|github_pat_|gh[pousr]_|AKIA[0-9A-Z]{16}|Bearer\s+[A-Za-z0-9._~-]+|Co-authored-by:)/i;
 
-function shortCommitLabel(message) {
-  return (message ?? "Public commit")
+function shortCommitLabel(message, sha) {
+  const label = (message ?? "Public commit")
     .split(/\r?\n/, 1)[0]
     .replace(/^(feat|fix|chore|refactor|test|docs)(\([^)]+\))?:\s*/i, "");
+  // Presentation only: retain the complete source record and immutable link.
+  return forbiddenPublicText.test(label) ? `Public commit ${sha.slice(0, 7)}` : label;
 }
 
 function publicGithubUrl(value, label) {
@@ -83,7 +84,7 @@ function buildCanonicalRecords(specs, hydrated, agentBySha) {
         referenceSha: evidence.referenceSha,
         commits: evidence.commits.map((commit) => ({
           sha: commit.sha,
-          label: shortCommitLabel(commit.commit?.message),
+          label: shortCommitLabel(commit.commit?.message, commit.sha),
           href: `https://github.com/${evidence.repository}/commit/${commit.sha}`,
           date:
             commit.commit?.author?.date ??
@@ -139,6 +140,18 @@ function assertComplete(records) {
   }
 }
 
+export function assertPublicSafePlayerRecords(records) {
+  const forbiddenKey = /^(authorization|body|email|patch|token)$/i;
+  const visit = value => {
+    if (typeof value === "string") assert.ok(!forbiddenPublicText.test(value), "Unsafe text in public player records.");
+    else if (Array.isArray(value)) value.forEach(visit);
+    else if (value && typeof value === "object") for (const [key, child] of Object.entries(value)) {
+      assert.ok(!forbiddenKey.test(key), "Forbidden field in public player records."); visit(child);
+    }
+  };
+  visit(records);
+}
+
 export async function writeProjectPlayerRecords({
   specs,
   hydrated,
@@ -146,13 +159,22 @@ export async function writeProjectPlayerRecords({
   sourceExport,
   sourceExportCompletedAt,
   sourceExportRunId,
+  outputDirectory = defaultOutputDirectory,
+  operations = {},
 }) {
+  assertAttributionJoin(hydrated, agentBySha);
+  assert.ok(specs.length > 0 && new Set(specs.map((spec) => spec.id)).size === specs.length);
+  for (const spec of specs) assert.match(spec.id, /^[a-z][a-z0-9-]*$/);
+  assert.ok(typeof sourceExport === "string" && sourceExport.length > 0);
+  assert.ok(Number.isFinite(Date.parse(sourceExportCompletedAt)));
+  assert.ok(typeof sourceExportRunId === "string" && sourceExportRunId.length > 0);
   const records = buildCanonicalRecords(specs, hydrated, agentBySha);
   assertComplete(records);
+  assertPublicSafePlayerRecords(records);
   const compact = packContributionPlayerRecordCatalog(records);
   assert.deepEqual(unpackContributionPlayerRecordCatalog(compact), records);
 
-  await mkdir(canonicalRoot, { recursive: true });
+  const io = { lstat, mkdir, mkdtemp, readFile, rename, writeFile, ...operations };
   const manifest = {
     schemaVersion: 1,
     publicOnly: true,
@@ -163,21 +185,32 @@ export async function writeProjectPlayerRecords({
     graphIds: records.map((record) => record.id),
   };
   const compactSource = `${JSON.stringify(compact)}\n`;
-  await Promise.all([
-    writeFile(
-      resolve(canonicalRoot, "manifest.json"),
-      `${JSON.stringify(manifest, null, 2)}\n`,
-    ),
-    ...records.map((record) =>
-      writeFile(
-        resolve(canonicalRoot, `${record.id}.json`),
-        `${JSON.stringify(record)}\n`,
-      ),
-    ),
-    writeFile(compactPath, compactSource),
+  await io.mkdir(outputDirectory, { recursive: true });
+  const staging = await io.mkdtemp(resolve(outputDirectory, ".project-player-records-stage-"));
+  const stagedRecords = resolve(staging, "project-player-records");
+  const stagedCompact = resolve(staging, "project-player-records.compact.json");
+  await io.mkdir(stagedRecords);
+  // Wait for every staging write to settle before validation or promotion.
+  const writes = await Promise.allSettled([
+    io.writeFile(resolve(stagedRecords, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`),
+    ...records.map((record) => io.writeFile(resolve(stagedRecords, `${record.id}.json`), `${JSON.stringify(record)}\n`)),
+    io.writeFile(stagedCompact, compactSource),
   ]);
+  const failures = writes.filter((result) => result.status === "rejected");
+  if (failures.length) throw new AggregateError(failures.map((result) => result.reason), "Player generation staging failed; previous output retained.");
+  const staged = await Promise.all(records.map(async (record) => JSON.parse(await io.readFile(resolve(stagedRecords, `${record.id}.json`), "utf8"))));
+  assertComplete(staged);
+  assert.deepEqual(staged, records, "Staged canonical player records changed during writing.");
+  assert.deepEqual(JSON.parse(await io.readFile(resolve(stagedRecords, "manifest.json"), "utf8")), manifest);
+  assert.deepEqual(unpackContributionPlayerRecordCatalog(JSON.parse(await io.readFile(stagedCompact, "utf8"))), records, "Staged compact player records do not match.");
+
+  await promoteStagedPaths(staging, outputDirectory, [
+    { name: "project-player-records", directory: true },
+    { name: "project-player-records.compact.json", directory: false },
+  ], io);
 
   return {
+    retainedGenerationDirectory: staging,
     bytes: Buffer.byteLength(compactSource),
     graphCount: records.length,
     changeCount: records.reduce(

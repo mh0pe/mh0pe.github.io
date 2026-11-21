@@ -1,4 +1,5 @@
 export type ContributionGraphId =
+  | "ash-workspace"
   | "automated-security-helper"
   | "cloudformation-guard"
   | "nix-windows"

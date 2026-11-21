@@ -100,10 +100,22 @@ test("homepage motion remains finite, static-first, and independent of scroll ha
   assert.match(field, /getContributionGraph/);
   const graphIdBlock = field.match(/const graphIds = \[([\s\S]*?)\] as const/)?.[1];
   assert.ok(graphIdBlock);
+  // Article-only source records do not add another homepage visual or player.
+  const expectedVisibleGraphIds = [
+    "automated-security-helper", "cloudformation-guard", "nix-windows",
+    "portable-frameworks", "rules-js-pnp", "lightpanda-svg", "aws-labs-mcp", "cloud-runtime",
+  ];
+  assert.equal(expectedVisibleGraphIds.length, 8);
+  assert.deepEqual(expectedProjectGraphIds, [...expectedVisibleGraphIds, "ash-workspace"]);
   assert.deepEqual(
     [...graphIdBlock.matchAll(/"([a-z0-9-]+)"/g)].map((match) => match[1]),
-    expectedProjectGraphIds,
+    expectedVisibleGraphIds,
   );
+  assert.doesNotMatch(graphIdBlock + lineageField, /["']ash-workspace["']/);
+  assert.match(field, /projectFields[^=]*= graphIds\.map\(/);
+  assert.doesNotMatch(field, /getContributionGraph\(["']ash-workspace["']\)/);
+  const articleTrail = await readFile(new URL("app/components/blog/ArticleSourceTrail.tsx", root), "utf8");
+  assert.match(articleTrail, /getContributionPlayerRecords\("ash-workspace"\)/);
   assert.match(work, /<ProjectLineageField caseStudy=\{caseStudy\} compact/);
   assert.match(lineageField, /data-source-kind/);
   assert.match(lineageField, /getContributionGraph/);

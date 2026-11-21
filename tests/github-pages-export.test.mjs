@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 import { gzipSync } from "node:zlib";
+import { fileURLToPath } from "node:url";
+import { tsImport } from "tsx/esm/api";
+import { discoverExportCatalog } from "../tools/export-catalog.mjs";
 
 const root = new URL("../", import.meta.url);
 const output = new URL("../pages-dist/", import.meta.url);
@@ -45,6 +48,41 @@ function fontPreloadTags(html) {
     );
 }
 
+test("every exported document keeps one same-origin favicon without weakening its security policy", async () => {
+  const catalog = await discoverExportCatalog(fileURLToPath(output));
+  assert.equal(catalog.length, 26);
+  for (const entry of catalog) {
+    const html = await artifact(entry.output);
+    const icons = [...html.matchAll(/<link\b[^>]*>/gi)].map(([tag]) => tag).filter(tag => /\brel="icon"/i.test(tag));
+    assert.equal(icons.length, 1, entry.output);
+    assert.match(icons[0], /\bhref="\/favicon\.svg"/, entry.output);
+    assert.match(icons[0], /\btype="image\/svg\+xml"/, entry.output);
+    const csp = [...html.matchAll(/<meta\b[^>]*>/gi)].map(([tag]) => tag).find(tag => /http-equiv="Content-Security-Policy"/i.test(tag));
+    assert.ok(csp, entry.output);
+    const content = csp.match(/content="([^"]*)"/i)?.[1].replaceAll("&#x27;", "'");
+    assert.equal(content, "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; img-src 'self' data:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'", entry.output);
+  }
+});
+
+test("every exported identity link retains its visible accessible name", async () => {
+  const catalog = await discoverExportCatalog(fileURLToPath(output));
+  let identities = 0;
+  for (const entry of catalog) {
+    const html = await artifact(entry.output);
+    const identity = html.match(/<a\b[^>]*class="site-identity"[^>]*>[\s\S]*?<\/a>/)?.[0];
+    if (!identity) {
+      assert.equal(entry.output, "404.html", "only the standalone 404 has no shared identity header");
+      continue;
+    }
+    identities += 1;
+    assert.doesNotMatch(identity, /aria-label(?:ledby)?=/, entry.output);
+    assert.match(identity, /href="\/"/, entry.output);
+    assert.match(identity, /class="site-identity__mark" aria-hidden="true"/, entry.output);
+    assert.match(identity, /Principal AI Architect/, entry.output);
+  }
+  assert.equal(identities, 25);
+});
+
 test("exports every redesign route with production canonical metadata", async () => {
   for (const [filename, canonical] of routes) {
     const html = await artifact(filename);
@@ -54,11 +92,9 @@ test("exports every redesign route with production canonical metadata", async ()
         html.includes('href="' + canonical + '" rel="canonical"'),
       filename + " should declare " + canonical,
     );
-    if (filename === "models/index.html") {
-      assert.match(html, /self\.__VINEXT_RSC_DONE__\s*=\s*true/);
-    } else {
-      assert.doesNotMatch(html, /self\.__VINEXT_RSC_|rel="modulepreload"/i);
-    }
+    assert.doesNotMatch(html, /self\.__VINEXT_RSC_|rel="modulepreload"/i);
+    assert.equal((html.match(/data-static-runtime="model-explorer"/g) ?? []).length,
+      filename === "models/index.html" ? 1 : 0, filename);
     assert.doesNotMatch(html, /localhost|127\.0\.0\.1|\/_vinext\/image/i);
   }
 });
@@ -75,7 +111,7 @@ test("exports the visual landing story as a static, outcome-first document", asy
     ["security", "policy", "windows", "continuity"],
   );
   assert.equal((html.match(/<strong>My contribution<\/strong>/g) ?? []).length, 4);
-  assert.equal((html.match(/<summary>Explore the contribution<\/summary>/g) ?? []).length, 4);
+  assert.equal((html.match(/<summary>Explore the changes and source history<\/summary>/g) ?? []).length, 4);
   for (const id of ["automated-security-helper", "cloudformation-guard", "nix-windows", "agent-systems"]) {
     assert.ok(html.includes(`id="project-${id}"`), id);
     assert.ok(html.includes(`href="/work/${id}/"`), `${id} remains shareable`);
@@ -122,17 +158,34 @@ test("loads model-attribution code only from the model-composition surfaces", as
     artifact("models/index.html"),
     artifact("evidence/index.html"),
   ]);
-  assert.doesNotMatch(home, /AttributionExplorer-[A-Za-z0-9_-]+\.js/);
-  assert.doesNotMatch(proof, /AttributionExplorer-[A-Za-z0-9_-]+\.js/);
-  assert.doesNotMatch(evidence, /AttributionExplorer-[A-Za-z0-9_-]+\.js/);
+  for (const html of [home, proof, evidence]) assert.doesNotMatch(html, /model-explorer\.js|AttributionExplorer-[A-Za-z0-9_-]+\.js/);
   assert.match(proof, /href="\/models\/#agent-collaboration"/i);
   assert.match(evidence, /href="\/models\/#agent-collaboration"/i);
 
-  const match = models.match(
-    /\/assets\/(AttributionExplorer-[A-Za-z0-9_-]+\.js)/,
-  );
+  const match = models.match(/src="\/(model-explorer\.js)\?v=[a-f0-9]{64}"/);
   assert.ok(match, "models route should load its attribution explorer");
-  await access(new URL("assets/" + match[1], output));
+  await access(new URL(match[1], output));
+});
+
+test("exports one complete hash-bound attribution archive without loading it on other routes", async () => {
+  const { validateAttributionTransportFiles } = await tsImport(new URL("../tools/build-attribution-transport.mjs", import.meta.url).href, import.meta.url);
+  const seed = JSON.parse(await readFile(new URL("../app/data/attribution-transport.json", import.meta.url), "utf8"));
+  const decoded = await validateAttributionTransportFiles({
+    seed,
+    archiveDirectory: new URL("attribution/", output).pathname,
+    attributionBytes: await readFile(new URL("../app/data/agent-attribution.json", import.meta.url)),
+    basisBytes: await readFile(new URL("../app/data/agent-attribution-basis.json", import.meta.url)),
+  });
+  assert.equal(decoded.data.commits.length, seed.totalRows);
+  assert.deepEqual((await readdir(new URL("attribution/", output))).sort(), seed.archive.map(chunk => `${chunk.sha256}.json`).sort());
+  const models = await artifact("models/index.html");
+  assert.ok(models.includes(`data-attribution-generation="${seed.canonicalSha256}"`));
+  for (const [filename] of routes) {
+    if (filename === "models/index.html") continue;
+    const html = await artifact(filename);
+    assert.doesNotMatch(html, /(?:src|href)="\/attribution\//);
+    assert.doesNotMatch(html, /attribution-transport|data-attribution-generation/);
+  }
 });
 
 test("preloads only the two normal above-the-fold font faces", async () => {
@@ -204,13 +257,13 @@ test("every exported page preserves only the intended static enhancement runtime
 
 test("supporting routes continue into a relevant next chapter", async () => {
   const nextChapterByArtifact = {
-    "work/index.html": "/capabilities/",
+    "work/index.html": "/blog/workspace-security/",
     "capabilities/index.html": "/method/",
-    "method/index.html": "/decisions/",
+    "method/index.html": "/blog/handoffs-that-carry-the-work/",
     "decisions/index.html": "/work/",
     "about/index.html": "/credentials/",
     "credentials/index.html": "/work/",
-    "proof/index.html": "/models/#agent-collaboration",
+    "proof/index.html": "/blog/",
     "models/index.html": "/work/agent-systems/",
   };
 

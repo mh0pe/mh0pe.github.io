@@ -1,7 +1,12 @@
 import { spawn } from "node:child_process";
 import { access, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { discoverExportCatalog } from "./export-catalog.mjs";
+import { viewportAuditFailureReasons } from "./viewport-audit-contract.mjs";
+
+const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const chromePath =
   process.env.CHROME_PATH ??
@@ -13,24 +18,9 @@ const baseUrl = (process.env.PORTFOLIO_URL ?? "http://127.0.0.1:3000").replace(
 const outputDir =
   process.argv[2] ?? join(tmpdir(), "portfolio-viewport-audit");
 
-const routes = [
-  "/",
-  "/work/",
-  "/work/automated-security-helper/",
-  "/work/cloudformation-guard/",
-  "/work/nix-windows/",
-  "/work/agent-systems/",
-  "/capabilities/",
-  "/method/",
-  "/decisions/",
-  "/about/",
-  "/credentials/",
-  "/proof/",
-  "/models/",
-  "/evidence/",
-  "/career/",
-  "/404.html",
-];
+const routes = (await discoverExportCatalog(resolve(projectRoot, "pages-dist"))).map(
+  ({ route }) => route,
+);
 
 const viewports = [
   { height: 568, key: "phone-small", width: 320 },
@@ -289,19 +279,16 @@ for (const theme of themes) {
   }
 }
 
+const failures = report
+  .map((entry) => ({ ...entry, failureReasons: viewportAuditFailureReasons(entry) }))
+  .filter((entry) => entry.failureReasons.length > 0);
+
 await writeFile(
   join(outputDir, "report.json"),
   JSON.stringify(
     {
       baseUrl,
-      failures: report.filter(
-        (entry) =>
-          entry.horizontalOverflow ||
-          entry.brokenImages.length > 0 ||
-          !entry.oneH1 ||
-          !entry.oneMain ||
-          !entry.newsreaderLoaded,
-      ),
+      failures,
       report,
     },
     null,
@@ -314,14 +301,7 @@ socket.close();
 
 const summary = {
   checks: report.length,
-  failures: report.filter(
-    (entry) =>
-      entry.horizontalOverflow ||
-      entry.brokenImages.length > 0 ||
-      !entry.oneH1 ||
-      !entry.oneMain ||
-      !entry.newsreaderLoaded,
-  ).length,
+  failures: failures.length,
   output: outputDir,
   screenshots: report.filter((entry) =>
     shouldCapture(
@@ -333,3 +313,4 @@ const summary = {
 };
 
 console.log(JSON.stringify(summary, null, 2));
+if (failures.length > 0) process.exitCode = 1;

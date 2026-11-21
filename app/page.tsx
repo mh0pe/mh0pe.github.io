@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Native links preserve the static portfolio's navigation. */
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { SourceLink } from "./components/v2/Evidence";
 import { RouteFrame } from "./components/v2/RouteFrame";
@@ -10,6 +11,8 @@ import { developmentPhilosophy } from "./data/philosophy";
 import { credentialsByCategory } from "./data/credentials";
 import professionalHistory from "./data/professional-history.json";
 import { articleBySlug, articlePath, legacyEntryPoints, topicFor } from "./data/blog";
+import { ArtDrawing } from "./components/blog/EditorialArt";
+import { artFor, artStyle } from "./data/article-art";
 import {
   agentSystemsCaseStudy,
   automatedSecurityHelperFlagship,
@@ -40,22 +43,23 @@ export default function HomePage() {
     <RouteFrame>
       {/* Route styles follow the shared theme in the static export. */}
       {/* eslint-disable @next/next/no-css-tags */}
-      <link rel="stylesheet" href="/living-systems.css?v=20261001-philosophy" />
-      {/* eslint-disable @next/next/no-css-tags */}
       <link rel="stylesheet" href="/living-architecture.css?v=20261003-palette" />
       {/* eslint-disable @next/next/no-css-tags */}
       <link rel="stylesheet" href="/landing-story.css?v=20261007-journal-targets" />
+      {/* eslint-disable @next/next/no-css-tags */}
+      <link rel="stylesheet" href="/editorial-art.css?v=20261010-writing-previews" />
       <ProfilePageData />
       <div className="landing-story">
         <span className="anchor-alias" id="top" aria-hidden="true" />
         <section className="landing-opening shell" data-home-section="opening" aria-labelledby="home-title">
           <div className="landing-opening__copy">
             <p className="landing-role">Principal AI Architect</p>
-            <h1 id="home-title">Bringing Hope to distributed systems.</h1>
+            <h1 id="home-title">Bringing <em className="landing-hope">Hope</em> to distributed systems.</h1>
             <p className="landing-lead">I help teams make AI, security, and cloud platforms work together at enterprise scale.</p>
+            <p className="landing-opening__examples">From <a href="/blog/one-definition-many-agent-tools/">one shared definition across fifteen coding tools</a> to <a href="/work/nix-windows/">native Windows builds in Nix</a>.</p>
             <div className="landing-actions">
               <a className="hope-button hope-button--primary" href="#work">Explore my work</a>
-              <a className="landing-link" href="#philosophy">How I think</a>
+              <a className="landing-link" href={publicSources.linkedinMadison.href} target="_blank" rel="noreferrer">Talk with me on LinkedIn<span className="visually-hidden">, opens in a new tab</span></a>
             </div>
           </div>
           <ArchitectureHero />
@@ -78,13 +82,19 @@ export default function HomePage() {
                   <p className="landing-project__identity">{project.title}</p>
                   <h3 id={`story-${project.id}`}>{title}</h3>
                   <p className="landing-project__description">{description}</p>
+                </div>
+                <div className="landing-project__visual"><ContributionScene kind={kind} /></div>
+                <div className="landing-project__follow-through">
                   <p className="landing-project__contribution"><strong>My contribution</strong> {project.contributionSummary}</p>
                   <span className="landing-project__layer">{layer}</span>
+                  <div className="landing-project__actions">
+                    <a className="landing-link" href={`/work/${project.id}/`}>Read the project story<span className="visually-hidden">: {project.title}</span></a>
+                    <SourceLink sourceId={project.repositorySourceId}>Open the code<span className="visually-hidden">: {project.title}</span></SourceLink>
+                  </div>
                 </div>
-                <ContributionScene kind={kind} />
                 <div className="landing-project__depth">
                   <details className="landing-details">
-                    <summary>Explore the contribution</summary>
+                    <summary>Explore the changes and source history</summary>
                     <div className="landing-details__body">
                       {index === 0 ? (
                         <>
@@ -100,10 +110,8 @@ export default function HomePage() {
                         </>
                       ) : null}
                       <ProjectLineageField caseStudy={project} compact inlineSources />
-                      <a className="landing-link" href={`/work/${project.id}/`}>Read the full project story</a>
                     </div>
                   </details>
-                  <SourceLink sourceId={project.repositorySourceId}>See the working code</SourceLink>
                 </div>
               </article>
             ))}
@@ -140,9 +148,14 @@ export default function HomePage() {
           </header>
           <div className="landing-writing__entries">
             {writingEntries.map(({ entry, article }) => <article id={`post-${entry.id}`} key={entry.id}>
-              <p>{topicFor(article).label}</p>
-              <h3><a href={articlePath(article)}>{article.title}</a></h3>
-              <p>{article.deck}</p>
+              <div className="landing-writing__art" aria-hidden="true" style={artStyle(artFor(article.slug))}>
+                <ArtDrawing direction={artFor(article.slug)} id={`home-preview-${article.slug}`} compact />
+              </div>
+              <div className="landing-writing__copy">
+                <p className="landing-writing__topic">{topicFor(article).label}</p>
+                <h3><a href={articlePath(article)}>{article.title}</a></h3>
+                <p>{article.deck}</p>
+              </div>
             </article>)}
           </div>
         </section>
@@ -168,13 +181,13 @@ export default function HomePage() {
               {professionalHistory.employers.map((employer) => (
                 <details className="landing-employer" key={employer.logo_key}>
                   <summary>
-                    <span className="landing-employer__logo" aria-hidden="true">
+                    <span className="landing-employer__logo" aria-hidden="true" style={{ "--employer-optical-scale": employer.optical_scale ?? 1 } as CSSProperties}>
                       {employer.logo ? <Image src={employer.logo} alt="" width={employer.width ?? 240} height={employer.height ?? 96} loading="lazy" unoptimized /> : <span>F.T.</span>}
                     </span>
                     <span>{employer.name}</span>
                     <span className="landing-employer__plus" aria-hidden="true">+</span>
                   </summary>
-                  <p>{employer.scope}</p>
+                  <p>{"context_label" in employer && employer.context_label ? <strong>{String(employer.context_label)}: </strong> : null}{employer.scope}</p>
                 </details>
               ))}
             </div>
@@ -201,7 +214,9 @@ export default function HomePage() {
                   {category.credentials.map((credential) => (
                     <li key={credential.id}>
                       <a href={credential.href} target="_blank" rel="noreferrer">
-                        <Image src={credential.image} alt="" width={128} height={128} loading="lazy" unoptimized />
+                        {/* Badge files are preoptimized; avoid synthetic responsive variants of the same file. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={credential.image} alt="" width={128} height={128} loading="lazy" decoding="async" />
                         <span>
                           <strong>{credential.name}</strong>
                           <small>Earned {credential.issued}</small>

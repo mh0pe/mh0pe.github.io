@@ -7,4 +7,5 @@ export const expectedProjectGraphIds = Object.freeze([
   "lightpanda-svg",
   "aws-labs-mcp",
   "cloud-runtime",
+  "ash-workspace",
 ]);

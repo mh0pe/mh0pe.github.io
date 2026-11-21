@@ -1,0 +1,194 @@
+{
+  "valid": {
+    "schemaVersion": 1,
+    "route": "/blog/one-definition-many-agent-tools/",
+    "expectedChapters": ["opening", "middle", "ending"],
+    "viewport": { "width": 390, "height": 844 },
+    "arrival": {
+      "overflowPx": 0,
+      "live": {
+        "svgCount": 1,
+        "svgConnected": true,
+        "svgInsidePlayer": true,
+        "svgWidth": 928,
+        "svgHeight": 580,
+        "svgFrame": 70,
+        "svgVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "playerCount": 1,
+        "playerOpacity": 1,
+        "playerWidth": 928,
+        "playerHeight": 580,
+        "playerVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "requestedFrame": 70,
+        "committedFrame": 70,
+        "expectedCaption": "The opening caption.",
+        "caption": "The opening caption."
+      }
+    },
+    "scroll": {
+      "scrollYBefore": 390,
+      "scrollYAfter": 900,
+      "overflowPx": 0,
+      "live": {
+        "svgCount": 1,
+        "svgConnected": true,
+        "svgInsidePlayer": true,
+        "svgWidth": 928,
+        "svgHeight": 580,
+        "svgFrame": 430,
+        "svgVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "playerCount": 1,
+        "playerOpacity": 1,
+        "playerWidth": 928,
+        "playerHeight": 580,
+        "playerVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "requestedFrame": 430,
+        "committedFrame": 430,
+        "expectedCaption": "The middle caption.",
+        "caption": "The middle caption."
+      }
+    },
+    "static": {
+      "manualStill": true,
+      "livePlayerCount": 0,
+      "visibleChapters": ["opening", "middle", "ending"],
+      "visibleStillChapters": ["opening", "middle", "ending"],
+      "overflowPx": 0
+    },
+    "reduced": {
+      "prefersReducedMotion": true,
+      "livePlayerCount": 0,
+      "visibleChapters": ["opening", "middle", "ending"],
+      "visibleStillChapters": ["opening", "middle", "ending"],
+      "overflowPx": 0
+    }
+  },
+  "invisiblePlayer": {
+    "schemaVersion": 1,
+    "route": "/blog/one-definition-many-agent-tools/",
+    "expectedChapters": ["opening", "middle", "ending"],
+    "viewport": { "width": 390, "height": 844 },
+    "arrival": {
+      "overflowPx": 0,
+      "live": {
+        "svgCount": 1,
+        "svgConnected": true,
+        "svgInsidePlayer": true,
+        "svgWidth": 928,
+        "svgHeight": 580,
+        "svgFrame": 70,
+        "svgVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "playerCount": 1,
+        "playerOpacity": 0,
+        "playerWidth": 928,
+        "playerHeight": 580,
+        "playerVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "requestedFrame": 70,
+        "committedFrame": 70,
+        "expectedCaption": "The opening caption.",
+        "caption": "The opening caption."
+      }
+    },
+    "scroll": {
+      "scrollYBefore": 390,
+      "scrollYAfter": 900,
+      "overflowPx": 0,
+      "live": {
+        "svgCount": 1,
+        "svgConnected": true,
+        "svgInsidePlayer": true,
+        "svgWidth": 928,
+        "svgHeight": 580,
+        "svgFrame": 430,
+        "svgVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "playerCount": 1,
+        "playerOpacity": 1,
+        "playerWidth": 928,
+        "playerHeight": 580,
+        "playerVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "requestedFrame": 430,
+        "committedFrame": 430,
+        "expectedCaption": "The middle caption.",
+        "caption": "The middle caption."
+      }
+    },
+    "static": {
+      "manualStill": true,
+      "livePlayerCount": 0,
+      "visibleChapters": ["opening", "middle", "ending"],
+      "visibleStillChapters": ["opening", "middle", "ending"],
+      "overflowPx": 0
+    },
+    "reduced": {
+      "prefersReducedMotion": true,
+      "livePlayerCount": 0,
+      "visibleChapters": ["opening", "middle", "ending"],
+      "visibleStillChapters": ["opening", "middle", "ending"],
+      "overflowPx": 0
+    }
+  },
+  "overflow": {
+    "schemaVersion": 1,
+    "route": "/blog/one-definition-many-agent-tools/",
+    "expectedChapters": ["opening", "middle", "ending"],
+    "viewport": { "width": 390, "height": 844 },
+    "arrival": {
+      "overflowPx": 4,
+      "live": {
+        "svgCount": 1,
+        "svgConnected": true,
+        "svgInsidePlayer": true,
+        "svgWidth": 928,
+        "svgHeight": 580,
+        "svgFrame": 70,
+        "svgVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "playerCount": 1,
+        "playerOpacity": 1,
+        "playerWidth": 928,
+        "playerHeight": 580,
+        "playerVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "requestedFrame": 70,
+        "committedFrame": 70,
+        "expectedCaption": "The opening caption.",
+        "caption": "The opening caption."
+      }
+    },
+    "scroll": {
+      "scrollYBefore": 390,
+      "scrollYAfter": 900,
+      "overflowPx": 0,
+      "live": {
+        "svgCount": 1,
+        "svgConnected": true,
+        "svgInsidePlayer": true,
+        "svgWidth": 928,
+        "svgHeight": 580,
+        "svgFrame": 430,
+        "svgVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "playerCount": 1,
+        "playerOpacity": 1,
+        "playerWidth": 928,
+        "playerHeight": 580,
+        "playerVisibility": { "checkVisibility": true, "hiddenByAncestor": false, "effectiveOpacity": 1 },
+        "requestedFrame": 430,
+        "committedFrame": 430,
+        "expectedCaption": "The middle caption.",
+        "caption": "The middle caption."
+      }
+    },
+    "static": {
+      "manualStill": true,
+      "livePlayerCount": 0,
+      "visibleChapters": ["opening", "middle", "ending"],
+      "visibleStillChapters": ["opening", "middle", "ending"],
+      "overflowPx": 0
+    },
+    "reduced": {
+      "prefersReducedMotion": true,
+      "livePlayerCount": 0,
+      "visibleChapters": ["opening", "middle", "ending"],
+      "visibleStillChapters": ["opening", "middle", "ending"],
+      "overflowPx": 0
+    }
+  }
+}

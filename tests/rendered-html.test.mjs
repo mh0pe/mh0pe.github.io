@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { gzipSync } from "node:zlib";
 import { tsImport } from "tsx/esm/api";
+import { assertAnonymousLandingMarkup, assertAnonymousAboutMarkup } from "./helpers/anonymous-contexts.mjs";
 
 const root = new URL("../", import.meta.url);
 const load = (path) => tsImport(new URL(path, root).href, import.meta.url);
@@ -112,11 +113,12 @@ test("renders one visual landing journey with four distinct contribution stories
     assert.ok(titleId && contribution.includes(`<h3 id="${titleId}">`), "each story has a programmatic heading");
     assert.ok(contribution.indexOf("<h3") < contribution.indexOf("<figure"), "the outcome precedes its illustration");
     assert.match(contribution, /<strong>My contribution<\/strong>/);
-    assert.match(contribution, /<summary>Explore the contribution<\/summary>/);
-    assert.match(contribution, /See the working code/);
+    assert.match(contribution, /<summary>Explore the changes and source history<\/summary>/);
+    assert.match(contribution, /Open the code/);
     assert.match(contribution, /Read the reviewed change/);
     assert.match(contribution, /class="source-records__details" open=""/);
-    assert.match(contribution, /href="\/work\/[a-z-]+\/">Read the full project story/);
+    assert.match(contribution, /href="\/work\/[a-z-]+\/">Read the project story/);
+    assert.ok(contribution.indexOf("Read the project story") < contribution.indexOf("<details"));
   }
   assert.doesNotMatch(html, /Neutral bricks provide context|cap-tower|data-lineage-field|data-cap-project|class="cap-change"/);
 });
@@ -218,7 +220,7 @@ test("landing page contains complete philosophy, organizational scope and earned
     assert.ok(html.includes(escapeHtml(context.label)), context.label);
     assert.ok(html.includes(escapeHtml(context.scope)), context.id);
   }
-  assert.doesNotMatch(html, /\b(?:Visa|Bank of America|Toyota|Nissan|Fidelity Management)\b/i);
+  assertAnonymousLandingMarkup(html);
 
   const credentialSection = html.match(/<section\b[^>]*\bid="credentials"[^>]*>[\s\S]*?(?=<span\b[^>]*\bid="connect")/)?.[0];
   assert.ok(credentialSection, "the full learning record is a homepage section");
@@ -277,6 +279,7 @@ test("renders every primary redesign route with its promised content", async () 
     assert.equal(response.status, 200, pathname);
     const html = (await response.text()).replaceAll("<!-- -->", "");
     assert.match(html, pattern, pathname);
+    if (pathname === "/about") assertAnonymousAboutMarkup(html);
     if (pathname === "/capabilities") {
       const systemCount = (html.match(/id="capability-[^"]+"/g) ?? []).length;
       assert.ok(systemCount > 0);
@@ -286,6 +289,25 @@ test("renders every primary redesign route with its promised content", async () 
       );
     }
   }
+});
+
+test("anonymous rendering contract rejects synthetic disclosure and stale or incomplete copy", async () => {
+  const landing = (await readFile(new URL("pages-dist/index.html", root), "utf8")).replaceAll("<!-- -->", "");
+  const about = (await readFile(new URL("pages-dist/about/index.html", root), "utf8")).replaceAll("<!-- -->", "");
+  assertAnonymousLandingMarkup(landing);
+  assertAnonymousAboutMarkup(about);
+  const heading = "Global payments network";
+  for (const [html, check] of [[landing, assertAnonymousLandingMarkup], [about, assertAnonymousAboutMarkup]]) {
+    for (const replacement of ["Example Test Organization", heading + " for Example Test Organization", "", "Global payments network with 99% savings"]) {
+      assert.throws(() => check(html.replace(heading, replacement)));
+    }
+    assert.throws(() => check(html.replace(heading, '<a href="https://example.invalid">' + heading + '</a>')));
+    assert.throws(() => check(html.replace(heading, '<span data-client="Example Test Organization">' + heading + '</span>')));
+  }
+  assert.throws(() => assertAnonymousLandingMarkup(landing.replace('class="landing-details landing-contexts"', 'class="landing-details landing-contexts" data-client="Example Test Organization"')));
+  const block = landing.match(/<details class="landing-details landing-contexts">[\s\S]*?<\/details>/)[0];
+  assert.throws(() => assertAnonymousLandingMarkup(landing + block));
+  assert.throws(() => assertAnonymousAboutMarkup(about.replace('<span>15</span>', '<span>16</span>')));
 });
 
 test("source keeps the requested outcome hierarchy and public-state fields", async () => {

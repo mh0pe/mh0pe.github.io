@@ -1,6 +1,7 @@
 import { SourceLink, StatusStamp } from "../components/v2/Evidence";
 import { RouteFrame, RouteIntro } from "../components/v2/RouteFrame";
 import ProjectLineageField from "../components/v3/ProjectLineageField";
+import { ContributionScene } from "../components/v3/LivingArchitecture";
 import { caseStudies } from "../data/portfolio-v2";
 import { routeMetadata } from "../data/route-metadata";
 
@@ -13,6 +14,8 @@ export const metadata = routeMetadata(
 export default function WorkPage() {
   return (
     <RouteFrame current="work">
+      {/* eslint-disable-next-line @next/next/no-css-tags -- Static export stylesheet. */}
+      <link rel="stylesheet" href="/living-architecture.css?v=20261022-catalog" />
       <RouteIntro
         code="Work / 04 systems"
         title="Four systems, built for the next team."
@@ -53,7 +56,13 @@ export default function WorkPage() {
                       <SourceLink sourceId={caseStudy.repositorySourceId}>See the working code</SourceLink>
                     </div>
                   </div>
-                  <ProjectLineageField caseStudy={caseStudy} compact />
+                  <div className="work-index__cover">
+                    <ContributionScene kind={caseStudy.id === "automated-security-helper" ? "security" : caseStudy.id === "cloudformation-guard" ? "policy" : caseStudy.id === "nix-windows" ? "windows" : "continuity"} />
+                    <details className="work-index__history">
+                      <summary>Explore the contribution history</summary>
+                      <ProjectLineageField caseStudy={caseStudy} compact />
+                    </details>
+                  </div>
                 </article>
               </li>
             ))}

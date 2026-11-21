@@ -17,7 +17,7 @@
   }
 
   function resolvedTheme() {
-    return savedPreference() ?? transientPreference ?? (systemPreference.matches ? "dark" : "light");
+    return transientPreference ?? savedPreference() ?? (systemPreference.matches ? "dark" : "light");
   }
 
   function synchronizeControls(theme) {

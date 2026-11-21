@@ -13,6 +13,10 @@ const eslintConfig = defineConfig([
     "build/**",
     // Generated from separately linted React, Remotion and player source.
     "public/article-motion.js",
+    ".pages-dist-stage-*/**",
+    ".pages-dist-previous-*/**",
+    "app/data/.project-player-records-stage-*/**",
+    "app/data/.project-generation-stage-*/**",
     "next-env.d.ts",
   ]),
 ]);

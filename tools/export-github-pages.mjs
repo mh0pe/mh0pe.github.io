@@ -5,12 +5,16 @@ import {
   mkdir,
   readFile,
   readdir,
-  rm,
   writeFile,
 } from "node:fs/promises";
 import { dirname, posix, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { compactExportedStylesheets } from "./export-stylesheets.mjs";
+import { build } from "esbuild";
+import { compactExportedStylesheets, sharedStylesheets } from "./export-stylesheets.mjs";
+import { createRuntimeAssetPinner } from "./export-runtime-assets.mjs";
+import { stageAndPromoteDirectory } from "./staged-directory.mjs";
+import { validateAttributionTransportFiles } from "./build-attribution-transport.mjs";
+import attributionTransport from "../app/data/attribution-transport.json" with { type: "json" };
 import blogRoutes from "../app/data/blog-routes.json" with { type: "json" };
 import socialPages from "../app/data/social-pages.json" with { type: "json" };
 
@@ -19,10 +23,12 @@ const toolsDirectory = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(toolsDirectory, "..");
 const serverEntry = resolve(projectRoot, "dist/server/index.js");
 const clientDirectory = resolve(projectRoot, "dist/client");
-const outputDirectory = resolve(projectRoot, "pages-dist");
+const acceptedOutputDirectory = resolve(projectRoot, "pages-dist");
+let outputDirectory = acceptedOutputDirectory;
 const NOT_FOUND_TITLE = "Page not found | Madison Hope Steiner";
 const NOT_FOUND_DESCRIPTION =
   "The requested path does not exist. Continue through Madison Hope Steiner's open-source systems work or public GitHub profiles.";
+const attributionArchiveFiles = new Set(attributionTransport.archive.map((chunk) => `${chunk.sha256}.json`));
 const routeManifest = [
   { pathname: "/", output: "index.html" },
   { pathname: "/blog", output: "blog/index.html" },
@@ -44,7 +50,7 @@ const routeManifest = [
   { pathname: "/decisions", output: "decisions/index.html" },
   { pathname: "/method", output: "method/index.html" },
   { pathname: "/capabilities", output: "capabilities/index.html" },
-  { pathname: "/models", output: "models/index.html", hydrate: true },
+  { pathname: "/models", output: "models/index.html", modelExplorer: true },
   {
     pathname: "/evidence",
     output: "evidence/index.html",
@@ -117,6 +123,9 @@ function shouldCopyClientAsset(source) {
 
   const parts = path.split(sep);
   const name = parts.at(-1);
+  if (parts[0] === "attribution") {
+    return parts.length === 1 || (parts.length === 2 && attributionArchiveFiles.has(name));
+  }
   const isSupersededLogoSource =
     parts[0] === "logos" &&
     (parts[1] === "normalized" || name?.endsWith(".jpg"));
@@ -232,17 +241,6 @@ function stripVinextRuntime(html) {
     });
 }
 
-function prioritizeVisibleContent(html) {
-  // The complete server-rendered page does not need hydration to paint. Keep
-  // fetching its interactive code, but do not let speculative module hints
-  // compete at the same priority as render-blocking CSS and visible fonts.
-  return html.replace(/<link\b[^>]*>/gi, (tag) => (
-    attribute(tag, "rel")?.toLowerCase() === "modulepreload" && attribute(tag, "fetchpriority") === null
-      ? tag.replace(/^<link\b/i, '<link fetchpriority="low"')
-      : tag
-  ));
-}
-
 function escapeHtmlAttribute(value) {
   return value
     .replaceAll("&", "&amp;")
@@ -320,7 +318,10 @@ function normalizeNotFoundMetadata(html) {
     recoveryStyles = links;
     return "";
   });
-  invariant(recoveryStyles && htmlTags(recoveryStyles, "link").length === 3, "Recovery styles are missing.");
+  const recoveryLinks = htmlTags(recoveryStyles, "link");
+  invariant(recoveryLinks.length === sharedStylesheets.length && recoveryLinks.every((tag, index) => (
+    attribute(tag, "rel") === "stylesheet" && attribute(tag, "href")?.split("?")[0] === `/${sharedStylesheets[index]}`
+  )), "Recovery styles are missing or out of order.");
 
   return normalized.replace(
     /<\/head>/i,
@@ -550,19 +551,6 @@ async function validateArtifactReferences(documents) {
     }
   }
 
-  const hydratedDocuments = documents.filter((document) => document.hydrate);
-  invariant(hydratedDocuments.length > 0, "The route manifest has no hydrated document.");
-  for (const document of hydratedDocuments) {
-    const hydrationEntry = document.html.match(
-      /import\(["'](\/assets\/index-[A-Za-z0-9_-]+\.js)["']\)/,
-    )?.[1];
-    invariant(
-      hydrationEntry,
-      `Unable to locate the hydrated route entry for ${document.output}.`,
-    );
-    await assertArtifactReference(hydrationEntry, document.output);
-  }
-
   for (const stylesheet of await collectFiles(outputDirectory, ".css")) {
     const relativeStylesheet = relative(outputDirectory, stylesheet).split(sep).join("/");
     const source = await readFile(stylesheet, "utf8");
@@ -597,19 +585,23 @@ async function validateArtifactSurface() {
   }
 }
 
-async function main() {
-  validateOrigin();
-  validateOutputTarget();
-  await Promise.all([access(serverEntry), access(clientDirectory)]);
-  await assertRegularTree(clientDirectory, "Vinext client output");
-
-  await rm(outputDirectory, { recursive: true, force: true });
-  await mkdir(outputDirectory, { recursive: true });
+async function exportArtifact() {
   await cp(clientDirectory, outputDirectory, {
     recursive: true,
     filter: shouldCopyClientAsset,
   });
   await compactExportedStylesheets(outputDirectory);
+  const explorer = await build({
+    absWorkingDir: projectRoot,
+    entryPoints: ["app/components/model-explorer-entry.tsx"],
+    bundle: true, write: false, format: "iife", platform: "browser",
+    jsx: "automatic", target: ["es2020"], minify: true, legalComments: "eof",
+    define: { "process.env.NODE_ENV": '"production"' },
+  });
+  const [explorerScript] = explorer.outputFiles;
+  invariant(explorer.outputFiles.length === 1 && explorerScript.contents.length <= 260_000,
+    "The model explorer must ship as one isolated script under 260 KB.");
+  await writeFile(resolve(outputDirectory, "model-explorer.js"), explorerScript.contents);
 
   const workerUrl = pathToFileURL(serverEntry);
   workerUrl.searchParams.set("github-pages-export", `${process.pid}-${Date.now()}`);
@@ -644,11 +636,18 @@ async function main() {
     "The 404 recovery link must force a full document navigation.",
   );
 
-  const exportedRouteHtml = routeHtml.map((route) => ({
-    ...route,
-    html: route.hydrate ? prioritizeVisibleContent(route.html) : stripVinextRuntime(route.html),
+  const pinRuntimeAssets = createRuntimeAssetPinner(outputDirectory);
+  const exportedRouteHtml = await Promise.all(routeHtml.map(async (route) => {
+    let html = stripVinextRuntime(route.html);
+    if (route.modelExplorer) {
+      invariant(htmlTags(html, "div").filter(tag => /\bdata-model-explorer-root\b/.test(tag)).length === 1,
+        "The model explorer requires exactly one server-rendered mount.");
+      invariant(html.includes("</body>"), "The model explorer has no document body.");
+      html = html.replace("</body>", '<script data-static-runtime="model-explorer" src="/model-explorer.js" defer></script></body>');
+    }
+    return { ...route, html: await pinRuntimeAssets(html) };
   }));
-  const exportedNotFoundHtml = normalizeNotFoundMetadata(notFoundHtml);
+  const exportedNotFoundHtml = await pinRuntimeAssets(normalizeNotFoundMetadata(notFoundHtml));
   validateSocialMetadata(exportedNotFoundHtml, "/404.html");
   invariant(
     htmlTags(exportedNotFoundHtml, "title").length === 1 &&
@@ -689,28 +688,57 @@ async function main() {
       pathname: "/404.html",
       output: "404.html",
       html: exportedNotFoundHtml,
-      hydrate: false,
     },
   ]);
   await assertRegularTree(outputDirectory, "GitHub Pages artifact");
 
+  const modelsHtml = exportedRouteHtml.find((route) => route.pathname === "/models")?.html;
+  const frameworkHtml = routeHtml.find((route) => route.modelExplorer)?.html;
+  invariant(frameworkHtml, "The same-build framework render is missing.");
+  const privateEvidence = resolve(projectRoot, "build/local-preview");
+  await mkdir(privateEvidence, { recursive: true });
+  await writeFile(resolve(privateEvidence, "models-vinext.html"), frameworkHtml, "utf8");
+  invariant(
+    modelsHtml?.includes(`data-attribution-generation="${attributionTransport.canonicalSha256}"`),
+    "Rendered model summary and attribution archive use different generations.",
+  );
+  await validateAttributionTransportFiles({
+    seed: attributionTransport,
+    archiveDirectory: resolve(outputDirectory, "attribution"),
+    attributionBytes: await readFile(resolve(projectRoot, "app/data/agent-attribution.json")),
+    basisBytes: await readFile(resolve(projectRoot, "app/data/agent-attribution-basis.json")),
+  });
+  const exportedAttributionFiles = await readdir(resolve(outputDirectory, "attribution"));
+  invariant(
+    exportedAttributionFiles.length === attributionArchiveFiles.size &&
+      exportedAttributionFiles.every((name) => attributionArchiveFiles.has(name)),
+    "Exported attribution archive contains unexpected files.",
+  );
+
   const files = await collectFiles(outputDirectory);
-  process.stdout.write(
-    `${JSON.stringify(
-      {
+  return {
         origin: EXPECTED_ORIGIN,
-        output: relative(projectRoot, outputDirectory),
+        output: relative(projectRoot, acceptedOutputDirectory),
         routes: routeHtml.length,
         files: files.length,
-        staticRoutes: exportedRouteHtml.filter((route) => !route.hydrate).length,
-        hydratedRoutes: exportedRouteHtml.filter((route) => route.hydrate).length,
+        staticRoutes: exportedRouteHtml.length,
+        isolatedInteractiveRoutes: exportedRouteHtml.filter((route) => route.modelExplorer).length,
         indexBytes: Buffer.byteLength(exportedIndexHtml),
         notFoundBytes: Buffer.byteLength(exportedNotFoundHtml),
-      },
-      null,
-      2,
-    )}\n`,
-  );
+      };
+}
+
+async function main() {
+  validateOrigin();
+  validateOutputTarget();
+  await Promise.all([access(serverEntry), access(clientDirectory)]);
+  await assertRegularTree(clientDirectory, "Vinext client output");
+  const result = await stageAndPromoteDirectory(acceptedOutputDirectory, async (staging) => {
+    outputDirectory = staging;
+    return exportArtifact();
+  });
+  outputDirectory = acceptedOutputDirectory;
+  process.stdout.write(JSON.stringify({ ...result.value, previousArtifact: result.previous }, null, 2) + "\n");
 }
 
 await main();

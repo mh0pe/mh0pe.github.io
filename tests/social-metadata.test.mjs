@@ -25,6 +25,12 @@ test("sharing catalog covers every export with deliberate artwork", () => {
   }
 });
 
+test("security sharing-image description matches the installed-package artwork", () => {
+  const page = pages.find(item => item.path === "/blog/security-feedback-where-you-work/");
+  assert.match(page.alt, /installed ASH package and external dependencies as separate inspection boundaries/);
+  assert.doesNotMatch(page.alt, /annotation|marked line|work surface/i);
+});
+
 test("all 26 documents have complete page-specific social metadata", async () => {
   for (const entry of pages) {
     const card = entry.alias ? pages.find(page => page.path === entry.alias) : entry;
@@ -89,6 +95,11 @@ test("social graphics are distinct, decoded, compact and copied exactly", async 
   assert.ok(manifest.inputs.some(input => input.file.endsWith("newsreader-variable.woff2")));
   assert.ok(manifest.inputs.some(input => input.file.endsWith("madison-outdoor-720.webp")));
   assert.equal(manifest.inputs.filter(input => input.file.startsWith("public/credentials/")).length, 6);
+  assert.ok(manifest.inputs.some(input => input.file.endsWith("CapabilityScenes.tsx")), "the independent capability scenes are part of the social-art cache key");
+  for (const input of manifest.inputs) {
+    const bytes = await readFile(new URL(input.file, root));
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), input.sha256, `Social art input changed: ${input.file}`);
+  }
   for (const card of manifest.cards) {
     const source = await readFile(new URL("public/social/" + card.file, root));
     const exported = await readFile(new URL("pages-dist/social/" + card.file, root));

@@ -1,10 +1,12 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- native anchors keep the exported GitHub Pages build free of RSC navigation requests. */
+import { publicSources } from "../../data/portfolio-v2";
 
 export const landingNavigation = [
   { key: "work", label: "Work", href: "/#work" },
+  { key: "writing", label: "Writing", href: "/blog/" },
   { key: "philosophy", label: "Philosophy", href: "/#philosophy" },
   { key: "experience", label: "Experience", href: "/#experience" },
-  { key: "connect", label: "Connect", href: "/#connect" },
+  { key: "connect", label: "LinkedIn", href: publicSources.linkedinMadison.href },
 ] as const;
 
 function NavigationLinks({ current, activeSection }: { readonly current?: string; readonly activeSection?: string }) {
@@ -13,7 +15,7 @@ function NavigationLinks({ current, activeSection }: { readonly current?: string
     ? "philosophy"
     : section === "about" || section === "credentials"
       ? "experience"
-      : section;
+      : section === "blog" ? "writing" : section;
 
   return (
     <>
@@ -23,8 +25,12 @@ function NavigationLinks({ current, activeSection }: { readonly current?: string
           key={item.href}
           className={item.key === "connect" ? "primary-nav__conversation" : undefined}
           data-active-section={activeKey === item.key ? "true" : undefined}
+          target={item.key === "connect" ? "_blank" : undefined}
+          rel={item.key === "connect" ? "noreferrer" : undefined}
         >
           {item.label}
+          {activeKey === item.key ? <span className="visually-hidden">, current section</span> : null}
+          {item.key === "connect" ? <span className="visually-hidden">, opens in a new tab</span> : null}
         </a>
       ))}
     </>
@@ -57,7 +63,7 @@ export default function SiteHeader({ current, activeSection }: { readonly curren
   return (
     <header className="site-header">
       <div className="shell site-header__inner">
-        <a className="site-identity" href="/" aria-label="Madison Hope Steiner, home">
+        <a className="site-identity" href="/">
           <span className="site-identity__mark" aria-hidden="true">M<span>H</span>S</span>
           <span className="site-identity__name">Madison <em>Hope</em> Steiner</span>
           <small>Principal AI Architect</small>

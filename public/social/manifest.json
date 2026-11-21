@@ -1,23 +1,23 @@
 {
   "kind": "Rendered static sharing graphics, not webpage screenshots",
   "renderer": "Remotion 4.0.520",
-  "sourceHash": "93bf376b46a9880fe6b5f44c6e932c0aa2522b203499bfd3db235b4e3e320286",
+  "sourceHash": "9dcf8aa28d12480db43605947bf0177ba857148222364f4cefd41549b1421e42",
   "inputs": [
     {
       "file": "app/data/social-pages.json",
-      "sha256": "5fa13a71959037987da8acc86cb656d780f378dfa72b731e2dfde9227f372b91"
+      "sha256": "1cfed985be4110d2c62025fd55e1d8536ec09460872048f9460f983b2170f158"
     },
     {
       "file": "app/data/social.ts",
-      "sha256": "19fece8eaa1ec743caf753e2bcf0eb55299153a7405a35f7ac7429fdb37be4f7"
+      "sha256": "cde9d2368e69617cfbd9d8bb67d75c5ef19c2a9dffac75a622c13e41ef7f0ace"
     },
     {
       "file": "app/data/blog.ts",
-      "sha256": "b778f9893dbaa07c32b3c18ddb4e50058280e8305a42ec47690a9c0f90f325fa"
+      "sha256": "0af704dd98436864399d714733c1c8f16713d71317f808bf7b4a69351a253a36"
     },
     {
       "file": "app/data/article-motion.ts",
-      "sha256": "6402ee60bd9792b39b1f69c9852e70d7bd65483d0bab9f30c52d8064dbcd112a"
+      "sha256": "99e930b0044ee3fd48554bc0a187f521e3cd8c8290de04f433318e8f6cb94600"
     },
     {
       "file": "app/data/credentials.ts",
@@ -37,15 +37,19 @@
     },
     {
       "file": "app/components/blog/motion/StoryScene.tsx",
-      "sha256": "ad3f2ea0b532144b4cc0c1f6fad27e579988e915d975059d7a327984046b92cf"
+      "sha256": "ce00549e9e3a7b4466ee67784ef16974f58df2e5cf8f767bfb43c512581144e3"
     },
     {
       "file": "app/components/blog/motion/story-timing.ts",
-      "sha256": "aa72dd2b2b422031eeda0832114fdc6c0b81f9a35e4b949a199d9d194774685f"
+      "sha256": "2f2e473271486c4e75a54c7f76f567d178142191f21457b962f9194af00847ec"
     },
     {
       "file": "app/components/blog/motion/miura-geometry.ts",
       "sha256": "2bfeca337f3545e342136fa16b7ca7a7cd03d55b77511f09df12c10ab24a82d1"
+    },
+    {
+      "file": "app/components/blog/motion/CapabilityScenes.tsx",
+      "sha256": "e1ee9e7e62c5696f3c18c71cc8c13ea136c843c6c63ee064b4de45be046fc652"
     },
     {
       "file": "app/components/v3/LivingArchitecture.tsx",
@@ -61,11 +65,11 @@
     },
     {
       "file": "tools/render-social-cards.mjs",
-      "sha256": "c2c58d4d8dd0d54126b13dfffb23509cc9cfe7a32fd9bf83a204ad6627ec934c"
+      "sha256": "4473394cdb6c5a6bef5f74baa9db46e508ffa04dd67513bee1a74fe3461291c6"
     },
     {
       "file": "package-lock.json",
-      "sha256": "a31b8d1e010bab952e0f2df69635e25d7f48d0558833e5d82c728a33748ed14b"
+      "sha256": "a7c80529caed5c870d71b4ba030edf3b310d44a6f57270d5820994a808823cda"
     },
     {
       "file": "public/portraits/madison-outdoor-720.webp",
@@ -105,8 +109,8 @@
       "alt": "Bringing Hope to systems at scale. Four assembled layers represent foundations, security, developer tools, and AI workflows.",
       "width": 1200,
       "height": 630,
-      "bytes": 57926,
-      "sha256": "2c56156438dc6aa6b706f338ed0e9a53290891bf49d157ccc591d0f8cd1265a4"
+      "bytes": 58885,
+      "sha256": "421a36de4e457875603a302a2f25a70e7c5a544e48334ebf00750a27ce2dcec7"
     },
     {
       "path": "/blog/",
@@ -116,8 +120,8 @@
       "alt": "Notes from the work by Madison Hope Steiner. Three illustrated editorial sheets introduce essays on engineering and AI.",
       "width": 1200,
       "height": 630,
-      "bytes": 45784,
-      "sha256": "260a16be1004602c554cc44e72b0c85230bde58c6f335c39ebf6c233259c1557"
+      "bytes": 46450,
+      "sha256": "a76b30f48ea5d1f959d12b0a85164d18c933ad2a036360ba8d9902e293f97263"
     },
     {
       "path": "/blog/workspace-security/",
@@ -127,8 +131,8 @@
       "alt": "A shared view. Local context. Three separate project territories illustrate workspace security in Automated Security Helper.",
       "width": 1200,
       "height": 630,
-      "bytes": 55381,
-      "sha256": "e8c3558789d5bfed0461b1de33be2853b941360eaf38717178a6ebc169a3c326"
+      "bytes": 55232,
+      "sha256": "eb8e91839244995773a052818f93016f0b09b10f317d0dfbf778e2dd3f5fdd71"
     },
     {
       "path": "/blog/one-definition-many-agent-tools/",
@@ -138,8 +142,8 @@
       "alt": "One definition. Fifteen native forms. A shared diamond-shaped definition is surrounded by platform-specific packages.",
       "width": 1200,
       "height": 630,
-      "bytes": 60848,
-      "sha256": "d7f1672fcdf6e292ffad9e8215d495c9e50f75a8f348053d0c00f2d3c5353e1e"
+      "bytes": 61456,
+      "sha256": "7e9f306051b46a794d87c5966fc6398d601b6037cd9bb68e8de9b68dab064014"
     },
     {
       "path": "/blog/reproducible-security-checks/",
@@ -149,19 +153,19 @@
       "alt": "The tools are part of the result. A fixed tool collar sits beside separate code, rules, and external-data inputs.",
       "width": 1200,
       "height": 630,
-      "bytes": 58657,
-      "sha256": "fcdf071eb2728a57d4bc78704bbda0cc5299db236f4394175e77d562615f9509"
+      "bytes": 58073,
+      "sha256": "75d71abcd682180b965c40bf2f7c4fbee7b77e6986cb98a91bd00a8b64ee6759"
     },
     {
       "path": "/blog/security-feedback-where-you-work/",
       "file": "security-feedback-where-you-work.jpg",
       "art": "security-feedback-where-you-work",
       "title": "Security feedback at work | Madison Hope Steiner",
-      "alt": "Security feedback, where the work happens. An annotation appears beside a marked line on an illustrated work surface.",
+      "alt": "Security feedback, where the work happens. The illustration shows the installed ASH package and external dependencies as separate inspection boundaries.",
       "width": 1200,
       "height": 630,
-      "bytes": 61973,
-      "sha256": "9e9f40289f31ad6d125efe125590112dbf5beecce5ef6f5c9d6de8fb429253d3"
+      "bytes": 64097,
+      "sha256": "15f08e9451f19438bde847921fbd3723a2e6841e5de80fb8af83a2ed9e9f4747"
     },
     {
       "path": "/blog/handoffs-that-carry-the-work/",
@@ -171,8 +175,8 @@
       "alt": "Carry the work, not just the conversation. A folded handoff sheet keeps Why, Now, and Next together.",
       "width": 1200,
       "height": 630,
-      "bytes": 63637,
-      "sha256": "0fb6b2968b3fb23db786f9cfe27052bb1658d4e6d1c3a23d7c16b4207cc45004"
+      "bytes": 64491,
+      "sha256": "352cfc6ba0fe400cee0aa71eb45d340682b9a9800c67b8d12c4d999e3b358bfc"
     },
     {
       "path": "/blog/integrity-bound-yarn-pnp-for-bazel/",
@@ -182,8 +186,8 @@
       "alt": "Make the build prove what it loaded. Interlocking inspection rings illustrate file identity before a resolver can load.",
       "width": 1200,
       "height": 630,
-      "bytes": 52042,
-      "sha256": "b4422c73131f5024dae1d21e178501b6eb178423a27c9245cd793f452bd9295e"
+      "bytes": 54351,
+      "sha256": "196e26fc482f33d6f8149a960c9ecde02148281d26ecab21d57d28f9a6a1234c"
     },
     {
       "path": "/blog/typed-svg-dom/",
@@ -193,8 +197,8 @@
       "alt": "A browser capability, built in layers. Transparent strata reveal the SVG document-model anatomy beneath a letterform.",
       "width": 1200,
       "height": 630,
-      "bytes": 60301,
-      "sha256": "6ab544dc6f40b3b583f20cc016cedc7376c24d440ecd0d28ca6c75432d5a56fc"
+      "bytes": 60808,
+      "sha256": "bec88f9f7b00269bf01ffbae47c1cf32efc053c20e501d0b1b95cfeb72503d7e"
     },
     {
       "path": "/blog/aws-labs-mcp/",
@@ -204,8 +208,8 @@
       "alt": "Useful tools. Clear boundaries. Separate rooms represent documents, images, connection, and session capabilities.",
       "width": 1200,
       "height": 630,
-      "bytes": 56838,
-      "sha256": "93630915666d4e9be01a75763c686ccb7fe6ee06447de7724d679d02ad961ac6"
+      "bytes": 76926,
+      "sha256": "bc05081abec112e2eb642c4ee1abaddecfa01aeee7a54fb1b4d0dd36d937ed5f"
     },
     {
       "path": "/blog/cloud-runtime/",
@@ -215,8 +219,8 @@
       "alt": "Developer feedback is part of the platform. An illustrated preview distinguishes intended change from unresolved values.",
       "width": 1200,
       "height": 630,
-      "bytes": 62702,
-      "sha256": "4a082905f84ac3e159e6bf98af8092421dba50dbd600cda1e92d19c856524c70"
+      "bytes": 83626,
+      "sha256": "ff8b3793b94ec672b36bf05fadd769fccf500a23676a91e9a6a25ffbd42d37a1"
     },
     {
       "path": "/work/",
@@ -226,8 +230,8 @@
       "alt": "Systems built for the next team. Four labeled layers introduce foundations, security, developer tools, and AI workflows.",
       "width": 1200,
       "height": 630,
-      "bytes": 56593,
-      "sha256": "c4a8154f6733d9b20d94f2d8560ffaf1bb5d89a62244c93ab39153a2c19f2545"
+      "bytes": 57689,
+      "sha256": "05dcd67333d3e4e659b488dfe659485339c2043144eac714548cd3e9a8cf44b6"
     },
     {
       "path": "/work/automated-security-helper/",
@@ -237,8 +241,8 @@
       "alt": "Shared security. Clear ownership. Separate project territories represent independently scoped security work.",
       "width": 1200,
       "height": 630,
-      "bytes": 59179,
-      "sha256": "5f4e7ac39a1cff4a086751c22a782f5ed8bbee7fafbd8813fe8a1573b5790709"
+      "bytes": 59207,
+      "sha256": "c469fee4b7173900c263319bc0504e6f5b91789b1c077a558ed8a943cf4136ff"
     },
     {
       "path": "/work/cloudformation-guard/",
@@ -248,8 +252,8 @@
       "alt": "Keep policy intent intact. Separate pass, reject, missing, and error outcomes show distinct policy evaluation meanings.",
       "width": 1200,
       "height": 630,
-      "bytes": 47972,
-      "sha256": "0ab2b33a3334199baaf551263432ec036a048abf12b4c7169838028d4fc26c74"
+      "bytes": 48612,
+      "sha256": "c76e835274a090d83e330e25f273b2b1454e159062f94fae978db741bbbabac5"
     },
     {
       "path": "/work/nix-windows/",
@@ -259,8 +263,8 @@
       "alt": "A path across platforms. Interlocking tiles labeled Nix and Windows illustrate a staged platform boundary.",
       "width": 1200,
       "height": 630,
-      "bytes": 45850,
-      "sha256": "64b186d693fb51a2ce93c018876dcde16f86b4fd32757b2f8dc00b12f18418eb"
+      "bytes": 45557,
+      "sha256": "ee7b0af2bd0a52d71020827205820984aff80b937c663fb49d1d69b2aafc7636"
     },
     {
       "path": "/work/agent-systems/",
@@ -270,8 +274,8 @@
       "alt": "Agent teams. Decisions that travel. A folded handoff sheet carries reasons, current state, and the next step.",
       "width": 1200,
       "height": 630,
-      "bytes": 61847,
-      "sha256": "f76c792fc76befc45542401e2c63cd6fe91be8f06e81c003cab7df355f6fcc3f"
+      "bytes": 62878,
+      "sha256": "44655b662358c10d7902a4e7fc0ee1ea80449f6c2796cda85b25982fc8312c62"
     },
     {
       "path": "/proof/",
@@ -281,8 +285,8 @@
       "alt": "Follow the result back to the work. Three illustrated source sheets are labeled code, review, and release.",
       "width": 1200,
       "height": 630,
-      "bytes": 52352,
-      "sha256": "6163aff2562149eb59fcf1b581baddaf708a0f2e2d21f98d2d1709aa91178882"
+      "bytes": 52905,
+      "sha256": "85c38b1a56fb892455ff206e42434ef90ecc4a952d76a85e081fc8fdb7a5a7b1"
     },
     {
       "path": "/about/",
@@ -292,8 +296,8 @@
       "alt": "Experience across industries. A portrait of Madison Hope Steiner accompanies the experience page.",
       "width": 1200,
       "height": 630,
-      "bytes": 64601,
-      "sha256": "24615cc5032dcd258e738563cedf7b95b5e221c310849e918d241000047f4d6a"
+      "bytes": 63380,
+      "sha256": "896c602a795d0f56e5e095df4ce7b10edad4a8c0ee0f17287f9f5ff7c97fe52e"
     },
     {
       "path": "/credentials/",
@@ -303,8 +307,8 @@
       "alt": "Curiosity, put into practice. Earned certification badges accompany Madison Hope Steiner's learning history.",
       "width": 1200,
       "height": 630,
-      "bytes": 68166,
-      "sha256": "60a564aa204f9ecb1913681935590916e4e5af84adf8483051e2b705490353c6"
+      "bytes": 67652,
+      "sha256": "0eb7d1e86b0c979ee2ce79060fff76f6936c07d710723f895a2b5795c22cd2a8"
     },
     {
       "path": "/decisions/",
@@ -314,8 +318,8 @@
       "alt": "The trade-off is part of the architecture. Three editorial cards identify pressure, choice, and cost.",
       "width": 1200,
       "height": 630,
-      "bytes": 53568,
-      "sha256": "c699af7865abb59361f4b006724a82b456ced78cd09ff76ff4f118b81ada376f"
+      "bytes": 53757,
+      "sha256": "b6464a914ed51ccd54e40a70c3f4117c6a3409182f5d19c47ee25e6c31decc01"
     },
     {
       "path": "/method/",
@@ -325,8 +329,8 @@
       "alt": "Build capability. Keep responsibility. Three connected editorial sheets represent understand, build, and verify.",
       "width": 1200,
       "height": 630,
-      "bytes": 54529,
-      "sha256": "58f8a5e6ff25f9395ff4d2c0a618bdfe8d8a85f70fc26d56d825175612ce1f5b"
+      "bytes": 54997,
+      "sha256": "44849c4e8320ba8d275843e08244af8cc7b99b074ff2d696bf448cf294b18471"
     },
     {
       "path": "/capabilities/",
@@ -336,8 +340,8 @@
       "alt": "Tools other teams can use. Assembled layers show work spanning foundations, security, developer tools, and AI workflows.",
       "width": 1200,
       "height": 630,
-      "bytes": 54845,
-      "sha256": "a4f6b7b94dae58f9fbbde9b62cf34f3b90d67dc033b68443b330ceccdbe2e07c"
+      "bytes": 56120,
+      "sha256": "305ba785aa66c6b4a15fda273651bbac9df4007be87b2a06c4931fe1ef51496a"
     },
     {
       "path": "/models/",
@@ -347,8 +351,8 @@
       "alt": "The models I work with. Three editorial sheets labeled Direction, Models, and Review illustrate a collaborative workflow.",
       "width": 1200,
       "height": 630,
-      "bytes": 47234,
-      "sha256": "803c3d60c1998fcf3a23384b571ae1158963343e9fc4ce10e32601a6eddff744"
+      "bytes": 47706,
+      "sha256": "c96e6cc073f1e124e7b3a925feb25035c55395c47d2ae86f3ec05d349a751f5d"
     },
     {
       "path": "/404.html",
@@ -358,8 +362,8 @@
       "alt": "Another way into the work. An open editorial doorway introduces links back to the portfolio.",
       "width": 1200,
       "height": 630,
-      "bytes": 41314,
-      "sha256": "3d8d0bae79656a5e6a21ad65332245ac1b851125c89cde6c82ab340f73d76051"
+      "bytes": 41790,
+      "sha256": "820c3d2c3dba4254fec7b7949d653d5d569824835107334e1941ceee4ad1f398"
     }
   ],
   "aliases": [

@@ -1,10 +1,11 @@
 {
   "schemaVersion": 2,
   "publicOnly": true,
-  "generatedAt": "2026-09-05T03:30:53.508Z",
-  "sourceExport": "2026-09-03-public-contributions",
-  "sourceExportCompletedAt": "2026-09-03T15:29:33.992364Z",
-  "sourceExportRunId": "450e1321-9a2d-4015-a841-e9cf57ceb2b3",
+  "generatedAt": "2026-10-11T21:49:20.455Z",
+  "sourceKind": "full-public-history-with-curated-project-records",
+  "sourceExport": "public-history-ed15c12a-9049-40ea-995f-4a276492954b",
+  "sourceExportCompletedAt": "2026-10-11T14:04:43.978705Z",
+  "sourceExportRunId": "ed15c12a-9049-40ea-995f-4a276492954b",
   "graphIds": [
     "automated-security-helper",
     "cloudformation-guard",
@@ -13,6 +14,8 @@
     "rules-js-pnp",
     "lightpanda-svg",
     "aws-labs-mcp",
-    "cloud-runtime"
-  ]
+    "cloud-runtime",
+    "ash-workspace"
+  ],
+  "sourceBindings": "full-contribution-generation.json"
 }

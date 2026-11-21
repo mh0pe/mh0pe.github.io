@@ -1,7 +1,7 @@
 import SiteFooter from "./SiteFooter";
 import SiteHeader from "./SiteHeader";
 import RouteStyles from "./RouteStyles";
-import RouteMotif, {
+import {
   resolveRouteMotif,
   type RouteMotifKey,
 } from "../v3/RouteMotif";
@@ -51,7 +51,6 @@ export function RouteFrame({
         {collection ? (
           <CollectionPageData path={collection[0]} name={collection[1]} description={collection[2]} />
         ) : null}
-        {routeMotif ? <RouteMotif route={routeMotif} /> : null}
         {children}
       </main>
       <SiteFooter compact={Boolean(current)} journeyKey={routeMotif === "case-study" ? undefined : routeMotif} />
@@ -77,12 +76,7 @@ export function RouteIntro({
       <div className={`shell route-intro__grid${visual ? " route-intro__grid--with-visual" : ""}`}>
         <div className="route-folio">
           <p className="section-code">{code}</p>
-          <svg className="route-thread" data-motion-once viewBox="0 0 160 80" fill="none" aria-hidden="true" focusable="false">
-            <path pathLength="1" d="M1 62C35 62 32 18 70 18S111 62 159 35" />
-            <path d="M70 18v39m-5-5 5 5 5-5" />
-            <circle cx="70" cy="18" r="5" />
-            <circle cx="159" cy="35" r="1" />
-          </svg>
+          <span className="route-folio__rule" aria-hidden="true" />
         </div>
         <div>
           <h1 id="route-title">{title}</h1>

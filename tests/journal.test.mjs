@@ -64,6 +64,10 @@ test("the hub has native topic destinations and inactive controls until enhancem
   assert.match(html, /data-journal-tag-control="true" hidden=""/);
   assert.match(html, /role="status" aria-live="polite" aria-atomic="true"/);
   assert.match(html, /journal-feature__legend/);
+  const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(new Set(ids).size, ids.length, "the writing index has unique heading and illustration IDs");
+  assert.match(html, /<h2 id="journal-explanation-section-title">/);
+  assert.match(html, /<title id="journal-explanation-title">/);
   for (const topic of blogTopics) {
     assert.ok(html.includes('href="#topic-' + topic.id + '"'));
     assert.ok(html.includes('id="topic-' + topic.id + '"'));
@@ -145,7 +149,7 @@ class Target {
   hasAttribute(name) { return this.attributes.has(name); }
   addEventListener(name, handler) { this.listeners.set(name, handler); }
   emit(name, event = {}) { this.listeners.get(name)?.(event); }
-  scrollIntoView() { this.scrolled = true; }
+  scrollIntoView(options) { this.scrolled = true; this.scrollOptions = options; this.scrollCalls = (this.scrollCalls ?? 0) + 1; }
   focus() { this.focusCalls = (this.focusCalls ?? 0) + 1; }
 }
 
@@ -207,7 +211,7 @@ async function harness({ reduced = false, saved = false, hidden = false, observe
   const flush = () => { while (frames.length) frames.shift()(); };
   const navigate = (path) => { current = new URL(path, current); window.emit("popstate"); };
   const visibleCount = () => groups.flatMap((group) => group.entries).filter((entry) => !entry.hidden).length;
-  return { document, window, media, connection, figures, groups, topicLinks, select, status, empty, tagWrapper, resets, click, enter, flush, navigate, visibleCount, get url() { return current; } };
+  return { document, window, media, connection, figures, groups, topicLinks, select, status, empty, tagWrapper, resets, articles, click, enter, flush, navigate, visibleCount, get url() { return current; } };
 }
 
 test("topic and focus filters preserve URL state, reset, and browser history", async () => {
@@ -250,11 +254,54 @@ test("empty-state reset returns keyboard focus to visible All writing", async ()
   assert.equal(all.attributes.get("aria-current"), "location");
 });
 
+test("native topic and reset destinations match enhanced filtering from filtered URLs", async () => {
+  const page = await harness({ url: "https://mh0pe.github.io/blog/?topic=security&tag=MCP&ref=reading#articles" });
+  for (const link of page.topicLinks) {
+    const destination = new URL(link.attributes.get("href"), page.url);
+    assert.equal(destination.searchParams.get("topic"), link.dataset.journalTopic === "all" ? null : link.dataset.journalTopic);
+    assert.equal(destination.searchParams.get("tag"), "MCP");
+    assert.equal(destination.searchParams.get("ref"), "reading");
+    const native = await harness({ url: destination.href });
+    const enhanced = await harness({ url: page.url.href });
+    enhanced.click(enhanced.topicLinks.find(candidate => candidate.dataset.journalTopic === link.dataset.journalTopic));
+    assert.equal(native.visibleCount(), enhanced.visibleCount());
+    assert.equal(native.status.textContent, enhanced.status.textContent);
+    assert.equal(page.click(link, { metaKey: true }).prevented, undefined);
+  }
+  for (const reset of page.resets) {
+    const destination = new URL(reset.attributes.get("href"), page.url);
+    assert.equal(destination.searchParams.get("topic"), null);
+    assert.equal(destination.searchParams.get("tag"), null);
+    assert.equal(destination.searchParams.get("ref"), "reading");
+    assert.equal(destination.hash, "#articles");
+    assert.equal((await harness({ url: destination.href })).visibleCount(), 9);
+  }
+  page.navigate("?topic=browser&tag=SVG");
+  for (const link of page.topicLinks) assert.equal(new URL(link.attributes.get("href"), page.url).searchParams.get("tag"), "SVG");
+  page.select.value = ""; page.select.emit("change");
+  for (const link of page.topicLinks) assert.equal(new URL(link.attributes.get("href"), page.url).searchParams.get("tag"), null);
+});
+
 test("persistent Clear filters control does not move keyboard focus", async () => {
   const page = await harness({ url: "https://mh0pe.github.io/blog/?topic=security&tag=MCP" });
   page.click(page.resets[0]);
   assert.equal(page.visibleCount(), 9);
   assert.equal(page.topicLinks[0].focusCalls ?? 0, 0);
+});
+
+test("both writing resets scroll to the header-offset library target without changing modified-click behavior", async () => {
+  for (const index of [0, 1]) {
+    const page = await harness({ url: "https://mh0pe.github.io/blog/?topic=security&tag=MCP" });
+    page.click(page.resets[index], { metaKey: true });
+    assert.equal(page.articles.scrollCalls ?? 0, 0);
+    page.click(page.resets[index]);
+    assert.equal(page.articles.scrollCalls, 1);
+    assert.equal(page.articles.scrollOptions.behavior, "auto");
+    assert.equal(page.articles.scrollOptions.block, "start");
+    assert.equal(page.url.hash, "#articles");
+    assert.equal(page.visibleCount(), 9);
+    assert.equal(page.topicLinks[0].focusCalls ?? 0, index === 1 ? 1 : 0);
+  }
 });
 
 test("illustrations assemble once when visible and replay only while visible", async () => {

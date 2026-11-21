@@ -24,6 +24,7 @@ export default function BlogPage() {
         blogPost: blogArticles.map((article) => ({ "@type": "BlogPosting", headline: article.title, url: "https://mh0pe.github.io" + articlePath(article) })),
       }} />
       <div className="journal journal-index" data-journal>
+        <div className="shell journal-masthead"><span>Ideas in practice</span><span>By Madison Hope Steiner</span></div>
         <header className="shell journal-opening">
           <div>
             <a className="journal-back" href="/">← The portfolio</a>
@@ -71,9 +72,10 @@ export default function BlogPage() {
               <div className="journal-entries">
                 {blogArticles.filter((article) => article.topic === topic.id).map((article) => (
                   <article className="journal-entry" key={article.slug} data-journal-entry data-journal-tags={JSON.stringify(article.tags)}>
-                    <div className="journal-entry__art" aria-hidden="true" style={artStyle(artFor(article.slug))}>
+                    <a className="journal-entry__art" href={articlePath(article)} aria-label={topic.label + ": read " + article.title} style={artStyle(artFor(article.slug))}>
                       <ArtDrawing direction={artFor(article.slug)} id={"preview-" + article.slug} compact />
-                    </div>
+                      <span className="journal-entry__cover-label">{topic.label}<span aria-hidden="true">↗</span></span>
+                    </a>
                     <div className="journal-entry__copy">
                       <p className="journal-eyebrow">{article.project}</p>
                       <h3><a href={articlePath(article)}>{article.title} <span aria-hidden="true">↗</span></a></h3>
@@ -102,8 +104,8 @@ export default function BlogPage() {
             } <span aria-hidden="true">→</span></a></li>)}
           </ul>
         </section>
-        <section className="shell journal-explanation" aria-labelledby="journal-explanation-title">
-          <h2 id="journal-explanation-title">Read the idea. Follow it into the work.</h2>
+        <section className="shell journal-explanation" aria-labelledby="journal-explanation-section-title">
+          <h2 id="journal-explanation-section-title">Read the idea. Follow it into the work.</h2>
           <p>The illustrations explain a design choice. Each essay links to the code, review, or documentation where that choice takes shape.</p>
           <EditorialBeat direction={sharedArt} beat={sharedArt.beats[0]} id="journal-explanation" />
         </section>

@@ -8,6 +8,17 @@ async function source(path) {
   return readFile(new URL(path, root), "utf8");
 }
 
+test("home identity uses its visible name and role instead of an overriding label", async () => {
+  const header = await source("app/components/v2/SiteHeader.tsx");
+  const identity = header.match(/<a\b[^>]*className="site-identity"[^>]*>[\s\S]*?<\/a>/)?.[0];
+  assert.ok(identity);
+  assert.match(identity, /href="\/"/);
+  assert.doesNotMatch(identity, /aria-label(?:ledby)?=/);
+  assert.match(identity, /className="site-identity__mark" aria-hidden="true"/);
+  assert.match(identity, /className="site-identity__name">Madison <em>Hope<\/em> Steiner<\/span>/);
+  assert.match(identity, /<small>Principal AI Architect<\/small>/);
+});
+
 test("model explorer keyboard order follows its visual reading order", async () => {
   const explorer = await source("app/components/AttributionExplorer.tsx");
   const styles = await Promise.all([
@@ -27,6 +38,21 @@ test("model explorer keyboard order follows its visual reading order", async () 
       /\.attribution-(?:workspace|overview|evidence)\s*\{[^}]*\border\s*:/,
     );
   }
+});
+
+test("model selection keeps visible values in its name and action guidance in its description", async () => {
+  const explorer = await source("app/components/AttributionExplorer.tsx");
+  const trace = explorer.match(/<button\s+type="button"\s+className=\{`attribution-trace[\s\S]*?<\/button>/)?.[0];
+  assert.ok(trace);
+  assert.doesNotMatch(trace, /aria-label(?:ledby)?=/);
+  assert.match(trace, /aria-describedby=\{descriptionId\}/);
+  assert.match(trace, /<span id=\{descriptionId\} hidden>/);
+  assert.match(trace, /aria-pressed=\{isSelected\}/);
+  assert.match(trace, /aria-controls=\{evidenceId\}/);
+  assert.match(trace, /onClick=\{\(\) => focusAgent\(row.agent.id\)\}/);
+  assert.match(trace, /<strong>\{row.agent.label\}<\/strong>/);
+  assert.match(trace, /integerFormatter.format\(row.value\)/);
+  assert.match(trace, /percentageFormatter.format\(row.percentage\)/);
 });
 
 test("header content wraps instead of clipping enlarged identity text", async () => {
@@ -148,7 +174,7 @@ test("all landing credentials use visible named category galleries without discl
   assert.match(section, /<ul className="landing-credential-gallery">/);
   assert.match(section, /category\.credentials\.map\(\(credential\)/);
   assert.match(section, /<a href=\{credential\.href\} target="_blank" rel="noreferrer">/);
-  assert.match(section, /<Image src=\{credential\.image\} alt=""[^>]*loading="lazy"[^>]*unoptimized/);
+  assert.match(section, /<img src=\{credential\.image\} alt=""[^>]*loading="lazy"[^>]*decoding="async"/);
   assert.match(section, /<strong>\{credential\.name\}<\/strong>/);
   assert.match(section, /Earned \{credential\.issued\}/);
   assert.match(section, /View Credly record, opens in a new tab/);

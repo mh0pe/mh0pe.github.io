@@ -49,7 +49,7 @@ export default function AboutPage() {
             <p className="section-code">01 / Impact in context</p>
             <div>
               <h2 id="impact-title">Where I have contributed.</h2>
-              <p>The organizations I have worked with, and the scope of that work.</p>
+              <p>The organizations I have worked with, the environments they operate in, and selected areas where I contributed.</p>
             </div>
           </div>
           <ol className="career-ledger career-ledger--unified">
@@ -83,7 +83,7 @@ export default function AboutPage() {
                     <svg viewBox="0 0 120 72"><circle cx="60" cy="36" r="23" /><path d="M12 36h25M83 36h25M60 7v12M60 53v12" /></svg>
                   </div>
                 )}
-                <div><h3>{entry.label}</h3><p>{entry.scope}</p></div>
+                <div><h3>{entry.label}</h3><p>{entry.employer && "context_label" in entry.employer && entry.employer.context_label ? <strong>{String(entry.employer.context_label)}: </strong> : null}{entry.scope}</p></div>
               </li>
             ))}
           </ol>

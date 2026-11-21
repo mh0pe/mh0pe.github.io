@@ -336,11 +336,11 @@ test("artifact values contain no private or source-level payloads", async () => 
 test("matches the audited public snapshot totals", async () => {
   const { data } = await attributionArtifact();
 
-  assert.equal(data.coverage.candidateShas, 1_634);
+  assert.equal(data.coverage.candidateShas, 2_990);
   assert.equal(data.coverage.duplicateOccurrencesRemoved, 29);
-  assert.equal(data.coverage.mergeCommitsExcluded, 141);
-  assert.equal(data.coverage.zeroDiffCommits, 10);
-  assert.equal(data.coverage.measuredShas, 1_483);
+  assert.equal(data.coverage.mergeCommitsExcluded, 331);
+  assert.equal(data.coverage.zeroDiffCommits, 12);
+  assert.equal(data.coverage.measuredShas, 2_647);
   assert.deepEqual(data.coverage.warnings, []);
   assert.equal(data.commits.length, data.coverage.measuredShas);
 
@@ -351,7 +351,7 @@ test("matches the audited public snapshot totals", async () => {
     }),
     { code: 0, allText: 0 },
   );
-  assert.deepEqual(totals, { code: 379_449, allText: 448_676 });
+  assert.deepEqual(totals, { code: 777_196, allText: 970_748 });
 
   const byAgent = new Map();
   for (const commit of data.commits) {
@@ -374,10 +374,11 @@ test("matches the audited public snapshot totals", async () => {
     "claude-opus-4-6": { commits: 96, code: 17_236, allText: 52_998 },
     "claude-opus-4-7": { commits: 322, code: 92_269, allText: 100_332 },
     "claude-opus-4-8": { commits: 36, code: 15_418, allText: 15_432 },
-    "claude-opus-5": { commits: 944, code: 219_257, allText: 242_446 },
+    "claude-opus-5": { commits: 1_328, code: 313_959, allText: 339_340 },
+    "claude-opus-5-5": { commits: 774, code: 271_688, allText: 390_883 },
     "claude-sonnet-4-6": { commits: 5, code: 5_884, allText: 5_904 },
     "github-copilot": { commits: 41, code: 3_482, allText: 3_640 },
-    "openai-codex": { commits: 2, code: 2_267, allText: 2_270 },
+    "openai-codex": { commits: 8, code: 33_624, allText: 36_565 },
   });
 });
 
@@ -451,9 +452,9 @@ test("renders public evidence links and an exact-value table", async () => {
   assert.match(section, /opens in a new tab/i);
 });
 
-test("keeps attribution data and rendered evidence within performance budgets", async () => {
-  const [{ source }, response, packageSource] = await Promise.all([
-    attributionArtifact(),
+test("keeps initial attribution data and rendered evidence within performance budgets", async () => {
+  const [source, response, packageSource] = await Promise.all([
+    readFile(new URL("app/data/attribution-transport.json", root), "utf8"),
     render("/models"),
     readFile(new URL("package.json", root), "utf8"),
   ]);
@@ -468,11 +469,11 @@ test("keeps attribution data and rendered evidence within performance budgets", 
 
   assert.ok(
     Buffer.byteLength(source) <= 128 * 1024,
-    "Compact attribution JSON should remain at or below 128 KB raw",
+    "Initial attribution summary should remain at or below 128 KB raw",
   );
   assert.ok(
     gzipSync(source).byteLength <= 56 * 1024,
-    "Compact attribution JSON should remain at or below 56 KB gzip",
+    "Initial attribution summary should remain at or below 56 KB gzip",
   );
   assert.ok(
     Buffer.byteLength(html) <= 240 * 1024,
@@ -500,7 +501,12 @@ test("keeps attribution data and rendered evidence within performance budgets", 
     compactEvidenceRows.length > 0 && compactEvidenceRows.length <= 12,
     "The no-JavaScript evidence sample should be useful and bounded",
   );
-  assert.match(section, /complete public record/i);
+  assert.match(section, /Explore selected public changes by project and model/i);
+  assert.match(section, /The chart includes every change in\s*this view/i);
+  assert.match(section, /recorded commit markers or are inferred\s*from my stated model-use history/i);
+  assert.match(section, /Line counts show change volume,\s*not individual model output or project impact/i);
+  assert.match(section, /data-association-basis="[rht]"/);
+  assert.doesNotMatch(section, /complete public record|No model data|Model not recorded/i);
 
   const packageData = JSON.parse(packageSource);
   const dependencies = new Set([

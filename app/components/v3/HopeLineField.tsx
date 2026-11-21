@@ -22,6 +22,10 @@ const projectRoutes: Record<
   ContributionGraphId,
   { readonly href: string; readonly label: string }
 > = {
+  "ash-workspace": {
+    href: "/blog/workspace-security/#sources",
+    label: "Explore the workspace implementation",
+  },
   "automated-security-helper": {
     href: "/work/automated-security-helper/",
     label: "Trace the case",
@@ -87,6 +91,7 @@ const familyColors = {
 } as const;
 
 const agentColors: Record<string, string> = {
+  "claude-opus-5-5": "#f2a7c5",
   "claude-opus-5": "var(--coral, #ef806f)",
   "claude-fable-5": "var(--gold, #d6b45d)",
   "claude-opus-4-8": "var(--lime, #b1cc68)",
@@ -103,6 +108,7 @@ const geometricAgentMarkers = new Set([
   "square",
   "pentagon",
   "hexagon",
+  "star",
 ]);
 
 const maxRepositoriesPerProject = 2;
@@ -418,6 +424,9 @@ function ModelGlyph({
       ) : null}
       {marker === "hexagon" ? (
         <path d="M-6-3.5 0-7 6-3.5 6 3.5 0 7-6 3.5Z" />
+      ) : null}
+      {marker === "star" ? (
+        <path d="M0-7 2.1-2.2 7-1.9 3.3 1.4 4.4 6.3 0 3.7-4.4 6.3-3.3 1.4-7-1.9-2.1-2.2Z" />
       ) : null}
       {isTextMarker ? (
         <>

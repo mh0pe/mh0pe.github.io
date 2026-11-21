@@ -45,6 +45,7 @@ test("the credential chamber uses a bright focus ring independent of page theme"
 
 test("changed contrast styles have new export cache identifiers", async () => {
   assert.match(await read("app/components/v2/RouteStyles.tsx"), /portfolio-v3\.css\?v=20261003-palette-contrast/);
-  assert.match(await read("app/components/v2/RouteStyles.tsx"), /20261003-loading/);
+  assert.match(await read("app/components/v2/RouteStyles.tsx"), /routeStyleVersions\[route as keyof typeof routeStyleVersions\]/);
+  assert.doesNotMatch(await read("app/components/v2/RouteStyles.tsx"), /20261003-loading/);
   assert.match(await read("app/credentials/layout.tsx"), /credentials\.css\?v=20261003-palette/);
 });

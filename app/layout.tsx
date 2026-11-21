@@ -103,9 +103,6 @@ export async function generateMetadata(): Promise<Metadata> {
       address: false,
       telephone: false,
     },
-    icons: {
-      icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    },
     authors: [{ name: "Madison Hope Steiner", url: canonicalUrl }],
     creator: "Madison Hope Steiner",
     publisher: "Madison Hope Steiner",
@@ -167,6 +164,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <meta
           httpEquiv="Content-Security-Policy"
           content="default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; img-src 'self' data:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"

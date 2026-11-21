@@ -26,8 +26,10 @@ test("retained Hope Line renders deterministic graph-derived artwork in isolatio
   const graphIds = [...field.matchAll(/data-graph-id="([^"]+)"/g)].map(
     (match) => match[1],
   );
-  assert.deepEqual([...new Set(graphIds)], expectedProjectGraphIds);
-  for (const graphId of expectedProjectGraphIds) {
+  const activeVisualGraphIds = expectedProjectGraphIds.filter(id => id !== "ash-workspace");
+  assert.equal(activeVisualGraphIds.length, 8);
+  assert.deepEqual([...new Set(graphIds)], activeVisualGraphIds);
+  for (const graphId of activeVisualGraphIds) {
     assert.equal(
       graphIds.filter((candidate) => candidate === graphId).length,
       3,
@@ -56,6 +58,19 @@ test("retained Hope Line renders deterministic graph-derived artwork in isolatio
   assert.doesNotMatch(field, /<(?:image|foreignObject|script|canvas)\b/i);
   assert.doesNotMatch(field, /(?:href|xlink:href)="data:/i);
   assert.ok(gzipSync(field).byteLength <= 10 * 1024);
+});
+
+test("ninth workspace data group is surfaced in article sources, not an extra global anchor", async () => {
+  assert.equal(expectedProjectGraphIds.length, 9);
+  assert.ok(expectedProjectGraphIds.includes("ash-workspace"));
+  const page = await readFile(new URL("../app/components/blog/ArticlePage.tsx", import.meta.url), "utf8");
+  const trail = await readFile(new URL("../app/components/blog/ArticleSourceTrail.tsx", import.meta.url), "utf8");
+  assert.match(page, /article\.slug === "workspace-security" \? <ArticleSourceTrail sourceHref=\{source\.href\}/);
+  assert.match(trail, /getContributionPlayerRecords\("ash-workspace"\)/);
+  assert.match(trail, /<summary>Explore this change/);
+  assert.doesNotMatch(trail, /use client|ContributionCardPlayer|ContributionGraphCanvas/);
+  const html = renderToStaticMarkup(createElement(HopeLineField));
+  assert.doesNotMatch(html, /data-graph-id="ash-workspace"/);
 });
 
 test("keeps the Hope Line server-only, deterministic, and free of runtime loaders", async () => {

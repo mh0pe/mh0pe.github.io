@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import postcss from "postcss";
@@ -13,10 +14,17 @@ const sharedFamilies = [
   "button-row", "text-action", "micro-label", "is-", "has-", "js-",
 ];
 export const routeFamilies = {
-  home: [...sharedFamilies, "landing-", "architecture-", "contribution-scene", "lineage-", "source-"],
+  home: [...sharedFamilies, "landing-", "architecture-", "contribution-scene", "lineage-", "source-", "article-art"],
   models: [...sharedFamilies, "proof-models", "attribution-"],
   method: [...sharedFamilies, "philosophy-", "method-", "motion-film"],
   blog: [...sharedFamilies, "journal", "article-"],
+  credentials: [...sharedFamilies, "credential-"],
+  work: [...sharedFamilies, "button", "work-", "contribution-scene", "lineage-", "source-", "status-stamp"],
+  "case-study": [...sharedFamilies, "case-", "claim-ledger", "lineage-", "source-", "status-stamp"],
+  proof: [...sharedFamilies, "proof-", "source-", "vocabulary-"],
+  about: [...sharedFamilies, "about-", "career-ledger", "case-close__grid", "source-"],
+  capabilities: [...sharedFamilies, "capability-atlas", "atlas-", "source-"],
+  decisions: [...sharedFamilies, "decision-pages", "source-"],
 };
 
 export function includesRouteClass(route, className) {
@@ -61,11 +69,19 @@ export async function buildRouteStyles(projectRoot) {
     filename,
     source: await readFile(resolve(projectRoot, "public", filename), "utf8"),
   })));
+  const versions = {};
   for (const route of Object.keys(routeFamilies)) {
     const css = inputs.map(({ source, filename }) => routeStylesheet(source, route, filename)).join("\n");
     await writeFile(resolve(output, `${route}.css`), css, "utf8");
+    versions[route] = createHash("sha256").update(css).digest("hex");
     console.log(`Route stylesheet ${route}: ${Buffer.byteLength(css)} bytes`);
   }
+  // Generated before SSR so HTML, Flight hints and hydrated props all identify
+  // the same final bytes. Post-render HTML-only versioning cannot do this.
+  const manifest = resolve(projectRoot, "app/data/route-style-versions.json");
+  await mkdir(dirname(manifest), { recursive: true });
+  await writeFile(manifest, `${JSON.stringify(versions, null, 2)}\n`);
+  return versions;
 }
 
 const scriptPath = fileURLToPath(import.meta.url);

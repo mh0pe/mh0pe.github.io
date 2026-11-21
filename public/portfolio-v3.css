@@ -3945,15 +3945,27 @@ html[data-theme="dark"] .hope-brand .not-found {
   navigation: auto;
 }
 
+::view-transition-old(root) {
+  display: none;
+}
+
+::view-transition-new(root) {
+  animation: none;
+}
+
 ::view-transition-old(site-identity),
 ::view-transition-new(site-identity) {
   animation-duration: 420ms;
   animation-timing-function: var(--hope-ease);
 }
 
+@media (max-width: 700px) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root),
   ::view-transition-old(site-identity),
   ::view-transition-new(site-identity),
   ::view-transition-old(site-header),

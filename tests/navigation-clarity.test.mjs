@@ -41,6 +41,17 @@ test("child routes do not claim a primary destination as current", async () => {
   assert.match(frame, /const primarySection = routeMotif === "case-study" \? current : undefined;/);
 });
 
+test("the editorial masthead keeps reachable controls and attaches its reading-progress rule", async () => {
+  const [css, markup, runtime] = await Promise.all([
+    source("public/editorial-system.css"), source("app/components/v2/SiteHeader.tsx"), source("public/interactions.css"),
+  ]);
+  assert.match(css, /\.site-header__inner \{[^}]*display: grid;[^}]*box-shadow: none/);
+  assert.match(css, /\.mobile-nav summary \{[^}]*min-height: 44px/);
+  assert.match(css, /\.mobile-nav summary > span:first-child \{[^}]*position: static;[^}]*clip: auto/);
+  assert.match(markup, /<details className="mobile-nav">[\s\S]*?<summary>[\s\S]*?<span>Menu<\/span>/);
+  assert.match(runtime, /\.site-header::after \{[^}]*bottom: -1px/);
+});
+
 test("nested work has a visual section cue without claiming the parent page is current", async () => {
   const header = await source("app/components/v2/SiteHeader.tsx");
   const css = await source("public/portfolio-v3.css");

@@ -294,4 +294,32 @@ export const articleMobileLabels: Record<MotionStory, ChapterGuides> = {
       ],
     },
   ],
+  "slowest-shard": [
+    { orientation: "Three workers run at the same time, but the first carries three long tests.", parts: [
+      { label: "Worker 1", location: "Top lane", meaning: "Three long tests set the finish time." },
+      { label: "Workers 2 and 3", location: "Lower lanes", meaning: "Their three tests each are shorter." },
+    ] },
+    { orientation: "The tiles keep their letters as they change which worker runs them.", parts: [
+      { label: "Long blocks", location: "Amber tiles", meaning: "One moves into each of the three lanes." },
+      { label: "Last worker", location: "Dashed line", meaning: "The finish moves earlier in this example." },
+    ] },
+    { orientation: "The new layout holds the same nine test blocks as the opening layout.", parts: [
+      { label: "A through I", location: "All three lanes", meaning: "The same nine identities appear once each." },
+      { label: "Finish line", location: "Right of longest lane", meaning: "An estimate of the load, not a wall-clock measurement." },
+    ] },
+  ],
+  "support-is-a-matrix": [
+    { orientation: "The first column gives the SDK release for each illustrated build.", parts: [
+      { label: "Older SDK", location: "Top row", meaning: "The top example uses the older release." },
+      { label: "Newer SDK", location: "Lower two rows", meaning: "They have the same release but different target capabilities." },
+    ] },
+    { orientation: "The camera setting and the chip capability are two separate columns.", parts: [
+      { label: "Camera on", location: "Component column", meaning: "All three examples enable the camera component." },
+      { label: "CSI available", location: "Middle row", meaning: "Only this example target has the separate interface." },
+    ] },
+    { orientation: "The right column records which example checks the CSI build path.", parts: [
+      { label: "Included", location: "Middle row", meaning: "This combination is eligible for a CSI build check." },
+      { label: "No CSI check", location: "Dashed cells", meaning: "Outside this check, not a failed build." },
+    ] },
+  ],
 };

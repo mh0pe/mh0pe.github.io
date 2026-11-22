@@ -12,9 +12,9 @@ const slugs = JSON.parse(await read("app/data/blog-routes.json"));
 const structured = (html) => [...html.matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((match) => JSON.parse(match[1]));
 const flatSchema = (html) => structured(html).flatMap((record) => record["@graph"] ?? [record]);
 
-test("the journal has ten distinct, illustrated, source-backed essays", () => {
-  assert.equal(blogArticles.length, 10);
-  assert.equal(new Set(slugs).size, 10);
+test("the journal has twelve distinct, illustrated, source-backed essays", () => {
+  assert.equal(blogArticles.length, 12);
+  assert.equal(new Set(slugs).size, 12);
   assert.deepEqual(slugs, blogArticles.map((article) => article.slug));
   for (const article of blogArticles) {
     assert.ok(blogTopics.some((topic) => topic.id === article.topic));
@@ -59,7 +59,7 @@ test("all eight original narratives keep their homepage entry points and canonic
 
 test("the hub has native topic destinations and inactive controls until enhancement", async () => {
   const html = await read("pages-dist/blog/index.html");
-  assert.equal((html.match(/\bdata-journal-entry="true"/g) ?? []).length, 10);
+  assert.equal((html.match(/\bdata-journal-entry="true"/g) ?? []).length, 12);
   assert.match(html, /<select[^>]*data-journal-tag="true"[^>]*disabled=""/);
   assert.match(html, /data-journal-tag-control="true" hidden=""/);
   assert.match(html, /role="status" aria-live="polite" aria-atomic="true"/);
@@ -74,7 +74,7 @@ test("the hub has native topic destinations and inactive controls until enhancem
   }
   for (const article of blogArticles) assert.ok(html.includes('href="' + articlePath(article) + '"'));
   const blog = flatSchema(html).find((record) => record["@type"] === "Blog");
-  assert.equal(blog.blogPost.length, 10);
+  assert.equal(blog.blogPost.length, 12);
 });
 
 for (const article of blogArticles) {
@@ -218,8 +218,8 @@ test("topic and focus filters preserve URL state, reset, and browser history", a
   const page = await harness();
   assert.equal(page.select.disabled, false);
   assert.equal(page.tagWrapper.hidden, false);
-  assert.equal(page.visibleCount(), 10);
-  assert.match(page.status.textContent, /10 essays/);
+  assert.equal(page.visibleCount(), 12);
+  assert.match(page.status.textContent, /12 essays/);
   page.click(page.topicLinks.find((link) => link.dataset.journalTopic === "security"));
   assert.equal(page.visibleCount(), 3);
   assert.equal(page.url.searchParams.get("topic"), "security");
@@ -227,14 +227,14 @@ test("topic and focus filters preserve URL state, reset, and browser history", a
   assert.equal(page.visibleCount(), 0);
   assert.equal(page.empty.hidden, false);
   page.click(page.resets[0]);
-  assert.equal(page.visibleCount(), 10);
+  assert.equal(page.visibleCount(), 12);
   assert.equal(page.empty.hidden, true);
   assert.equal(page.url.search, "");
   page.navigate("?topic=browser&tag=SVG");
   assert.equal(page.visibleCount(), 1);
   assert.equal(page.select.value, "SVG");
   page.navigate("?topic=unknown&tag=unknown");
-  assert.equal(page.visibleCount(), 10);
+  assert.equal(page.visibleCount(), 12);
   assert.equal(page.select.value, "");
   assert.equal(page.click(page.topicLinks[1], { metaKey: true }).prevented, undefined);
   assert.equal(page.click(page.resets[0], { button: 1 }).prevented, undefined);
@@ -248,7 +248,7 @@ test("empty-state reset returns keyboard focus to visible All writing", async ()
   assert.equal(all.focusCalls ?? 0, 0, "modified activation keeps native navigation");
   assert.equal(page.empty.hidden, false);
   page.click(page.resets[1]);
-  assert.equal(page.visibleCount(), 10);
+  assert.equal(page.visibleCount(), 12);
   assert.equal(page.empty.hidden, true);
   assert.equal(all.focusCalls, 1, "focus leaves the panel that the reset just hid");
   assert.equal(all.attributes.get("aria-current"), "location");
@@ -274,7 +274,7 @@ test("native topic and reset destinations match enhanced filtering from filtered
     assert.equal(destination.searchParams.get("tag"), null);
     assert.equal(destination.searchParams.get("ref"), "reading");
     assert.equal(destination.hash, "#articles");
-    assert.equal((await harness({ url: destination.href })).visibleCount(), 10);
+    assert.equal((await harness({ url: destination.href })).visibleCount(), 12);
   }
   page.navigate("?topic=browser&tag=SVG");
   for (const link of page.topicLinks) assert.equal(new URL(link.attributes.get("href"), page.url).searchParams.get("tag"), "SVG");
@@ -285,7 +285,7 @@ test("native topic and reset destinations match enhanced filtering from filtered
 test("persistent Clear filters control does not move keyboard focus", async () => {
   const page = await harness({ url: "https://mh0pe.github.io/blog/?topic=security&tag=MCP" });
   page.click(page.resets[0]);
-  assert.equal(page.visibleCount(), 10);
+  assert.equal(page.visibleCount(), 12);
   assert.equal(page.topicLinks[0].focusCalls ?? 0, 0);
 });
 
@@ -299,7 +299,7 @@ test("both writing resets scroll to the header-offset library target without cha
     assert.equal(page.articles.scrollOptions.behavior, "auto");
     assert.equal(page.articles.scrollOptions.block, "start");
     assert.equal(page.url.hash, "#articles");
-    assert.equal(page.visibleCount(), 10);
+    assert.equal(page.visibleCount(), 12);
     assert.equal(page.topicLinks[0].focusCalls ?? 0, index === 1 ? 1 : 0);
   }
 });

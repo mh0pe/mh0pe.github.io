@@ -43,7 +43,7 @@ test("visual focus and resolution begin with their matching semantic chapter", (
 
 test("article motion remains a local progressive enhancement with bounded cost", async () => {
   const bundle = await read("public/article-motion.js");
-  assert.ok(Buffer.byteLength(bundle) < 550_000);
+  assert.ok(Buffer.byteLength(bundle) < 555_000);
   assert.ok(gzipSync(bundle).length < 175_000);
   const entry = await read("app/components/blog/motion/player-entry.tsx");
   assert.match(entry, /useCurrentFrame|StoryComposition/);
@@ -163,7 +163,7 @@ test("a first-ever upward arrival moves below its authored pose without a prior 
   assert.equal(h.mounts.length - h.destroyed.length, 1);
 });
 
-test("all 33 chapters opt into first-upward motion without changing their authored arrival or forward rate", async () => {
+test("all 39 chapters opt into first-upward motion without changing their authored arrival or forward rate", async () => {
   let count = 0;
   for (const story of motionStorySlugs) for (const beat of motionStories[story].chapters) {
     const data = { storySlug: story, storyStage: beat.moment, storyFrame: String(beat.frame),
@@ -179,7 +179,7 @@ test("all 33 chapters opt into first-upward motion without changing their author
     assert.equal(forward.seeks.at(-1), Math.round(beat.frame + (beat.end - beat.frame) * 100 / 525));
     count++;
   }
-  assert.equal(count, 33);
+  assert.equal(count, 39);
 });
 
 test("missing or malformed reverse metadata preserves the exact legacy clamp; zero is valid", async () => {

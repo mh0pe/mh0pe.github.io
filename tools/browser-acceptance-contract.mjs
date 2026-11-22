@@ -14,6 +14,8 @@ const EXPECTED_CHAPTERS_BY_STORY = new Map([
   ["aws-labs-mcp", FOUR_CHAPTERS],
   ["cloud-runtime", FOUR_CHAPTERS],
   ["zero-findings", FOUR_CHAPTERS],
+  ["slowest-shard", THREE_CHAPTERS],
+  ["support-is-a-matrix", THREE_CHAPTERS],
 ]);
 
 function finite(value) {

@@ -194,15 +194,8 @@ html:has(body.hope-brand) {
 }
 
 .hope-brand .site-header__inner {
-  min-height: 64px;
-  padding: 0.45rem;
   align-items: center;
-  flex-direction: row;
   flex-wrap: wrap;
-  border: 1px solid rgb(24 34 57 / 10%);
-  border-radius: 999px;
-  background: rgb(247 245 240 / 96%);
-  box-shadow: 0 14px 44px rgb(24 34 57 / 9%);
   pointer-events: auto;
 }
 
@@ -2295,17 +2288,8 @@ html:has(body.hope-brand) {
 
   .mobile-nav summary {
     display: flex;
-    min-width: 6.2rem;
-    min-height: 46px;
-    padding: 0 0.45rem 0 0.9rem;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.7rem;
-    border-radius: 999px;
-    background: var(--hope-carbon);
-    color: var(--hope-porcelain);
     cursor: pointer;
-    font-size: 0.72rem;
     font-weight: 650;
     list-style: none;
   }
@@ -2317,10 +2301,6 @@ html:has(body.hope-brand) {
   .mobile-nav__glyph {
     position: relative;
     display: block;
-    width: 2.15rem;
-    height: 2.15rem;
-    border-radius: 50%;
-    background: rgb(247 245 240 / 11%);
   }
 
   .mobile-nav__glyph i {
@@ -3721,15 +3701,7 @@ html[data-theme="dark"] .hope-brand {
   color: var(--hope-carbon);
 }
 
-html[data-theme="dark"] .hope-brand .site-header__inner {
-  border-color: rgb(247 245 240 / 14%);
-  background: rgb(17 24 39 / 95%);
-  box-shadow: 0 14px 44px rgb(0 0 0 / 28%);
-}
-
 html[data-theme="dark"] .hope-brand .primary-nav a:hover,
-html[data-theme="dark"] .hope-brand .primary-nav a[aria-current],
-html[data-theme="dark"] .hope-brand .primary-nav a[data-active-section="true"],
 html[data-theme="dark"] .hope-brand .theme-toggle:hover {
   background: rgb(247 245 240 / 8%);
 }

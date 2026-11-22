@@ -13,10 +13,10 @@ const tags = head => [...head.matchAll(/<meta\b[^>]*>/gi)].map(([tag]) => Object
 const fileFor = path => path === "/404.html" ? "404.html" : path === "/" ? "index.html" : path.slice(1) + "index.html";
 
 test("sharing catalog covers every export with deliberate artwork", () => {
-  assert.equal(pages.length, 27);
-  assert.equal(new Set(pages.map(page => page.path)).size, 27);
-  assert.equal(pages.filter(page => !page.alias).length, 25);
-  assert.equal(new Set(pages.filter(page => !page.alias).map(page => page.image)).size, 25);
+  assert.equal(pages.length, 29);
+  assert.equal(new Set(pages.map(page => page.path)).size, 29);
+  assert.equal(pages.filter(page => !page.alias).length, 27);
+  assert.equal(new Set(pages.filter(page => !page.alias).map(page => page.image)).size, 27);
   for (const slug of blogRoutes) assert.equal(pages.find(page => page.path === `/blog/${slug}/`).art, slug);
   for (const page of pages.filter(page => !page.alias)) {
     assert.ok(page.lines.length >= 2 && page.lines.length <= 3);
@@ -31,7 +31,7 @@ test("security sharing-image description matches the installed-package artwork",
   assert.doesNotMatch(page.alt, /annotation|marked line|work surface/i);
 });
 
-test("all 27 documents have complete page-specific social metadata", async () => {
+test("all 29 documents have complete page-specific social metadata", async () => {
   for (const entry of pages) {
     const card = entry.alias ? pages.find(page => page.path === entry.alias) : entry;
     const html = await readFile(new URL("pages-dist/" + fileFor(entry.path), root), "utf8");
@@ -91,7 +91,7 @@ test("all 27 documents have complete page-specific social metadata", async () =>
 test("social graphics are distinct, decoded, compact and copied exactly", async () => {
   const hashes = [];
   const manifest = JSON.parse(await readFile(new URL("public/social/manifest.json", root), "utf8"));
-  assert.equal(manifest.cards.length, 25);
+  assert.equal(manifest.cards.length, 27);
   assert.ok(manifest.inputs.some(input => input.file.endsWith("newsreader-variable.woff2")));
   assert.ok(manifest.inputs.some(input => input.file.endsWith("madison-outdoor-720.webp")));
   assert.equal(manifest.inputs.filter(input => input.file.startsWith("public/credentials/")).length, 6);
@@ -115,5 +115,5 @@ test("social graphics are distinct, decoded, compact and copied exactly", async 
     assert.equal(card.sha256, hash);
     hashes.push(hash);
   }
-  assert.equal(new Set(hashes).size, 25);
+  assert.equal(new Set(hashes).size, 27);
 });

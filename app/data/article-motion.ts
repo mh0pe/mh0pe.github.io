@@ -2,6 +2,7 @@ export const motionStorySlugs = [
   "workspace-security", "one-definition-many-agent-tools", "reproducible-security-checks",
   "security-feedback-where-you-work", "handoffs-that-carry-the-work",
   "integrity-bound-yarn-pnp-for-bazel", "typed-svg-dom", "aws-labs-mcp", "cloud-runtime", "zero-findings",
+  "slowest-shard", "support-is-a-matrix",
 ] as const;
 export type MotionStory = typeof motionStorySlugs[number];
 export type StoryMoment = "opening" | "middle" | "later" | "ending";
@@ -112,6 +113,22 @@ export const motionStories: Record<MotionStory, {
       { ...beat("middle", "coverage", ["ash-coverage"], [320, 225, 445]), reverseFloor: 225, title: "Read the coverage.", caption: "A ran all three planned checks. B ran two; the infrastructure check never ran.", description: "The two receipts open beneath the unchanged zeroes. A shows 3 of 3 checks ran. B shows 2 of 3, with infrastructure marked Not run." },
       { ...beat("later", "freshness", ["ash-freshness"], [560, 450, 670]), reverseFloor: 450, title: "Check the age of the data.", caption: "One of B's completed checks used dependency data past its age limit. That is different from the check that did not run.", description: "A separate data row shows A within its age limit and B past the limit. B still separately shows missing infrastructure coverage." },
       { ...beat("ending", "decision", ["ash-380", "ash-coverage", "ash-freshness"], [820, 675, 900]), reverseFloor: 675, title: "Carry the difference into the decision.", caption: "Review A within the stated scope. For B, follow up on the gaps or explicitly narrow what you are deciding.", description: "A's receipt ends with Review within scope. B's ends with Follow up. Both retain their original zero findings and the reasons behind the next step." },
+    ],
+  },
+  "slowest-shard": {
+    name: "The last worker", ink: "#243943", paper: "#e9f1ed", material: "#b8d6ce", accent: "#efbc73",
+    chapters: [
+      { ...beat("opening", "counting", ["ash-balanced-tests"]), reverseFloor: 0, title: "Equal counts, uneven work.", caption: "Each lane gets three test blocks. One lane still has much more work.", description: "The three longest blocks are on the first worker, so the outlined finish line sits much farther away." },
+      { ...beat("middle", "placement", ["ash-balanced-tests"]), reverseFloor: 300, title: "Place the long tests first.", caption: "The same blocks move into gentler loads across three workers.", description: "Each worker gets one of the long blocks. Short blocks fill the gaps." },
+      { ...beat("ending", "verification", ["ash-balanced-tests"]), reverseFloor: 650, title: "Count what made the move.", caption: "All nine illustrated blocks are still there, once each.", description: "The labels A through I are unchanged even though the assignments are different." },
+    ],
+  },
+  "support-is-a-matrix": {
+    name: "A compatibility matrix", ink: "#3c304a", paper: "#f0eaf3", material: "#d4c7e1", accent: "#ebbb82",
+    chapters: [
+      { ...beat("opening", "versions", ["esp-bindings-matrix"]), reverseFloor: 0, title: "SDK version is one column.", caption: "The SDK version describes the headers available to the build, not every capability of its target.", description: "The first column separates older and newer versions. Two targets in the newer version can still differ." },
+      { ...beat("middle", "targets", ["esp-bindings-matrix"]), reverseFloor: 300, title: "The component and the chip both matter.", caption: "The camera component can be on even when the chip doesn't have the CSI peripheral.", description: "The middle columns show the camera component turned on and the CSI capability present on only one illustrated target." },
+      { ...beat("ending", "proof", ["esp-bindings-matrix"]), reverseFloor: 650, title: "Say which builds the check covers.", caption: "A dashed cell marks a combination the example does not check for CSI.", description: "One cell has an included build check. The other rows are marked no CSI check, not failed." },
     ],
   },
 };

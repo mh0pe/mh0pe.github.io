@@ -1,11 +1,11 @@
 {
   "kind": "Rendered static sharing graphics, not webpage screenshots",
   "renderer": "Remotion 4.0.520",
-  "sourceHash": "9dcf8aa28d12480db43605947bf0177ba857148222364f4cefd41549b1421e42",
+  "sourceHash": "59215f417a41f3a0f7389d1c59d162a77eb6794b42b6d60f80b5bc9858765f05",
   "inputs": [
     {
       "file": "app/data/social-pages.json",
-      "sha256": "1cfed985be4110d2c62025fd55e1d8536ec09460872048f9460f983b2170f158"
+      "sha256": "c2bbbc89d864019477fe431fff80269eda5dfede78086f80c369994fa6bc2d8e"
     },
     {
       "file": "app/data/social.ts",
@@ -13,15 +13,27 @@
     },
     {
       "file": "app/data/blog.ts",
-      "sha256": "0af704dd98436864399d714733c1c8f16713d71317f808bf7b4a69351a253a36"
+      "sha256": "5825129dfc2176b3f6f1e618c942dc1bc2543f3e40cd1e90702552c437b22a80"
+    },
+    {
+      "file": "app/data/zero-findings.ts",
+      "sha256": "22b7443856407f4fe12fab5dd818031c7dcbcdc7633c7f04f7cf8952be696123"
+    },
+    {
+      "file": "app/data/new-engineering-essays.ts",
+      "sha256": "a66fecb8f3febd76de28f92ead4a2460602f6415e613f4b1076920e511059c34"
     },
     {
       "file": "app/data/article-motion.ts",
-      "sha256": "99e930b0044ee3fd48554bc0a187f521e3cd8c8290de04f433318e8f6cb94600"
+      "sha256": "7d26ff6b42ac4aa0e9da928744dcaca16b173ca123711acd1129a2e86c9faf74"
     },
     {
       "file": "app/data/credentials.ts",
       "sha256": "d1a78ac19576673489943e34b2148ec5c6817792a52f3a7b307c78bdad666d75"
+    },
+    {
+      "file": "app/data/architecture-atlas.ts",
+      "sha256": "cc268980146ef338672431328b11bcbd4d91381d17c4bf0e45347b8aa6d555f2"
     },
     {
       "file": "remotion/index.ts",
@@ -37,7 +49,7 @@
     },
     {
       "file": "app/components/blog/motion/StoryScene.tsx",
-      "sha256": "ce00549e9e3a7b4466ee67784ef16974f58df2e5cf8f767bfb43c512581144e3"
+      "sha256": "b2b2a0ad2bca0ec6a5d9e4266666a2bd99850b16557520f0192a948e7fbe0fac"
     },
     {
       "file": "app/components/blog/motion/story-timing.ts",
@@ -52,8 +64,16 @@
       "sha256": "e1ee9e7e62c5696f3c18c71cc8c13ea136c843c6c63ee064b4de45be046fc652"
     },
     {
+      "file": "app/components/blog/motion/ScanReceiptWorld.tsx",
+      "sha256": "ac46ab6a081eec35bfb40cb2371b129967e180d6c43c3ecdaf10ff18c8d0ae7e"
+    },
+    {
+      "file": "app/components/blog/motion/EngineeringWorlds.tsx",
+      "sha256": "599d2131b7720e1e36bbf0953bf4d47a05ef22bd73299100444a389779570478"
+    },
+    {
       "file": "app/components/v3/LivingArchitecture.tsx",
-      "sha256": "b9ae1cd7e358e066d0c028f0f92af296698e604dcc74817ac76144ba5ad6a68f"
+      "sha256": "572f5fb7b99dbd7848f1f0b80e88f8730640a2b35aafcb936488e10b32994cdf"
     },
     {
       "file": "public/fonts/newsreader-variable.woff2",
@@ -65,7 +85,7 @@
     },
     {
       "file": "tools/render-social-cards.mjs",
-      "sha256": "4473394cdb6c5a6bef5f74baa9db46e508ffa04dd67513bee1a74fe3461291c6"
+      "sha256": "8544ccc833c8b9c31ab17b1c4d7a19c137936e6bfa214abe4cfe9aff893be1d7"
     },
     {
       "file": "package-lock.json",
@@ -109,8 +129,8 @@
       "alt": "Bringing Hope to systems at scale. Four assembled layers represent foundations, security, developer tools, and AI workflows.",
       "width": 1200,
       "height": 630,
-      "bytes": 58885,
-      "sha256": "421a36de4e457875603a302a2f25a70e7c5a544e48334ebf00750a27ce2dcec7"
+      "bytes": 57895,
+      "sha256": "602ce162c07eb00fa00d0375ee6f6f7cb6e19f6e379e77deb65a2e2843898b3c"
     },
     {
       "path": "/blog/",
@@ -120,8 +140,41 @@
       "alt": "Notes from the work by Madison Hope Steiner. Three illustrated editorial sheets introduce essays on engineering and AI.",
       "width": 1200,
       "height": 630,
-      "bytes": 46450,
-      "sha256": "a76b30f48ea5d1f959d12b0a85164d18c933ad2a036360ba8d9902e293f97263"
+      "bytes": 45763,
+      "sha256": "7bcc5a23125ca6acb3d64680eb0756b7d1f9dd8b1506e2bc314d402afa2d98e4"
+    },
+    {
+      "path": "/blog/zero-findings/",
+      "file": "zero-findings.jpg",
+      "art": "zero-findings",
+      "title": "What does zero findings mean? | Madison Hope Steiner",
+      "alt": "Two scan receipts show the same zero findings. The essay compares which checks ran and the age of their data.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 58175,
+      "sha256": "a08343cc3b9bfb508d68abaa548ccb3a8c6f5bd1418786471c7373b9ecc4312c"
+    },
+    {
+      "path": "/blog/slowest-shard/",
+      "file": "slowest-shard.jpg",
+      "art": "slowest-shard",
+      "title": "The slowest shard is the build | Madison Hope Steiner",
+      "alt": "Three test workers have equal counts of tiles, but one has the longest tests and takes the longest to finish.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 52391,
+      "sha256": "4621d9c6de8c8cf688cf6bd9eaab1de167a000f7d8eaf7e57b08627decccff7b"
+    },
+    {
+      "path": "/blog/support-is-a-matrix/",
+      "file": "support-is-a-matrix.jpg",
+      "art": "support-is-a-matrix",
+      "title": "Support is a matrix | Madison Hope Steiner",
+      "alt": "A build matrix shows how SDK versions, component settings, and chip capabilities decide which interface is available.",
+      "width": 1200,
+      "height": 630,
+      "bytes": 52854,
+      "sha256": "487f2b2d1917cbf6ba1d717908dbaaa902b0fcc206d0577e6bebb6f9912a52e2"
     },
     {
       "path": "/blog/workspace-security/",
@@ -131,8 +184,8 @@
       "alt": "A shared view. Local context. Three separate project territories illustrate workspace security in Automated Security Helper.",
       "width": 1200,
       "height": 630,
-      "bytes": 55232,
-      "sha256": "eb8e91839244995773a052818f93016f0b09b10f317d0dfbf778e2dd3f5fdd71"
+      "bytes": 55127,
+      "sha256": "1497ca3fd181af89b885ca1893a16a5f4432d65556e99ecd7a848725d5ac2f4b"
     },
     {
       "path": "/blog/one-definition-many-agent-tools/",
@@ -142,8 +195,8 @@
       "alt": "One definition. Fifteen native forms. A shared diamond-shaped definition is surrounded by platform-specific packages.",
       "width": 1200,
       "height": 630,
-      "bytes": 61456,
-      "sha256": "7e9f306051b46a794d87c5966fc6398d601b6037cd9bb68e8de9b68dab064014"
+      "bytes": 60438,
+      "sha256": "9a2bc24de2fd61817b8cb3ea910cb5d51b61475d7eb5b84a6825b075cca61376"
     },
     {
       "path": "/blog/reproducible-security-checks/",
@@ -153,8 +206,8 @@
       "alt": "The tools are part of the result. A fixed tool collar sits beside separate code, rules, and external-data inputs.",
       "width": 1200,
       "height": 630,
-      "bytes": 58073,
-      "sha256": "75d71abcd682180b965c40bf2f7c4fbee7b77e6986cb98a91bd00a8b64ee6759"
+      "bytes": 58115,
+      "sha256": "9a86ffff300d037098cc952f281e97819fc4c0a433321f7f66204b8061db32ef"
     },
     {
       "path": "/blog/security-feedback-where-you-work/",
@@ -164,8 +217,8 @@
       "alt": "Security feedback, where the work happens. The illustration shows the installed ASH package and external dependencies as separate inspection boundaries.",
       "width": 1200,
       "height": 630,
-      "bytes": 64097,
-      "sha256": "15f08e9451f19438bde847921fbd3723a2e6841e5de80fb8af83a2ed9e9f4747"
+      "bytes": 63384,
+      "sha256": "f8a089d199015584a913431bc59915caba16ef8d50e3544b781d5f44faabc060"
     },
     {
       "path": "/blog/handoffs-that-carry-the-work/",
@@ -175,8 +228,8 @@
       "alt": "Carry the work, not just the conversation. A folded handoff sheet keeps Why, Now, and Next together.",
       "width": 1200,
       "height": 630,
-      "bytes": 64491,
-      "sha256": "352cfc6ba0fe400cee0aa71eb45d340682b9a9800c67b8d12c4d999e3b358bfc"
+      "bytes": 63768,
+      "sha256": "91d2889902e243e11d37230976bb1548734bc92fe0d228a9eb13691f68c9d123"
     },
     {
       "path": "/blog/integrity-bound-yarn-pnp-for-bazel/",
@@ -186,8 +239,8 @@
       "alt": "Make the build prove what it loaded. Interlocking inspection rings illustrate file identity before a resolver can load.",
       "width": 1200,
       "height": 630,
-      "bytes": 54351,
-      "sha256": "196e26fc482f33d6f8149a960c9ecde02148281d26ecab21d57d28f9a6a1234c"
+      "bytes": 52667,
+      "sha256": "23379f2621490ede587bd201248044c0929808d5c30ec741013b1cf165ffc86b"
     },
     {
       "path": "/blog/typed-svg-dom/",
@@ -197,8 +250,8 @@
       "alt": "A browser capability, built in layers. Transparent strata reveal the SVG document-model anatomy beneath a letterform.",
       "width": 1200,
       "height": 630,
-      "bytes": 60808,
-      "sha256": "bec88f9f7b00269bf01ffbae47c1cf32efc053c20e501d0b1b95cfeb72503d7e"
+      "bytes": 59909,
+      "sha256": "51105f6c519747f04a56c969f51271602c6ad9ef160fb33819ca7cb75a686130"
     },
     {
       "path": "/blog/aws-labs-mcp/",
@@ -208,8 +261,8 @@
       "alt": "Useful tools. Clear boundaries. Separate rooms represent documents, images, connection, and session capabilities.",
       "width": 1200,
       "height": 630,
-      "bytes": 76926,
-      "sha256": "bc05081abec112e2eb642c4ee1abaddecfa01aeee7a54fb1b4d0dd36d937ed5f"
+      "bytes": 75836,
+      "sha256": "e387934179a61fe4de15a7ba94ebabee6dbb351cfa7950fa917c2e3b5c0cb6d2"
     },
     {
       "path": "/blog/cloud-runtime/",
@@ -219,8 +272,8 @@
       "alt": "Developer feedback is part of the platform. An illustrated preview distinguishes intended change from unresolved values.",
       "width": 1200,
       "height": 630,
-      "bytes": 83626,
-      "sha256": "ff8b3793b94ec672b36bf05fadd769fccf500a23676a91e9a6a25ffbd42d37a1"
+      "bytes": 81124,
+      "sha256": "e97bb3c7f0c694b71548259291e46cb1ddddc731237b92ab0b628cffdd162bcc"
     },
     {
       "path": "/work/",
@@ -230,8 +283,8 @@
       "alt": "Systems built for the next team. Four labeled layers introduce foundations, security, developer tools, and AI workflows.",
       "width": 1200,
       "height": 630,
-      "bytes": 57689,
-      "sha256": "05dcd67333d3e4e659b488dfe659485339c2043144eac714548cd3e9a8cf44b6"
+      "bytes": 56521,
+      "sha256": "59f246bf22b347febe50dbc54e59727fdfd506eafd68262d9dc377b10ad3c401"
     },
     {
       "path": "/work/automated-security-helper/",
@@ -241,8 +294,8 @@
       "alt": "Shared security. Clear ownership. Separate project territories represent independently scoped security work.",
       "width": 1200,
       "height": 630,
-      "bytes": 59207,
-      "sha256": "c469fee4b7173900c263319bc0504e6f5b91789b1c077a558ed8a943cf4136ff"
+      "bytes": 59056,
+      "sha256": "6cd469b004a84205bf1302b7dee197bdc0a6fac7014ea57cb896a01794839527"
     },
     {
       "path": "/work/cloudformation-guard/",
@@ -252,8 +305,8 @@
       "alt": "Keep policy intent intact. Separate pass, reject, missing, and error outcomes show distinct policy evaluation meanings.",
       "width": 1200,
       "height": 630,
-      "bytes": 48612,
-      "sha256": "c76e835274a090d83e330e25f273b2b1454e159062f94fae978db741bbbabac5"
+      "bytes": 47968,
+      "sha256": "a10eba13b34fdf3d2ac64e84196cc15c518ed849f5f2fabb6a723ad9309a5121"
     },
     {
       "path": "/work/nix-windows/",
@@ -263,8 +316,8 @@
       "alt": "A path across platforms. Interlocking tiles labeled Nix and Windows illustrate a staged platform boundary.",
       "width": 1200,
       "height": 630,
-      "bytes": 45557,
-      "sha256": "ee7b0af2bd0a52d71020827205820984aff80b937c663fb49d1d69b2aafc7636"
+      "bytes": 45091,
+      "sha256": "ac30864e1ca2963d43f84975ee46e4deef4dff2a7cb7009075eb5aadfe736abd"
     },
     {
       "path": "/work/agent-systems/",
@@ -274,8 +327,8 @@
       "alt": "Agent teams. Decisions that travel. A folded handoff sheet carries reasons, current state, and the next step.",
       "width": 1200,
       "height": 630,
-      "bytes": 62878,
-      "sha256": "44655b662358c10d7902a4e7fc0ee1ea80449f6c2796cda85b25982fc8312c62"
+      "bytes": 61963,
+      "sha256": "6edd3b748614b704efa6c3d279c4839371fb45f7782752e8cb4792f4c1732d41"
     },
     {
       "path": "/proof/",
@@ -285,8 +338,8 @@
       "alt": "Follow the result back to the work. Three illustrated source sheets are labeled code, review, and release.",
       "width": 1200,
       "height": 630,
-      "bytes": 52905,
-      "sha256": "85c38b1a56fb892455ff206e42434ef90ecc4a952d76a85e081fc8fdb7a5a7b1"
+      "bytes": 52284,
+      "sha256": "a5d3715e285d2412d06d70b7ca2e58818c4d6d4fc0534db3f4c61f51a72e1963"
     },
     {
       "path": "/about/",
@@ -296,8 +349,8 @@
       "alt": "Experience across industries. A portrait of Madison Hope Steiner accompanies the experience page.",
       "width": 1200,
       "height": 630,
-      "bytes": 63380,
-      "sha256": "896c602a795d0f56e5e095df4ce7b10edad4a8c0ee0f17287f9f5ff7c97fe52e"
+      "bytes": 62969,
+      "sha256": "cda8c8a5e73891884052f503a2c5d3111ddf150d0980182c7ee5bb0cff77330a"
     },
     {
       "path": "/credentials/",
@@ -307,8 +360,8 @@
       "alt": "Curiosity, put into practice. Earned certification badges accompany Madison Hope Steiner's learning history.",
       "width": 1200,
       "height": 630,
-      "bytes": 67652,
-      "sha256": "0eb7d1e86b0c979ee2ce79060fff76f6936c07d710723f895a2b5795c22cd2a8"
+      "bytes": 67300,
+      "sha256": "0100ebc25eb3f9d93c10940717cb3009b1f4e85e78e76010e6cc663e84804593"
     },
     {
       "path": "/decisions/",
@@ -318,8 +371,8 @@
       "alt": "The trade-off is part of the architecture. Three editorial cards identify pressure, choice, and cost.",
       "width": 1200,
       "height": 630,
-      "bytes": 53757,
-      "sha256": "b6464a914ed51ccd54e40a70c3f4117c6a3409182f5d19c47ee25e6c31decc01"
+      "bytes": 53481,
+      "sha256": "0a76f6dd33771d7a7ea5f636c7c6f9f473195879be740cbf0f593dc66e58ac8e"
     },
     {
       "path": "/method/",
@@ -329,8 +382,8 @@
       "alt": "Build capability. Keep responsibility. Three connected editorial sheets represent understand, build, and verify.",
       "width": 1200,
       "height": 630,
-      "bytes": 54997,
-      "sha256": "44849c4e8320ba8d275843e08244af8cc7b99b074ff2d696bf448cf294b18471"
+      "bytes": 54508,
+      "sha256": "f956360cab0c3c871a8eb354e23adbfdbcbbd6a196280b7b920af02adcee2302"
     },
     {
       "path": "/capabilities/",
@@ -340,8 +393,8 @@
       "alt": "Tools other teams can use. Assembled layers show work spanning foundations, security, developer tools, and AI workflows.",
       "width": 1200,
       "height": 630,
-      "bytes": 56120,
-      "sha256": "305ba785aa66c6b4a15fda273651bbac9df4007be87b2a06c4931fe1ef51496a"
+      "bytes": 54666,
+      "sha256": "cc11446c71121234c091298e754b56dbd2c6ab215cdb3415eba0d5dcb57284eb"
     },
     {
       "path": "/models/",
@@ -351,8 +404,8 @@
       "alt": "The models I work with. Three editorial sheets labeled Direction, Models, and Review illustrate a collaborative workflow.",
       "width": 1200,
       "height": 630,
-      "bytes": 47706,
-      "sha256": "c96e6cc073f1e124e7b3a925feb25035c55395c47d2ae86f3ec05d349a751f5d"
+      "bytes": 47154,
+      "sha256": "8c9dfa637ed1fecf48a641d4fd4d8b8b7a6865003e0cb5baeb17212f52973845"
     },
     {
       "path": "/404.html",
@@ -362,8 +415,8 @@
       "alt": "Another way into the work. An open editorial doorway introduces links back to the portfolio.",
       "width": 1200,
       "height": 630,
-      "bytes": 41790,
-      "sha256": "820c3d2c3dba4254fec7b7949d653d5d569824835107334e1941ceee4ad1f398"
+      "bytes": 41097,
+      "sha256": "661cf4e6bdc4b068efa8aead834c9d1e10cf95e27cf3812e2f9e4392659cc908"
     }
   ],
   "aliases": [

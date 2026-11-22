@@ -316,7 +316,7 @@ test("source keeps the requested outcome hierarchy and public-state fields", asy
     readFile(new URL("app/work/page.tsx", root), "utf8"),
   ]);
 
-  assert.match(casePage, /<p className="micro-label case-hero__eyebrow">\{caseStudy\.title\}<\/p>/);
+  assert.match(casePage, /<p className="micro-label case-hero__eyebrow">\{layer \? <AtlasMark mark=\{layer\.mark\} \/> : null\}\{caseStudy\.title\}<\/p>/);
   assert.match(casePage, /<h1 className="case-hero__plain">\{caseStudy\.cardHeadline\}<\/h1>/);
   assert.match(casePage, /description=\{caseStudy\.plainResult\}/);
   assert.match(casePage, /<p className="case-hero__result">\{caseStudy\.operatingResult\}<\/p>/);
@@ -399,7 +399,7 @@ test("renders case pages with an outcome H1 and a six-stage operating path", asy
     assert.match(
       html,
       new RegExp(
-        '<p class="micro-label case-hero__eyebrow">' + escapeRegExp(system) +
+        '<p class="micro-label case-hero__eyebrow"><svg[^>]*aria-hidden="true"[^>]*>[\\s\\S]*?<\\/svg>' + escapeRegExp(system) +
           '<\\/p>\\s*<h1 class="case-hero__plain">' + escapeRegExp(headline) + '<\\/h1>',
         "i",
       ),

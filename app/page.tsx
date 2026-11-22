@@ -6,7 +6,8 @@ import { SourceLink } from "./components/v2/Evidence";
 import { RouteFrame } from "./components/v2/RouteFrame";
 import { ProfilePageData } from "./components/v2/StructuredData";
 import ProjectLineageField from "./components/v3/ProjectLineageField";
-import { ArchitectureHero, ContributionScene } from "./components/v3/LivingArchitecture";
+import { ArchitectureHero, AtlasMark, ContributionScene } from "./components/v3/LivingArchitecture";
+import { architectureAreas } from "./data/architecture-atlas";
 import { developmentPhilosophy } from "./data/philosophy";
 import { credentialsByCategory } from "./data/credentials";
 import professionalHistory from "./data/professional-history.json";
@@ -34,9 +35,10 @@ const stories = [
 ] as const;
 
 const writingEntries = legacyEntryPoints.filter((entry) => entry.kind === "article").map((entry) => ({
-  entry,
+  id: entry.id,
   article: articleBySlug(entry.href.split("/")[2])!,
 }));
+const recentEssays = ["slowest-shard", "support-is-a-matrix"].map(id => ({ id, article: articleBySlug(id)! }));
 
 export default function HomePage() {
   return (
@@ -56,11 +58,11 @@ export default function HomePage() {
             <p className="landing-role">Principal AI Architect</p>
             <h1 id="home-title">Bringing <em className="landing-hope">Hope</em> to distributed systems.</h1>
             <p className="landing-lead">I help teams make AI, security, and cloud platforms work together at enterprise scale.</p>
-            <p className="landing-opening__examples">From <a href="/blog/one-definition-many-agent-tools/">one shared definition across fifteen coding tools</a> to <a href="/work/nix-windows/">native Windows builds in Nix</a>.</p>
             <div className="landing-actions">
               <a className="hope-button hope-button--primary" href="#work">Explore my work</a>
               <a className="landing-link" href={publicSources.linkedinMadison.href} target="_blank" rel="noreferrer">Talk with me on LinkedIn<span className="visually-hidden">, opens in a new tab</span></a>
             </div>
+            <p className="landing-opening__examples">From <a href="/blog/one-definition-many-agent-tools/">one shared definition across fifteen coding tools</a> to <a href="/work/nix-windows/">native Windows builds in Nix</a>.</p>
           </div>
           <ArchitectureHero />
         </section>
@@ -86,7 +88,7 @@ export default function HomePage() {
                 <div className="landing-project__visual"><ContributionScene kind={kind} /></div>
                 <div className="landing-project__follow-through">
                   <p className="landing-project__contribution"><strong>My contribution</strong> {project.contributionSummary}</p>
-                  <span className="landing-project__layer">{layer}</span>
+                  <span className="landing-project__layer"><AtlasMark mark={architectureAreas.find(area => area.kind === kind)!.mark} />{layer}</span>
                   <div className="landing-project__actions">
                     <a className="landing-link" href={`/work/${project.id}/`}>Read the project story<span className="visually-hidden">: {project.title}</span></a>
                     <SourceLink sourceId={project.repositorySourceId}>Open the code<span className="visually-hidden">: {project.title}</span></SourceLink>
@@ -147,7 +149,7 @@ export default function HomePage() {
             <a className="landing-link" href="/blog/">Explore all writing</a>
           </header>
           <div className="landing-writing__entries">
-            {writingEntries.map(({ entry, article }) => <article id={`post-${entry.id}`} key={entry.id}>
+            {[...recentEssays, ...writingEntries].map(({ id, article }) => <article id={`post-${id}`} key={id}>
               <div className="landing-writing__art" aria-hidden="true" style={artStyle(artFor(article.slug))}>
                 <ArtDrawing direction={artFor(article.slug)} id={`home-preview-${article.slug}`} compact />
               </div>

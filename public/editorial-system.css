@@ -15,6 +15,7 @@
   --edition-highlight: var(--edition-apricot-300);
   --edition-line: color-mix(in srgb, var(--edition-text) 20%, transparent);
   --edition-space-section: clamp(3rem, 6vw, 6rem);
+  --edition-space-intro: clamp(2rem, 4.4vw, 4.75rem);
   --edition-duration-fast: 180ms;
   --edition-duration-enter: 540ms;
   --edition-ease: cubic-bezier(.16,1,.3,1);
@@ -40,19 +41,66 @@ html[data-theme="dark"] .hope-brand {
 }
 .hope-brand .site-header {
   top: 0;
-  padding-block: .75rem;
+  padding: 0;
+  background: var(--edition-surface);
+  border-bottom: 1px solid var(--edition-line);
 }
 .hope-brand .site-header__inner {
-  border-radius: .5rem;
-  box-shadow: 0 5px 18px rgb(24 34 57 / 5%);
-  border-color: var(--edition-line);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
+  gap: .5rem clamp(.65rem,1.5vw,1.65rem);
+  min-block-size: 3.9rem;
+  padding: .35rem 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
 }
 .hope-brand .site-identity {
   grid-template-columns: auto minmax(0, 1fr);
+  padding: 0;
+  min-block-size: 44px;
+  column-gap: .65rem;
+  justify-self: start;
+  text-decoration: none;
 }
+.hope-brand .site-identity__mark { width: 2.05rem; height: 2.05rem; border-radius: .25rem; background: var(--edition-surface-soft); color: var(--edition-text); }
+.site-identity__mark span { color: var(--edition-action); }
 .hope-brand .site-identity__name {
+  font-size: 1.17rem;
+  line-height: 1.13;
   min-width: 0;
   overflow-wrap: anywhere;
+}
+.hope-brand .site-identity small { display: block; font-size: .75rem; letter-spacing: 0; }
+.hope-brand .site-header .primary-nav a { min-block-size: 44px; padding-inline: clamp(.48rem,1vw,.95rem); border-radius: 0; font-size: .92rem; color: var(--edition-muted); }
+.hope-brand .site-header .primary-nav a[data-active-section="true"] { background: none; color: var(--edition-text); text-decoration: underline; text-decoration-color: var(--edition-action); text-decoration-thickness: 2px; text-underline-offset: .52em; }
+.hope-brand .site-header .primary-nav__conversation::after { content: "↗" / ""; opacity: .68; margin-inline-start: .28em; font-size: .8em; }
+.theme-ready .hope-brand .site-header .theme-toggle { justify-self: end; margin: 0; min-block-size: 44px; border-color: transparent; border-radius: .25rem; font-size: .85rem; }
+@media (max-width: 58rem) {
+  .hope-brand .site-header__inner { grid-template-columns: minmax(0,1fr) auto auto; }
+  .hope-brand .site-header .site-identity { grid-column: 1; }
+  .hope-brand .site-header .theme-toggle { grid-column: 2; grid-row: 1; min-inline-size: 44px; }
+  .hope-brand .site-header .mobile-nav { grid-column: 3; grid-row: 1; position: static; margin: 0; }
+  .hope-brand .site-header .mobile-nav summary { width: auto; min-width: 44px; min-height: 44px; padding-inline: .3rem; gap: .3rem; border-radius: .25rem; color: var(--edition-text); background: none; font-size: .9rem; }
+  .hope-brand .site-header .mobile-nav summary > span:first-child { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
+  .hope-brand .site-header .mobile-nav__glyph { inline-size: 1.15rem; block-size: 1.25rem; background: none; }
+  .hope-brand .site-header .mobile-nav nav { inset: calc(100% + 1px) 0 auto auto; width: min(100%,27rem); padding: .35rem .85rem; border-radius: 0 0 .4rem .4rem; background: var(--edition-surface-raised); }
+  .hope-brand .site-header .mobile-nav nav a { padding-inline: .25rem; font-size: 1.24rem; min-block-size: 50px; }
+}
+@media (max-width: 27rem) {
+  .hope-brand .site-header__inner { column-gap: .33rem; }
+  .hope-brand .site-header .site-identity { grid-template-columns: minmax(0,1fr); }
+  .hope-brand .site-header .site-identity__mark { display: none; }
+  .hope-brand .site-header .site-identity__name { font-size: 1rem; }
+  .hope-brand .site-header .mobile-nav summary { padding-inline: .22rem; gap: .2rem; }
+}
+@media (max-height: 31rem) and (orientation: landscape) {
+  .hope-brand .site-header { position: relative; }
+}
+@media (forced-colors: active) {
+  .hope-brand .site-header { background: Canvas; border-color: CanvasText; }
 }
 .hope-brand .landing-opening {
   padding-block: clamp(3rem,6vw,6rem);
@@ -148,7 +196,7 @@ html[data-theme="dark"] .hope-brand {
   font-size: clamp(1.7rem,2.3vw,2.4rem);
 }
 .hope-brand .route-intro {
-  padding-block: var(--edition-space-section);
+  padding-block: var(--edition-space-intro);
   border-bottom: 1px solid var(--edition-line);
   background: var(--edition-surface);
 }
@@ -229,13 +277,14 @@ html[data-theme="dark"] .hope-brand {
   letter-spacing: .04em;
 }
 .hope-brand .journal-opening {
+  align-items: start;
   grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr);
   gap: clamp(2rem,5vw,6rem);
-  padding-block: 3rem 5rem;
+  padding-block: var(--edition-space-intro);
 }
 .hope-brand .journal-opening h1 {
   color: var(--edition-text);
-  font-size: clamp(3.7rem,7.2vw,8rem);
+  font-size: clamp(3.3rem,6.1vw,6.2rem);
 }
 .hope-brand .journal-feature {
   border: 0;
@@ -244,7 +293,8 @@ html[data-theme="dark"] .hope-brand {
   background: var(--edition-surface-soft);
 }
 .hope-brand .journal-feature__diagram .article-art__drawing {
-  max-height: 300px;
+  max-height: 235px;
+  overflow: hidden;
 }
 .hope-brand .journal-topic {
   grid-template-columns: minmax(0,1fr);
@@ -475,14 +525,22 @@ html[data-theme="dark"] .hope-brand {
 }
 }
 @media (max-width: 700px) {
+  .hope-brand .route-intro { padding-block: 1.65rem 2rem; }
+  .hope-brand .route-intro__grid { gap: .8rem; }
+  .hope-brand .route-intro + .route-section { padding-top: 2rem; }
+  .hope-brand .route-folio { padding-top: 0; align-items: center; }
+  .hope-brand .route-folio .route-folio__rule { margin: 0; width: 1.75rem; height: .22rem; }
+  .hope-brand .journal-index .journal-masthead { display: none; }
+  .hope-brand .case-hero { padding-block: 1.8rem 2.5rem; }
+  .hope-brand .case-hero__grid { gap: .75rem; }
+  .hope-brand .case-hero__result { margin-block: 1rem; }
+  .hope-brand .decision-pages article { gap: .65rem; }
+  .hope-brand .decision-pages__index { min-block-size: 0; padding: .4rem 0; justify-content: flex-start; align-items: baseline; gap: .65rem; border: 0; }
+  .hope-brand .decision-pages__index span { font-size: 1.05rem; }
+  .hope-brand .not-found__utility { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: .5rem; }
+  .hope-brand .not-found h1 { font-size: clamp(2.35rem,9vw,3.6rem); }
   .hope-brand .landing-opening, .hope-brand .journal-opening {
   grid-template-columns: minmax(0,1fr);
-  gap: 2rem;
-  padding-block: 2rem 3rem;
-}
-  .hope-brand .landing-opening h1 {
-  font-size: clamp(3.4rem,12vw,5.5rem);
-  max-width: 14ch;
 }
   .hope-brand .landing-opening .architecture-hero {
   border-left: 0;
@@ -504,9 +562,6 @@ html[data-theme="dark"] .hope-brand {
   .hope-brand .journal-library__heading {
   display: block;
 }
-  .hope-brand .journal-opening h1 {
-  font-size: clamp(3.8rem,14vw,6rem);
-}
   .hope-brand .journal-entry__art {
   width: 100%;
   padding: .75rem;
@@ -515,11 +570,13 @@ html[data-theme="dark"] .hope-brand {
   font-size: 2.15rem;
 }
   .hope-brand .route-intro h1 {
-  font-size: clamp(2.8rem,10vw,4.5rem);
+  font-size: clamp(2.35rem,8.9vw,3.65rem);
+  margin-block: .4rem .8rem;
   max-width: 20ch;
 }
   .hope-brand .article-page .article-opening h1 {
-  font-size: clamp(2.7rem,10.2vw,4.4rem);
+  font-size: clamp(2.3rem,9vw,3.65rem);
+  margin-block: .65rem .9rem;
 }
   .hope-brand .article-page .article-opening__vignette {
   box-shadow: .3rem .3rem 0 var(--edition-surface-soft);

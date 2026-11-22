@@ -8,5 +8,7 @@
   "typed-svg-dom",
   "aws-labs-mcp",
   "cloud-runtime",
-  "zero-findings"
+  "zero-findings",
+  "slowest-shard",
+  "support-is-a-matrix"
 ]

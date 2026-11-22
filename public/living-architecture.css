@@ -41,27 +41,57 @@
 .architecture-solid__edge { fill: none; stroke: #fff; stroke-width: 1; stroke-opacity: .24; }
 .architecture-hero__inlay { fill: #f9f7ff; opacity: .58; pointer-events: none; }
 .architecture-hero__key { position: relative; min-width: 0; }
-.hope-brand .architecture-hero__title { margin: .1rem 0 .8rem; font-size: 1.05rem; font-weight: 600; color: var(--architecture-ink); }
-.architecture-hero__key ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem 1.1rem; padding: 0; margin: 0; list-style: none; }
-.architecture-hero__key li { min-width: 0; }
-.hope-brand .architecture-hero__key a {
-  display: grid; grid-template-columns: .8rem minmax(0, 1fr) 1rem; align-items: center; gap: .65rem;
-  min-height: 54px; padding: .5rem 0; color: var(--architecture-ink); text-decoration: none; border-radius: .3rem;
+.architecture-hero__key { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
+.atlas-mark { display: inline-block; flex: 0 0 auto; inline-size: 1.15em; block-size: 1.15em; fill: var(--atlas-layer, currentColor); }
+[data-area="foundations"] { --atlas-layer: var(--hope-layer-foundations); }
+[data-area="security"] { --atlas-layer: var(--hope-layer-security); }
+[data-area="tools"] { --atlas-layer: var(--hope-layer-tools); }
+[data-area="ai"] { --atlas-layer: var(--hope-layer-ai); }
+.architecture-hero__choices { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .45rem; }
+.architecture-choice { display: flex; align-items: center; gap: .5rem; padding: .4rem .55rem; min-block-size: 44px; border: 1px solid var(--architecture-line); border-radius: .28rem; cursor: pointer; color: var(--architecture-ink); font-size: .875rem; line-height: 1.3; }
+.architecture-choice span { min-inline-size: 0; overflow-wrap: anywhere; }
+.architecture-choice input { flex: 0 0 auto; margin: 0; accent-color: var(--architecture-focus); }
+.architecture-choice:has(input:checked) { background: color-mix(in srgb, var(--atlas-layer) 15%, transparent); border-color: currentColor; }
+.architecture-choice:has(input:focus-visible) { outline: 2px solid var(--architecture-focus); outline-offset: 3px; }
+.architecture-outcome { border-inline-start: 3px solid var(--atlas-layer); padding-inline-start: .7rem; }
+.architecture-outcome p { margin: 0; color: var(--architecture-ink); }
+.hope-brand .architecture-outcome a { display: inline-flex; align-items: center; gap: .35em; min-block-size: 44px; color: var(--architecture-ink); font-weight: 650; text-underline-offset: .2em; }
+.hope-brand .architecture-outcome a:focus-visible { outline-color: var(--architecture-focus); }
+@supports selector(:has(input:checked)) {
+  .architecture-outcome { display: none; }
+  .architecture-hero:has(.architecture-choice[data-area="foundations"] input:checked) .architecture-outcome[data-area="foundations"],
+  .architecture-hero:has(.architecture-choice[data-area="security"] input:checked) .architecture-outcome[data-area="security"],
+  .architecture-hero:has(.architecture-choice[data-area="tools"] input:checked) .architecture-outcome[data-area="tools"],
+  .architecture-hero:has(.architecture-choice[data-area="ai"] input:checked) .architecture-outcome[data-area="ai"] { display: block; }
+  .architecture-hero:has(.architecture-choice[data-area="foundations"] input:checked) .architecture-layer:not([data-area="foundations"]),
+  .architecture-hero:has(.architecture-choice[data-area="security"] input:checked) .architecture-layer:not([data-area="security"]),
+  .architecture-hero:has(.architecture-choice[data-area="tools"] input:checked) .architecture-layer:not([data-area="tools"]),
+  .architecture-hero:has(.architecture-choice[data-area="ai"] input:checked) .architecture-layer:not([data-area="ai"]) { opacity: .42; }
 }
-.architecture-hero__key strong { display: block; font-size: .95rem; line-height: 1.3; font-weight: 600; }
-.architecture-hero__key small { display: block; margin-top: .25rem; color: var(--architecture-muted); font-size: .78rem; line-height: 1.4; }
-.architecture-hero__key a > svg { width: 1rem; fill: none; stroke: currentColor; stroke-width: 1.5; }
-.architecture-hero__swatch { width: .8rem; height: 1.2rem; border-radius: .16rem; background: var(--architecture-blue); transform: skewY(-13deg); }
-.architecture-hero__key [data-area="security"] .architecture-hero__swatch { background: var(--architecture-jade); }
-.architecture-hero__key [data-area="tools"] .architecture-hero__swatch { background: var(--architecture-gold); }
-.architecture-hero__key [data-area="ai"] .architecture-hero__swatch { background: var(--architecture-violet); }
-.architecture-hero__key a:is(:hover, :focus-visible) strong { text-decoration: underline; text-underline-offset: .22em; }
-.architecture-hero__key a:focus-visible { outline: 2px solid var(--architecture-focus); outline-offset: 4px; }
+@supports not selector(:has(input:checked)) {
+  .architecture-hero__key { display: none; }
+  .architecture-outcome + .architecture-outcome { margin-block-start: .7rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .architecture-layer { transition: opacity .25s ease-out; }
+  .architecture-hero:has(.architecture-choice[data-area="foundations"] input:checked) .architecture-layer[data-area="foundations"] .architecture-solid,
+  .architecture-hero:has(.architecture-choice[data-area="security"] input:checked) .architecture-layer[data-area="security"] .architecture-solid,
+  .architecture-hero:has(.architecture-choice[data-area="tools"] input:checked) .architecture-layer[data-area="tools"] .architecture-solid,
+  .architecture-hero:has(.architecture-choice[data-area="ai"] input:checked) .architecture-layer[data-area="ai"] .architecture-solid {
+    animation: atlas-seat .44s cubic-bezier(.2,.8,.26,1) both;
+  }
+  .architecture-hero .architecture-solid[data-part="0"] { animation-delay: .035s; }
+  @keyframes atlas-seat { from { transform: translateY(-12px) scale(.99); opacity: .7; } to { transform: none; opacity: 1; } }
+}
+.case-hero__eyebrow .atlas-mark { vertical-align: -.18em; margin-inline-end: .65em; }
+.case-hero__code { border-inline-start: 3px solid var(--atlas-layer, var(--hope-blue)); padding-inline-start: .75rem; margin-block: 1rem 1.5rem; }
+.case-hero__code .source-link { min-block-size: 44px; display: inline-flex; align-items: center; font-weight: 650; }
+.case-path__mechanism { max-inline-size: 58rem; margin-block: 1rem clamp(2rem,5vw,4rem); }
+@media (max-width: 380px) {
+  .architecture-choice { gap: .35rem; padding-inline: .35rem; }
+}
+.hope-brand .architecture-hero__title { margin: .1rem 0 .8rem; font-size: 1.05rem; font-weight: 600; color: var(--architecture-ink); }
 .hope-brand .architecture-hero > figcaption { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--architecture-line); font-size: .78rem; line-height: 1.5; max-width: 54ch; color: var(--architecture-muted); }
-.architecture-hero:has(a[data-area="ai"]:is(:hover, :focus-visible)) .architecture-layer:not([data-area="ai"]),
-.architecture-hero:has(a[data-area="tools"]:is(:hover, :focus-visible)) .architecture-layer:not([data-area="tools"]),
-.architecture-hero:has(a[data-area="security"]:is(:hover, :focus-visible)) .architecture-layer:not([data-area="security"]),
-.architecture-hero:has(a[data-area="foundations"]:is(:hover, :focus-visible)) .architecture-layer:not([data-area="foundations"]) { opacity: .32; }
 
 .contribution-scene { container-type: inline-size; padding: clamp(1rem, 3vw, 2rem); border-radius: 1.5rem; background: var(--architecture-paper); }
 .hope-brand .contribution-scene__title { margin: 0 0 clamp(1.4rem, 3vw, 2.2rem); max-width: 38ch; font-size: clamp(1.05rem, 2vw, 1.3rem); line-height: 1.35; font-weight: 600; color: var(--architecture-ink); letter-spacing: -.02em; }
@@ -197,16 +227,14 @@
 }
 @media (max-width: 360px) {
   .architecture-hero { border-bottom-right-radius: 3rem; }
-  .architecture-hero__key ul { grid-template-columns: 1fr; gap: 0; }
-  .architecture-hero__key a { min-height: 52px; }
   .contribution-scene__fanout { gap: .4rem; grid-template-columns: minmax(0, .85fr) 1.5rem minmax(0, 1.25fr); }
   .contribution-scene__fanout .contribution-scene__translation > span { display: none; }
   .contribution-scene__documents { gap: .15rem; }
   .contribution-scene__fanout strong { font-size: .87rem; }
 }
 @media (forced-colors: active) {
-  .architecture-hero__key a:focus-visible { outline-color: Highlight; }
+  .architecture-choice:has(input:focus-visible), .hope-brand .architecture-outcome a:focus-visible { outline-color: Highlight; }
   .architecture-hero, .contribution-scene, .contribution-scene__build { border: 1px solid CanvasText; }
-  .architecture-hero__swatch { border: 1px solid CanvasText; }
+  .atlas-mark { fill: CanvasText; }
   .contribution-scene__arrow, .contribution-scene__lane-track, .contribution-scene__lane-signal { stroke: CanvasText; }
 }

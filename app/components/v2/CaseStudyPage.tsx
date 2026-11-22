@@ -3,6 +3,8 @@ import ProjectLineageField from "../v3/ProjectLineageField";
 import { SourceLink, StatusStamp } from "./Evidence";
 import { RouteFrame } from "./RouteFrame";
 import { CaseStudyData } from "./StructuredData";
+import { architectureAreas } from "../../data/architecture-atlas";
+import { AtlasMark, ContributionScene } from "../v3/LivingArchitecture";
 
 const stageActions = {
   Pressure: "See the starting point",
@@ -15,6 +17,7 @@ const stageActions = {
 
 export default function CaseStudyPage({ caseStudy }: { readonly caseStudy: CaseStudy }) {
   const caseIndex = caseStudies.findIndex((candidate) => candidate.id === caseStudy.id);
+  const layer = architectureAreas.find(area => area.caseId === caseStudy.id);
   const previous = caseStudies[(caseIndex - 1 + caseStudies.length) % caseStudies.length];
   const next = caseStudies[(caseIndex + 1) % caseStudies.length];
   const sourceUrls = [...new Set(
@@ -29,7 +32,11 @@ export default function CaseStudyPage({ caseStudy }: { readonly caseStudy: CaseS
         description={caseStudy.plainResult}
         sources={sourceUrls}
       />
-      <article className="case-study">
+      <article className="case-study" data-area={layer?.id}>
+        {layer ? <>
+          {/* eslint-disable-next-line @next/next/no-css-tags */}
+          <link rel="stylesheet" href="/living-architecture.css" />
+        </> : null}
         <header className="case-hero" id="story">
           <div className="shell case-hero__grid">
             <div className="case-hero__rail" aria-hidden="true">
@@ -41,9 +48,10 @@ export default function CaseStudyPage({ caseStudy }: { readonly caseStudy: CaseS
               <p className="section-code case-breadcrumb">
                 <a href="/work/">Selected work</a> <span aria-hidden="true">/</span> {caseStudy.family}
               </p>
-              <p className="micro-label case-hero__eyebrow">{caseStudy.title}</p>
+              <p className="micro-label case-hero__eyebrow">{layer ? <AtlasMark mark={layer.mark} /> : null}{caseStudy.title}</p>
               <h1 className="case-hero__plain">{caseStudy.cardHeadline}</h1>
               <p className="case-hero__result">{caseStudy.operatingResult}</p>
+              <div className="case-hero__code"><SourceLink sourceId={caseStudy.repositorySourceId}>View the working code<span className="visually-hidden">: {caseStudy.repository}</span></SourceLink></div>
               <dl className="case-hero__facts">
                 <div>
                   <dt>Who this helps</dt>
@@ -60,10 +68,6 @@ export default function CaseStudyPage({ caseStudy }: { readonly caseStudy: CaseS
                 <div>
                   <dt>Public activity</dt>
                   <dd>{caseStudy.period}</dd>
-                </div>
-                <div>
-                  <dt>Working code</dt>
-                  <dd><SourceLink sourceId={caseStudy.repositorySourceId}>{caseStudy.repository}</SourceLink></dd>
                 </div>
               </dl>
               <ProjectLineageField caseStudy={caseStudy} />
@@ -86,6 +90,7 @@ export default function CaseStudyPage({ caseStudy }: { readonly caseStudy: CaseS
                 <p>Six stages connect the original pressure to the system that now exists.</p>
               </div>
             </div>
+            {layer ? <div className="case-path__mechanism"><ContributionScene kind={layer.kind} /></div> : null}
             <ol className="case-path__list">
               {caseStudy.stages.map((stage) => {
                 const [primary, ...secondary] = stage.sourceIds;

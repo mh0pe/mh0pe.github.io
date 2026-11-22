@@ -1,14 +1,12 @@
 import type { CSSProperties, ReactNode } from "react";
+import { architectureAreas as areas } from "../../data/architecture-atlas";
 
 type SceneKind = "guidance" | "security" | "windows" | "continuity" | "policy";
 type Point = readonly [number, number];
 
-const areas = [
-  { id: "foundations", label: "Foundations", detail: "Nix on Windows", href: "#project-nix-windows" },
-  { id: "security", label: "Security", detail: "Automated Security Helper", href: "#project-automated-security-helper" },
-  { id: "tools", label: "Developer tools", detail: "CloudFormation Guard", href: "#project-cloudformation-guard" },
-  { id: "ai", label: "AI workflows", detail: "Agent systems", href: "#project-agent-systems" },
-] as const;
+export function AtlasMark({ mark }: { mark: string }) {
+  return <svg className="atlas-mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d={mark} /></svg>;
+}
 
 // The pieces describe areas of practice, not contribution volume or dependencies.
 const footprints: readonly (readonly Point[])[] = [
@@ -43,7 +41,7 @@ function Solid({ footprint, level, part }: { footprint: readonly Point[]; level:
 
 export function ArchitectureHero() {
   return (
-    <figure className="architecture-hero" data-motion-once>
+    <figure className="architecture-hero" id="architecture-atlas" data-motion-once>
       <div className="architecture-hero__stage">
         <svg className="architecture-hero__sculpture" viewBox="0 0 620 490" aria-hidden="true" focusable="false">
           <ellipse className="architecture-hero__shadow" cx="303" cy="450" rx="210" ry="24" />
@@ -57,21 +55,26 @@ export function ArchitectureHero() {
           ))}
         </svg>
       </div>
-      <div className="architecture-hero__key">
-        <p className="architecture-hero__title">Where my work fits</p>
-        <ul>
+      <fieldset className="architecture-hero__key">
+        <legend className="architecture-hero__title">Explore the stack</legend>
+        <div className="architecture-hero__choices">
           {areas.toReversed().map((area) => (
-            <li key={area.id}>
-              <a href={area.href} data-area={area.id}>
-                <span className="architecture-hero__swatch" aria-hidden="true" />
-                <span><strong>{area.label}</strong><small>{area.detail}</small></span>
-                <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 10h11m-4-4 4 4-4 4" /></svg>
-              </a>
-            </li>
+            <label className="architecture-choice" data-area={area.id} key={area.id}>
+              <input type="radio" name="architecture-layer" value={area.id} defaultChecked={area.id === "ai"} />
+              <AtlasMark mark={area.mark} />
+              <span>{area.label}</span>
+            </label>
           ))}
-        </ul>
-      </div>
-      <figcaption>From the foundations software runs on to the tools and AI workflows people use.</figcaption>
+        </div>
+      </fieldset>
+      <figcaption className="architecture-hero__outcomes">
+        {areas.toReversed().map((area) => (
+          <div className="architecture-outcome" data-area={area.id} key={area.id}>
+            <p><strong>{area.project}.</strong> {area.outcome}</p>
+            <a href={`/work/${area.caseId}/`}>Read the case study<span className="visually-hidden">: {area.project}</span> <span aria-hidden="true">↗</span></a>
+          </div>
+        ))}
+      </figcaption>
     </figure>
   );
 }

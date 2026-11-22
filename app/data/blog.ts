@@ -1,5 +1,6 @@
 import type { PublicUrl } from "./portfolio-v2";
 import { zeroFindings } from "./zero-findings";
+import { slowestShard, supportMatrix } from "./new-engineering-essays";
 
 export const blogTopics = [
   { id: "security", label: "Security", description: "Checks people can understand and act on." },
@@ -611,6 +612,8 @@ export const blogArticles: readonly BlogArticle[] = [
     ],
   },
   zeroFindings,
+  slowestShard,
+  supportMatrix,
 ];
 
 export const legacyEntryPoints = [

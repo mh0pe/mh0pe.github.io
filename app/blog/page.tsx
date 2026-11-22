@@ -13,6 +13,7 @@ export default function BlogPage() {
   const featured = articleBySlug("zero-findings") ?? blogArticles[0];
   const featuredArt = artFor(featured.slug);
   const sharedArt = artFor(blogArticles[1].slug);
+  const recent = blogArticles.slice(-2);
   const tags = [...new Set(blogArticles.flatMap((article) => article.tags))].sort();
   return (
     <RouteFrame current="blog">
@@ -29,9 +30,8 @@ export default function BlogPage() {
           <div>
             <a className="journal-back" href="/">← The portfolio</a>
             <p className="journal-eyebrow">Writing</p>
-            <h1>Notes from<br />the work.</h1>
-            <p className="journal-opening__lead">The decisions behind the systems, explained through the work itself.</p>
-            <p>Essays on security, AI collaboration, and the foundations that make software useful to other people.</p>
+            <h1>Notes from the work.</h1>
+            <p className="journal-opening__lead">Illustrated essays on the decisions behind the systems I build.</p>
           </div>
           <div className="journal-feature" data-topic={featured.topic} style={artStyle(featuredArt)}>
             <p className="journal-eyebrow">Start here <span aria-hidden="true">/</span> Security</p>
@@ -48,6 +48,10 @@ export default function BlogPage() {
             <a className="journal-read" href={articlePath(featured)}>Read the essay <span aria-hidden="true">→</span></a>
           </div>
         </header>
+        <section className="shell journal-recent" aria-labelledby="journal-recent-title">
+          <h2 id="journal-recent-title">New essays</h2>
+          <ul>{recent.map(article => <li key={article.slug}><a href={articlePath(article)}>{article.title}</a><p>{article.deck}</p></li>)}</ul>
+        </section>
         <section className="shell journal-library" id="articles" aria-labelledby="articles-title">
           <div className="journal-library__heading">
             <h2 id="articles-title">Find a thread to follow.</h2>

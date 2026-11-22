@@ -14,13 +14,13 @@ const sharedFamilies = [
   "button-row", "text-action", "micro-label", "is-", "has-", "js-",
 ];
 export const routeFamilies = {
-  home: [...sharedFamilies, "landing-", "architecture-", "contribution-scene", "lineage-", "source-", "article-art"],
+  home: [...sharedFamilies, "landing-", "architecture-", "atlas-mark", "contribution-scene", "lineage-", "source-", "article-art"],
   models: [...sharedFamilies, "proof-models", "attribution-"],
   method: [...sharedFamilies, "philosophy-", "method-", "motion-film"],
   blog: [...sharedFamilies, "journal", "article-"],
   credentials: [...sharedFamilies, "credential-"],
   work: [...sharedFamilies, "button", "work-", "contribution-scene", "lineage-", "source-", "status-stamp"],
-  "case-study": [...sharedFamilies, "case-", "claim-ledger", "lineage-", "source-", "status-stamp"],
+  "case-study": [...sharedFamilies, "case-", "atlas-mark", "contribution-scene", "claim-ledger", "lineage-", "source-", "status-stamp"],
   proof: [...sharedFamilies, "proof-", "source-", "vocabulary-"],
   about: [...sharedFamilies, "about-", "career-ledger", "case-close__grid", "source-"],
   capabilities: [...sharedFamilies, "capability-atlas", "atlas-", "source-"],

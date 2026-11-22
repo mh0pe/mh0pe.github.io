@@ -2242,7 +2242,7 @@ details > summary {
 .attribution-chart-heading p,
 .attribution-evidence-intro p {
   color: var(--paper-muted);
-  font-size: 0.8rem;
+  font-size: 0.94rem;
 }
 
 .attribution-method ul {
@@ -2253,7 +2253,7 @@ details > summary {
   margin-bottom: 0.45rem;
   color: var(--cyan) !important;
   font-family: var(--font-mono);
-  font-size: 0.66rem !important;
+  font-size: 0.8125rem !important;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -2303,7 +2303,7 @@ details > summary {
   margin-bottom: 0.4rem;
   color: var(--paper-muted);
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.8125rem;
   text-transform: uppercase;
 }
 
@@ -2319,7 +2319,7 @@ details > summary {
   border: 1px solid var(--line-strong);
   background: var(--night);
   color: var(--paper);
-  font-size: 0.72rem;
+  font-size: 0.9rem;
 }
 
 .attribution-segmented button[aria-pressed="true"] {
@@ -2450,7 +2450,7 @@ details > summary {
   align-items: center;
   color: var(--cyan);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.875rem;
 }
 
 .attribution-evidence-limit {
@@ -2458,7 +2458,7 @@ details > summary {
   margin: 0;
   padding: 0.75rem 0;
   color: var(--paper-muted);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
 }
 
 .attribution-table-wrap {

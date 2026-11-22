@@ -8,6 +8,7 @@ const storyByFamily: Record<ArtFamily, MotionStory> = {
   registration: "reproducible-security-checks", annotations: "security-feedback-where-you-work",
   folio: "handoffs-that-carry-the-work", verification: "integrity-bound-yarn-pnp-for-bazel",
   cutaway: "typed-svg-dom", apertures: "aws-labs-mcp", revisions: "cloud-runtime", receipts: "zero-findings",
+  shards: "slowest-shard", matrix: "support-is-a-matrix",
 };
 
 // Collection previews use an authored article pose, without loading a Player,

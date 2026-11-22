@@ -9,10 +9,10 @@ import { viewportAuditFailureReasons } from "../tools/viewport-audit-contract.mj
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 
-test("viewport audit derives all exported routes, including the blog index and ten articles", async () => {
+test("viewport audit derives all exported routes, including the blog index and twelve articles", async () => {
   const catalog = await discoverExportCatalog(fileURLToPath(new URL("../pages-dist/", import.meta.url)));
   const routes = catalog.map((entry) => entry.route);
-  assert.equal(routes.length, 27);
+  assert.equal(routes.length, 29);
   assert.ok(routes.includes("/blog/"));
   assert.deepEqual(
     blogRoutes.filter((slug) => routes.includes(`/blog/${slug}/`)),
@@ -29,6 +29,9 @@ test("viewport audit classifies release failures and exits nonzero when any are 
   assert.deepEqual(viewportAuditFailureReasons({
     brokenImages: ["missing.png"], horizontalOverflow: true, newsreaderLoaded: false, oneH1: false, oneMain: false,
   }), ["document-horizontal-overflow", "broken-images", "heading-count", "main-count", "newsreader-not-loaded"]);
+  assert.deepEqual(viewportAuditFailureReasons({
+    clippedReading: [{ className: "article-story__viewport" }], newsreaderLoaded: true, oneH1: true, oneMain: true,
+  }), ["component-text-or-art-clipped"]);
   const source = await read("tools/viewport-audit.mjs");
   assert.match(source, /discoverExportCatalog/);
   assert.match(source, /if \(failures\.length > 0\) process\.exitCode = 1/);

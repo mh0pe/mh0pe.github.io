@@ -18,9 +18,13 @@ const baseUrl = (process.env.PORTFOLIO_URL ?? "http://127.0.0.1:3000").replace(
 const outputDir =
   process.argv[2] ?? join(tmpdir(), "portfolio-viewport-audit");
 
-const routes = (await discoverExportCatalog(resolve(projectRoot, "pages-dist"))).map(
+const availableRoutes = (await discoverExportCatalog(resolve(projectRoot, "pages-dist"))).map(
   ({ route }) => route,
 );
+const routes = process.env.PORTFOLIO_AUDIT_ROUTES
+  ? [...new Set(process.env.PORTFOLIO_AUDIT_ROUTES.split(",").map(route => route.trim()))]
+  : availableRoutes;
+if (routes.some(route => !availableRoutes.includes(route))) throw new Error("Requested viewport route is not in the static export.");
 
 const viewports = [
   { height: 568, key: "phone-small", width: 320 },
@@ -140,7 +144,7 @@ async function evaluate(expression) {
 }
 
 async function navigate(url) {
-  const loaded = nextEvent("Page.loadEventFired");
+  const loaded = nextEvent("Page.loadEventFired", 25_000);
   await command("Page.navigate", { url });
   await loaded;
   await delay(260);
@@ -183,6 +187,50 @@ const auditExpression = String.raw`(() => {
     .slice(0, 24)
     .map(label);
 
+  // Global overflow checks miss text cut by a local card or masked by the page.
+  const clippedReading = [];
+  const reading = 'main :is(h1,h2,h3,summary), .site-header :is(.site-identity__name,.site-identity small,.primary-nav a,.mobile-nav summary,.mobile-nav nav a), .architecture-choice > span, .architecture-outcome a, .case-hero__code a, .article-story__viewport, .article-story__viewport svg text';
+  for (const element of document.querySelectorAll(reading)) {
+    if (!isVisible(element) || element.closest('.visually-hidden,[hidden],[inert]')) continue;
+    const view = element.closest('.article-story__viewport');
+    if (element.closest('svg') && !view) continue;
+    let left = 0, right = root.clientWidth, top = -Infinity, bottom = Infinity;
+    let skipped = false;
+    for (let container = element.parentElement; container; container = container.parentElement) {
+      // A nested summary can have measurable layout even when its enclosing
+      // disclosure is closed. Check every ancestor, not just the nearest.
+      if (container.matches('details:not([open])') && !container.querySelector(':scope > summary')?.contains(element)) { skipped = true; break; }
+      const style = getComputedStyle(container);
+      const bounds = container.getBoundingClientRect();
+      // A usable horizontal scroll region is not clipping.
+      if (['auto', 'scroll'].includes(style.overflowX) && container.scrollWidth > container.clientWidth + 3) { skipped = true; break; }
+      if (['hidden', 'clip'].includes(style.overflowX)) {
+        left = Math.max(left, bounds.left); right = Math.min(right, bounds.right);
+      }
+      if (container !== root && container !== document.body && ['hidden', 'clip'].includes(style.overflowY)) {
+        top = Math.max(top, bounds.top); bottom = Math.min(bottom, bounds.bottom);
+      }
+    }
+    if (skipped) continue;
+    const rects = [];
+    if (element.matches('.article-story__viewport, svg text')) {
+      rects.push(element.getBoundingClientRect());
+    } else {
+      const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const text = walker.currentNode;
+        if (!text.textContent.trim() || text.parentElement.closest('svg,.visually-hidden,[aria-hidden="true"],[hidden]') || !isVisible(text.parentElement)) continue;
+        const range = document.createRange();
+        range.selectNodeContents(text);
+        rects.push(...range.getClientRects());
+      }
+    }
+    if (rects.some(rect => rect.width > 0 && rect.height > 0 && Math.max(left - rect.left, rect.right - right, top - rect.top, rect.bottom - bottom) > 3)) {
+      clippedReading.push(label(element));
+    }
+    if (clippedReading.length >= 24) break;
+  }
+
   const siblingOverlaps = [];
   for (const parent of visible) {
     const children = [...parent.children]
@@ -218,6 +266,7 @@ const auditExpression = String.raw`(() => {
     horizontalOverflow: root.scrollWidth > root.clientWidth + 1,
     viewportOverflow,
     clippedText,
+    clippedReading,
     siblingOverlaps,
     landmarks,
     oneMain: document.querySelectorAll('main').length === 1,

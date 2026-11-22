@@ -26,6 +26,8 @@ Madison Hope Steiner, also known on GitHub as mh0pe and awsmadi, makes difficult
 ## Writing from the work
 
 - Read a zero-findings result in light of scan coverage and freshness: https://mh0pe.github.io/blog/zero-findings/
+- Balance parallel tests by duration without losing test coverage: https://mh0pe.github.io/blog/slowest-shard/
+- Make build compatibility claims precise across SDK versions and chip capabilities: https://mh0pe.github.io/blog/support-is-a-matrix/
 
 - Preserve project ownership in a shared security workflow: https://mh0pe.github.io/blog/workspace-security/
 - Adapt one capability definition for fifteen AI coding tools: https://mh0pe.github.io/blog/one-definition-many-agent-tools/

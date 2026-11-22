@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { motionStories, type MotionStory } from "./article-motion";
 
-export type ArtFamily = "reports" | "editions" | "registration" | "annotations" | "folio" | "verification" | "cutaway" | "apertures" | "revisions" | "receipts";
+export type ArtFamily = "reports" | "editions" | "registration" | "annotations" | "folio" | "verification" | "cutaway" | "apertures" | "revisions" | "receipts" | "shards" | "matrix";
 export type ArtMoment = "cover" | "focus" | "resolve";
 
 export interface ArticleArtDirection {
@@ -45,6 +45,8 @@ export const articleArt: Readonly<Record<string, ArticleArtDirection>> = {
   "aws-labs-mcp": direction("aws-labs-mcp", "apertures"),
   "cloud-runtime": direction("cloud-runtime", "revisions"),
   "zero-findings": direction("zero-findings", "receipts"),
+  "slowest-shard": direction("slowest-shard", "shards"),
+  "support-is-a-matrix": direction("support-is-a-matrix", "matrix"),
 };
 
 export function artFor(slug: string): ArticleArtDirection {

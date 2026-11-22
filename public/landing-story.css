@@ -7,7 +7,7 @@
 .landing-opening .hope-button--primary { background: var(--hope-blue); border-color: var(--hope-blue); color: var(--hope-porcelain); }
 .landing-opening .hope-button--primary:hover { background: var(--hope-green); border-color: var(--hope-green-dark); color: var(--hope-on-accent); }
 .landing-lead { max-width: 37ch; font-size: clamp(1.12rem, 1.5vw, 1.4rem); line-height: 1.55; }
-.landing-opening__examples { max-width: 46ch; font-size: 1rem; line-height: 1.65; color: var(--hope-ink-muted); }
+.landing-opening__examples { max-width: 46ch; margin-block: 1.05rem 0; font-size: 1rem; line-height: 1.55; color: var(--hope-ink-muted); }
 .landing-opening__examples a { color: var(--hope-carbon); text-underline-offset: .2em; }
 .landing-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 2rem; }
 .hope-brand .landing-link { display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; text-underline-offset: .25em; font-size: .95rem; font-weight: 550; }
@@ -18,6 +18,7 @@
 .landing-project { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); grid-template-areas: "intro art" "contribution art" "depth depth"; gap: 1.5rem 3rem; align-items: center; padding-block: 3rem 3.5rem; border-top: 1px solid var(--hope-hairline); }
 .landing-project__copy { grid-area: intro; align-self: end; }
 .landing-project__visual { grid-area: art; min-width: 0; }
+.landing-project__layer .atlas-mark { vertical-align: -.18em; margin-inline-end: .55em; --atlas-layer: var(--project-accent); }
 .landing-project__follow-through { grid-area: contribution; align-self: start; }
 .landing-project[data-story-kind="policy"] { grid-template-areas: "art intro" "art contribution" "depth depth"; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
 .landing-project[data-story-kind="continuity"] { grid-template-areas: "intro intro" "art contribution" "depth depth"; }
@@ -119,8 +120,9 @@
   .hope-brand .landing-credential-group h3 { max-width: none; }
 }
 @media (max-width: 760px) {
-  .landing-opening { grid-template-columns: minmax(0, 1fr); padding-block: 2.5rem 3rem; }
-  .hope-brand .landing-opening h1 { max-width: 16ch; font-size: clamp(2.85rem, 9.5vw, 4.5rem); }
+  .hope-brand .landing-story .landing-opening { grid-template-columns: minmax(0, 1fr); padding-block: clamp(1.35rem,4vw,2.5rem) 3rem; }
+  .hope-brand .landing-story .landing-opening h1 { max-width: 19ch; font-size: clamp(2.45rem, 8.5vw, 4.2rem); margin-block: .7rem 1rem; }
+  .landing-actions { margin-top: 1.1rem; gap: .4rem 1rem; }
   .landing-opening__copy { max-width: 38rem; }
   .landing-work { border-radius: 1.5rem 1.5rem 0 0; }
   .landing-section-heading { padding-block: 2.5rem 1rem; }
@@ -146,6 +148,12 @@
   .landing-credential-gallery { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 2rem .75rem; }
   .landing-credential-gallery img { width: 112px; height: 112px; }
   .landing-credentials { padding-bottom: 3rem; }
+}
+@media (max-height: 33rem) and (orientation: landscape) {
+  .hope-brand .landing-story .landing-opening { padding-block: 1rem 2.25rem; }
+  .hope-brand .landing-story .landing-opening h1 { font-size: clamp(2.35rem,6vw,3.4rem); margin-block: .45rem .75rem; }
+  .landing-lead { font-size: 1rem; }
+  .landing-actions { margin-top: .7rem; }
 }
 @media (max-width: 380px) {
   .landing-writing__entries article { grid-template-columns: minmax(0, 1fr); gap: 1rem; }

@@ -5,13 +5,15 @@ import { readFileSync } from "node:fs";
 const component = readFileSync(new URL("../app/components/v3/LivingArchitecture.tsx", import.meta.url), "utf8");
 const css = readFileSync(new URL("../public/living-architecture.css", import.meta.url), "utf8");
 const claims = readFileSync(new URL("../app/data/capability-bricks.ts", import.meta.url), "utf8");
+const atlas = readFileSync(new URL("../app/data/architecture-atlas.ts", import.meta.url), "utf8");
 
-test("architectural areas lead to real project sections without implying dependency or volume", () => {
+test("native atlas controls reveal case links without implying dependency or volume", () => {
   for (const id of ["nix-windows", "automated-security-helper", "cloudformation-guard", "agent-systems"]) {
-    assert.ok(component.includes(`href: "#project-${id}"`));
+    assert.ok(atlas.includes(`caseId: "${id}"`));
   }
   assert.match(component, /areas of practice, not contribution volume or dependencies/);
-  assert.match(component, /<a href=\{area\.href\}/);
+  assert.match(component, /<input type="radio" name="architecture-layer"/);
+  assert.match(component, /\/work\/\$\{area\.caseId\}\//);
   assert.doesNotMatch(component, /onMouseMove|onPointerMove|requestAnimationFrame|setInterval|"use client"/);
 });
 
@@ -36,8 +38,8 @@ test("art keeps meaningful labels in HTML and no essential labels in SVG", () =>
   assert.ok(svgTags.length >= 4);
   assert.ok(svgTags.every((tag) => tag.includes('aria-hidden="true"') && tag.includes('focusable="false"')));
   assert.match(component, /<figcaption>\{scene\.caption\}<\/figcaption>/);
-  assert.match(css, /\.architecture-hero__key a:focus-visible/);
-  assert.match(css, /min-height: 54px/);
+  assert.match(css, /\.architecture-choice:has\(input:focus-visible\)/);
+  assert.match(css, /\.architecture-choice \{[^}]*min-block-size: 44px/);
 });
 
 test("motion is a finite progressive enhancement with theme and reduced-motion fallbacks", () => {

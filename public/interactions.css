@@ -13,12 +13,6 @@
 }
 .hope-brand .site-footer__grid .site-footer__record { text-align: left; }
 
-/* Anchor the dropdown to the whole header even when its text wraps. */
-@media (max-width: 48rem) {
-  .hope-brand .site-header__inner { position: relative; }
-  .hope-brand .mobile-nav { position: static; }
-  .hope-brand .mobile-nav nav { left: 0; right: 0; width: auto; }
-}
 @media (max-width: 25rem) {
   .hope-brand .site-identity { flex: 1 1 0; padding-right: .25rem; column-gap: .45rem; }
   .hope-brand .site-identity__name { font-size: .9rem; line-height: 1.15; white-space: normal; }
@@ -27,11 +21,11 @@
 
 .hope-brand .site-header::after {
   position: absolute;
-  top: -0.85rem;
+  bottom: -1px;
   right: 0;
   left: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--hope-green), var(--hope-blue), var(--hope-copper));
+  background: var(--edition-action, var(--hope-blue));
   content: "";
   opacity: 0;
   pointer-events: none;

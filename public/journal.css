@@ -24,6 +24,12 @@
 .journal-feature__legend { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .6rem 1rem; padding: 0; margin: .5rem 0; list-style: none; }
 .journal-feature__legend li { display: flex; align-items: center; gap: .5rem; font-size: .85rem; }
 .journal-read { display: inline-flex; align-items: center; gap: .75rem; min-height: 44px; font-weight: 550; }
+.journal-recent { padding-block: 0 clamp(1.5rem,4vw,3rem); }
+.hope-brand .journal-recent h2 { font-size: clamp(1.5rem,3vw,2.3rem); margin-block: 0 .7rem; }
+.journal-recent ul { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,18rem),1fr)); gap: 1rem clamp(1rem,4vw,3rem); list-style: none; margin: 0; padding: 0; }
+.journal-recent li { border-block-start: 1px solid var(--hope-hairline); min-inline-size: 0; padding-block-start: .45rem; }
+.journal-recent a { display: inline-flex; align-items: center; min-block-size: 44px; font-weight: 650; text-underline-offset: .2em; }
+.journal-recent p { margin: 0; color: var(--hope-ink-muted); font-size: .95rem; }
 .hope-brand .journal-library[id] { border-top: 1px solid var(--hope-hairline); padding-block: 3rem 4rem; scroll-margin-top: 7rem; }
 .hope-brand .journal-library__heading h2 { font-size: clamp(2rem,3.2vw,3.25rem); line-height: 1.1; margin-bottom: 1rem; }
 .journal-topics { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1.75rem 1.25rem; }
@@ -143,9 +149,12 @@
   .article-reading { max-width: none; }
 }
 @media (max-width: 700px) {
-  .journal-opening { grid-template-columns: minmax(0,1fr); padding-block: 2rem 3rem; gap: 2rem; }
-  .hope-brand .journal-opening h1 { font-size: clamp(3.4rem,14vw,5.5rem); }
-  .journal-feature { padding: 1.5rem; }
+  .journal-index .journal-masthead { display: none; }
+  .hope-brand .journal-index .journal-opening { grid-template-columns: minmax(0,1fr); padding-block: 1.15rem 2.5rem; gap: 1.1rem; }
+  .journal-opening .journal-back { margin-bottom: .4rem; }
+  .hope-brand .journal-index .journal-opening h1 { font-size: clamp(2.7rem,10vw,4.4rem); margin-block: .5rem .8rem; text-wrap: balance; }
+  .journal-opening .journal-opening__lead { font-size: 1.06rem; margin-block: 0; }
+  .hope-brand .journal-index .journal-feature { padding: clamp(1rem,4vw,1.5rem); }
   .journal-library { padding-block: 2rem; }
   .journal-topic { grid-template-columns: minmax(0,1fr); gap: .5rem; padding-block: 2rem; }
   .journal-topic > header p { max-width: 45ch; }

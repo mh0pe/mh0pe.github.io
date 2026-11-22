@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { motionStories, type MotionStory } from "@/app/data/article-motion";
+import { CompatibilityWorld, ShardWorld } from "./EngineeringWorlds";
 import { foldedSheet } from "@/app/components/blog/motion/miura-geometry";
 import { between, chapterAt, storyState } from "@/app/components/blog/motion/story-timing";
 import { CloudRuntimeWorld, MCPWorld } from "@/app/components/blog/motion/CapabilityScenes";
@@ -264,6 +265,7 @@ const worlds: Record<MotionStory, (props: WorldProps) => ReactNode> = {
   "handoffs-that-carry-the-work": Continuity, "integrity-bound-yarn-pnp-for-bazel": Interlock,
   "typed-svg-dom": Letterform, "aws-labs-mcp": MCPWorld, "cloud-runtime": CloudRuntimeWorld,
   "zero-findings": ScanReceiptWorld,
+  "slowest-shard": ShardWorld, "support-is-a-matrix": CompatibilityWorld,
 };
 
 // Pure frame geometry is shared by server-rendered stills, the scroll player,

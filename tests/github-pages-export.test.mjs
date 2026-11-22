@@ -51,7 +51,7 @@ function fontPreloadTags(html) {
 
 test("every exported document keeps one same-origin favicon without weakening its security policy", async () => {
   const catalog = await discoverExportCatalog(fileURLToPath(output));
-  assert.equal(catalog.length, 27);
+  assert.equal(catalog.length, 29);
   for (const entry of catalog) {
     const html = await artifact(entry.output);
     const icons = [...html.matchAll(/<link\b[^>]*>/gi)].map(([tag]) => tag).filter(tag => /\brel="icon"/i.test(tag));
@@ -81,7 +81,7 @@ test("every exported identity link retains its visible accessible name", async (
     assert.match(identity, /class="site-identity__mark" aria-hidden="true"/, entry.output);
     assert.match(identity, /Principal AI Architect/, entry.output);
   }
-  assert.equal(identities, 26);
+  assert.equal(identities, 28);
 });
 
 test("exports every redesign route with production canonical metadata", async () => {

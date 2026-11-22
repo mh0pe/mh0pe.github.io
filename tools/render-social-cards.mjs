@@ -11,9 +11,9 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const output = resolve(root, "public/social");
 const review = resolve(root, "review/social");
 const digest = data => createHash("sha256").update(data).digest("hex");
-const sources = ["app/data/social-pages.json", "app/data/social.ts", "app/data/blog.ts", "app/data/zero-findings.ts", "app/data/article-motion.ts", "app/data/credentials.ts",
+const sources = ["app/data/social-pages.json", "app/data/social.ts", "app/data/blog.ts", "app/data/zero-findings.ts", "app/data/new-engineering-essays.ts", "app/data/article-motion.ts", "app/data/credentials.ts", "app/data/architecture-atlas.ts",
   "remotion/index.ts", "remotion/Root.tsx", "remotion/compositions/SocialCard.tsx", "app/components/blog/motion/StoryScene.tsx", "app/components/blog/motion/story-timing.ts",
-  "app/components/blog/motion/miura-geometry.ts", "app/components/blog/motion/CapabilityScenes.tsx", "app/components/blog/motion/ScanReceiptWorld.tsx", "app/components/v3/LivingArchitecture.tsx", "public/fonts/newsreader-variable.woff2", "public/fonts/instrument-sans-variable.woff2", "tools/render-social-cards.mjs", "package-lock.json", "public/portraits/madison-outdoor-720.webp"];
+  "app/components/blog/motion/miura-geometry.ts", "app/components/blog/motion/CapabilityScenes.tsx", "app/components/blog/motion/ScanReceiptWorld.tsx", "app/components/blog/motion/EngineeringWorlds.tsx", "app/components/v3/LivingArchitecture.tsx", "public/fonts/newsreader-variable.woff2", "public/fonts/instrument-sans-variable.woff2", "tools/render-social-cards.mjs", "package-lock.json", "public/portraits/madison-outdoor-720.webp"];
 const credentialSource = await readFile(resolve(root, "app/data/credentials.ts"), "utf8");
 sources.push(...[...credentialSource.matchAll(/credential\(\s*"([a-z0-9-]+)"/g)].slice(0, 6).map(([, id]) => `public/credentials/${id}.webp`));
 const inputs = await Promise.all(sources.map(async file => ({ file, sha256: digest(await readFile(resolve(root, file))) })));

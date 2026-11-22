@@ -129,6 +129,8 @@ for (const article of blogArticles) {
       assert.ok(html.includes(scene.description.replaceAll("'", "&#x27;")) || html.includes(scene.description));
     }
     assert.ok(html.includes('/editorial-art.css?'));
+    assert.match(html, /class="article-opening-band"><header class="shell article-opening">/);
+    assert.equal((html.match(/class="article-story__folio"/g) ?? []).length, chapters.length);
     assert.doesNotMatch(html, /<canvas|<video|<iframe|type="module"|vite-rsc|__next_f/);
     assert.doesNotMatch(html, /<details open=""/);
     assert.ok(html.indexOf('data-story-stage="opening"') > html.indexOf('class="shell article-layout"'));

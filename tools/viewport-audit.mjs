@@ -257,6 +257,27 @@ const auditExpression = String.raw`(() => {
     const rect = heading.getBoundingClientRect();
     return { ...label(heading), top: Math.round(rect.top + scrollY), width: Math.round(rect.width), height: Math.round(rect.height) };
   });
+  const articleSpreadIssues = [];
+  const article = document.querySelector('.article-page[data-story-layout="inline"]');
+  if (article) {
+    const fillsPage = node => {
+      const rect = node?.getBoundingClientRect();
+      return !!rect && Math.abs(rect.left) <= 2 && Math.abs(rect.right - root.clientWidth) <= 2;
+    };
+    if (!fillsPage(article.querySelector('.article-opening-band'))) articleSpreadIssues.push('opener-not-full-width');
+    const stages = [...article.querySelectorAll('[data-story-stage]')];
+    if (!stages.length) articleSpreadIssues.push('missing-spreads');
+    for (const stage of stages) {
+      if (!fillsPage(stage)) articleSpreadIssues.push(stage.dataset.storyStage + ':narrow-spread');
+      const artwork = stage.querySelector('.article-story__viewport')?.getBoundingClientRect();
+      if (!artwork || !artwork.width || Math.abs(artwork.width * 5 / 8 - artwork.height) > 2) {
+        articleSpreadIssues.push(stage.dataset.storyStage + ':artwork-ratio');
+      }
+    }
+    const copy = article.querySelector('.article-section__beat > p')?.getBoundingClientRect();
+    const measure = 44 * parseFloat(getComputedStyle(root).fontSize);
+    if (!copy || copy.width > measure + 2 || copy.width >= root.clientWidth - 4) articleSpreadIssues.push('unbounded-prose');
+  }
 
   return {
     title: document.title,
@@ -267,6 +288,7 @@ const auditExpression = String.raw`(() => {
     viewportOverflow,
     clippedText,
     clippedReading,
+    articleSpreadIssues,
     siblingOverlaps,
     landmarks,
     oneMain: document.querySelectorAll('main').length === 1,

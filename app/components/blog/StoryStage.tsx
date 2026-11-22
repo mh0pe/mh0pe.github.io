@@ -31,6 +31,7 @@ export function StoryStage({ story, moment, rail = false, sources = [] }: { stor
     </div>
     <figcaption className="article-story__caption">
       <div>
+        {!rail ? <p className="article-story__folio">Illustration {String(index + 1).padStart(2, "0")} / {String(direction.chapters.length).padStart(2, "0")}</p> : null}
         <strong data-story-title>{chapter.title}</strong>
         <p data-story-caption>{chapter.caption}</p>
         <p className="visually-hidden" id={instance + "-description"} data-story-description>{chapter.description}</p>

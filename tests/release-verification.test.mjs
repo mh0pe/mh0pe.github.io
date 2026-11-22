@@ -32,6 +32,9 @@ test("viewport audit classifies release failures and exits nonzero when any are 
   assert.deepEqual(viewportAuditFailureReasons({
     clippedReading: [{ className: "article-story__viewport" }], newsreaderLoaded: true, oneH1: true, oneMain: true,
   }), ["component-text-or-art-clipped"]);
+  assert.deepEqual(viewportAuditFailureReasons({
+    articleSpreadIssues: ["opening:narrow-spread"], newsreaderLoaded: true, oneH1: true, oneMain: true,
+  }), ["article-spread-layout"]);
   const source = await read("tools/viewport-audit.mjs");
   assert.match(source, /discoverExportCatalog/);
   assert.match(source, /if \(failures\.length > 0\) process\.exitCode = 1/);

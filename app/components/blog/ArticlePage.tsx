@@ -49,6 +49,7 @@ export default function ArticlePage({ article }: { readonly article: BlogArticle
       <article className="journal article-page" data-motion-story={story} data-story-runtime="/article-motion.js" data-story-layout="inline"
         data-story-focus={direction.beats[0].section} data-story-resolve={direction.beats[1].section}
         data-topic={article.topic} data-art={direction.family} style={artStyle(direction)}>
+        <div className="article-opening-band">
         <header className="shell article-opening">
           <a className="journal-back" href="/blog/">← All writing</a>
           <div className="article-opening__grid">
@@ -67,6 +68,7 @@ export default function ArticlePage({ article }: { readonly article: BlogArticle
             </figure>
           </div>
         </header>
+        </div>
         <div className="shell article-layout">
           <div className="article-reading">
           <aside className="article-contents">

@@ -379,30 +379,6 @@ html[data-theme="dark"] .hope-brand {
 .hope-brand .journal-library__heading > p {
   max-width: 32ch;
 }
-.hope-brand .article-page .article-opening {
-  padding-bottom: 3rem;
-  border-bottom: 1px solid var(--edition-line);
-}
-.hope-brand .article-page .article-opening__grid {
-  grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr);
-  gap: clamp(2rem,4vw,5rem);
-}
-.hope-brand .article-page .article-opening__vignette {
-  max-width: none;
-  padding: clamp(.75rem,2vw,1.5rem);
-  border: 1px solid var(--edition-line);
-  background: var(--edition-surface-raised);
-  box-shadow: .55rem .55rem 0 var(--edition-surface-soft);
-}
-.hope-brand .article-page .article-opening__vignette figcaption {
-  color: var(--edition-muted);
-}
-.hope-brand .article-page .article-opening h1 {
-  font-size: clamp(3rem,4.8vw,5.8rem);
-}
-.hope-brand .article-page .article-layout {
-  padding-top: 3rem;
-}
 .hope-brand .journal-related__cover {
   display: block;
   min-height: 44px;
@@ -514,12 +490,6 @@ html[data-theme="dark"] .hope-brand {
   .route-folio__rule {
   margin-top: .75rem;
 }
-  .hope-brand .article-page .article-opening__grid {
-  grid-template-columns: minmax(0,1fr);
-}
-  .hope-brand .article-page .article-opening__vignette {
-  width: min(100%,40rem);
-}
   .site-footer__catalog-grid {
   grid-template-columns: repeat(2,minmax(0,1fr));
 }
@@ -574,13 +544,6 @@ html[data-theme="dark"] .hope-brand {
   margin-block: .4rem .8rem;
   max-width: 20ch;
 }
-  .hope-brand .article-page .article-opening h1 {
-  font-size: clamp(2.3rem,9vw,3.65rem);
-  margin-block: .65rem .9rem;
-}
-  .hope-brand .article-page .article-opening__vignette {
-  box-shadow: .3rem .3rem 0 var(--edition-surface-soft);
-}
   .site-footer__catalog-grid {
   gap: 0 1.25rem;
 }
@@ -611,7 +574,7 @@ html[data-theme="dark"] .hope-brand {
   .landing-hope::after, .route-folio__rule {
   background: CanvasText;
 }
-  .hope-brand .journal-entry__art, .hope-brand .article-page .article-opening__vignette {
+  .hope-brand .journal-entry__art {
   border-color: CanvasText;
   box-shadow: none;
 }
